@@ -12,7 +12,7 @@ namespace CtrlVAF.Tests.CommandTests
     {
         public void Handle(BeforeSetPropertiesCommand<Configuration> command)
         {
-            throw new NotImplementedException();
+            return;
         }
     }
 }

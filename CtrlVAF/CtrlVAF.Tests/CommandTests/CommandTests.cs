@@ -19,7 +19,8 @@ namespace CtrlVAF.Tests.CommandTests
             var environment = new EventHandlerEnvironment();
 
             var dispatcher = new Dispatcher();
-            dispatcher.Dispatch(new BeforeSetPropertiesCommand<Configuration>() { Env = environment, Configuration = conf });
+            var command = new BeforeSetPropertiesCommand<Configuration>() { Env = environment, Configuration = conf };
+            dispatcher.Dispatch(command);
 
             Assert.AreEqual(expected, environment.CurrentUserID);
         }

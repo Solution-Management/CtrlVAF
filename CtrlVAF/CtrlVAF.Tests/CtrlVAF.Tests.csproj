@@ -84,6 +84,10 @@
     <Compile Include="CommandTests\CommandTests.cs" />
     <Compile Include="CommandTests\Configuration.cs" />
     <Compile Include="CommandTests\CreateCustomerHandler.cs" />
+    <Compile Include="ConfigValidationTests\Child_ConfigurationValidator.cs" />
+    <Compile Include="ConfigValidationTests\Configuration.cs" />
+    <Compile Include="ConfigValidationTests\ConfigurationValidator.cs" />
+    <Compile Include="ConfigValidationTests\ConfigValidationTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -93,6 +97,10 @@
     <ProjectReference Include="..\CtrlVAF.Commands\CtrlVAF.Commands.csproj">
       <Project>{a473ed6c-0e80-4bcc-a07f-359c36313565}</Project>
       <Name>CtrlVAF.Commands</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CtrlVAF.Validators\CtrlVAF.Validators.csproj">
+      <Project>{3a0d3152-1468-4b0a-8ac7-8ed3322c8602}</Project>
+      <Name>CtrlVAF.Validators</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
