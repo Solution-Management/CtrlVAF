@@ -18,8 +18,9 @@ namespace CtrlVAF.Tests.CommandTests
             var conf = new Configuration() { Name = "Tester", ID = 1234 };
             var environment = new EventHandlerEnvironment();
 
+            var dispatcher = new CommandDispatcher();
             var command = new BeforeSetPropertiesCommand<Configuration>() { Env = environment, Configuration = conf };
-            CommandDispatcher.Dispatch(command);
+            dispatcher.Dispatch(command);
 
             Assert.AreEqual(expected, environment.CurrentUserID);
         }
@@ -33,11 +34,40 @@ namespace CtrlVAF.Tests.CommandTests
             var conf = new Configuration() { Name = "Tester", ID = 1234 };
             var environment = new EventHandlerEnvironment();
 
+            var dispatcher = new CommandDispatcher();
             var command = new AfterSetPropertiesCommand<Configuration>() { Env = environment, Configuration = conf };
-            CommandDispatcher.Dispatch(command);
+            dispatcher.Dispatch(command);
 
             Assert.AreEqual(expectedID, environment.CurrentUserID);
             Assert.AreEqual(expectedName, environment.Input);
+        }
+
+        [TestMethod]
+        public void AssertThat_FailuresInDefaultDispatchMethod_ThrowsNoException()
+        {
+            var conf = new Configuration() { };
+            var environment = new EventHandlerEnvironment();
+
+            var dispatcher = new CommandDispatcher();
+            var command = new AfterCheckInChangesCommand<Configuration>() { Env = environment, Configuration = conf };
+            dispatcher.Dispatch(command);
+
+            Assert.IsTrue(true);
+        }
+
+        [TestMethod]
+        public void AssertThat_FailuresInExceptionHandlingDispatcher_ThrowsException()
+        {
+            var conf = new Configuration() { };
+            var environment = new EventHandlerEnvironment();
+
+            var dispatcher = new CommandDispatcher();
+            var command = new AfterCheckInChangesCommand<Configuration>() { Env = environment, Configuration = conf };
+
+            Assert.ThrowsException<NotImplementedException>(() =>
+            {
+                dispatcher.Dispatch(command, (e) => throw e);
+            });
         }
     }
 }
