@@ -39,5 +39,45 @@ namespace CtrlVAF.Tests.CommandTests
             Assert.AreEqual(expectedID, environment.CurrentUserID);
             Assert.AreEqual(expectedName, environment.Input);
         }
+
+        [TestMethod]
+        public void AssertThat_FailuresInDefaultDispatchMethod_ThrowsNoException()
+        {
+            var conf = new Configuration() { };
+            var environment = new EventHandlerEnvironment();
+
+            var command = new AfterCheckInChangesCommand<Configuration>() { Env = environment, Configuration = conf };
+            CommandDispatcher.Dispatch(command);
+
+            Assert.IsTrue(true);
+        }
+
+        [TestMethod]
+        public void AssertThat_FailuresInExceptionHandlingDispatcher_ThrowsException()
+        {
+            var conf = new Configuration() { };
+            var environment = new EventHandlerEnvironment();
+
+            var command = new AfterCheckInChangesCommand<Configuration>() { Env = environment, Configuration = conf };
+
+            Assert.ThrowsException<NotImplementedException>(() =>
+            {
+                CommandDispatcher.Dispatch(command, false, (e) => throw e);
+            });
+        }
+
+        [TestMethod]
+        public void AssertThat_FailuresInExceptionThrowingDispatcher_ThrowsException()
+        {
+            var conf = new Configuration() { };
+            var environment = new EventHandlerEnvironment();
+
+            var command = new AfterCheckInChangesCommand<Configuration>() { Env = environment, Configuration = conf };
+
+            Assert.ThrowsException<NotImplementedException>(() =>
+            {
+                CommandDispatcher.Dispatch(command, true);
+            });
+        }
     }
 }

@@ -81,6 +81,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CommandTests\AfterCheckInChangesFailureHandler.cs" />
     <Compile Include="CommandTests\AfterSetPropertiesHandler2.cs" />
     <Compile Include="CommandTests\AfterSetPropertiesHandler1.cs" />
     <Compile Include="CommandTests\BeforeSetPropertiesHandler.cs" />
