@@ -18,9 +18,8 @@ namespace CtrlVAF.Tests.CommandTests
             var conf = new Configuration() { Name = "Tester", ID = 1234 };
             var environment = new EventHandlerEnvironment();
 
-            var dispatcher = new CommandDispatcher();
             var command = new BeforeSetPropertiesCommand<Configuration>() { Env = environment, Configuration = conf };
-            dispatcher.Dispatch(command);
+            CommandDispatcher.Dispatch(command);
 
             Assert.AreEqual(expected, environment.CurrentUserID);
         }
@@ -34,9 +33,8 @@ namespace CtrlVAF.Tests.CommandTests
             var conf = new Configuration() { Name = "Tester", ID = 1234 };
             var environment = new EventHandlerEnvironment();
 
-            var dispatcher = new CommandDispatcher();
             var command = new AfterSetPropertiesCommand<Configuration>() { Env = environment, Configuration = conf };
-            dispatcher.Dispatch(command);
+            CommandDispatcher.Dispatch(command);
 
             Assert.AreEqual(expectedID, environment.CurrentUserID);
             Assert.AreEqual(expectedName, environment.Input);
@@ -48,9 +46,8 @@ namespace CtrlVAF.Tests.CommandTests
             var conf = new Configuration() { };
             var environment = new EventHandlerEnvironment();
 
-            var dispatcher = new CommandDispatcher();
             var command = new AfterCheckInChangesCommand<Configuration>() { Env = environment, Configuration = conf };
-            dispatcher.Dispatch(command);
+            CommandDispatcher.Dispatch(command);
 
             Assert.IsTrue(true);
         }
@@ -61,12 +58,25 @@ namespace CtrlVAF.Tests.CommandTests
             var conf = new Configuration() { };
             var environment = new EventHandlerEnvironment();
 
-            var dispatcher = new CommandDispatcher();
             var command = new AfterCheckInChangesCommand<Configuration>() { Env = environment, Configuration = conf };
 
             Assert.ThrowsException<NotImplementedException>(() =>
             {
-                dispatcher.Dispatch(command, (e) => throw e);
+                CommandDispatcher.Dispatch(command, false, (e) => throw e);
+            });
+        }
+
+        [TestMethod]
+        public void AssertThat_FailuresInExceptionThrowingDispatcher_ThrowsException()
+        {
+            var conf = new Configuration() { };
+            var environment = new EventHandlerEnvironment();
+
+            var command = new AfterCheckInChangesCommand<Configuration>() { Env = environment, Configuration = conf };
+
+            Assert.ThrowsException<NotImplementedException>(() =>
+            {
+                CommandDispatcher.Dispatch(command, true);
             });
         }
     }
