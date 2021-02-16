@@ -1,17 +1,13 @@
 ﻿using CtrlVAF.Commands.Handlers;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
 
 namespace CtrlVAF.Commands
 {
-    public class Dispatcher
+    public static class CommandDispatcher
     {
-        public void Dispatch<TCommand>(TCommand command) where TCommand : class
+        public static void Dispatch<TCommand>(TCommand command) where TCommand : class
         {
             Type handler = typeof(ICommandHandler<>);
             Type handlerType = handler.MakeGenericType(command.GetType());

@@ -11,9 +11,9 @@ using System.Threading.Tasks;
 
 namespace CtrlVAF.Validators
 {
-    public class Dispatcher
+    public static class ValidationDispatcher
     {
-        public IEnumerable<ValidationFinding> Dispatch(Vault vault, object config)
+        public static IEnumerable<ValidationFinding> Dispatch(Vault vault, object config)
         {
             var callingAssembly = config.GetType().Assembly;
             var allTypes = callingAssembly.GetTypes();
@@ -48,7 +48,7 @@ namespace CtrlVAF.Validators
 
         }
 
-        private object GetConfigPropertyOfType(object config, Type configSubType)
+        private static object GetConfigPropertyOfType(object config, Type configSubType)
         {
             if (config.GetType() == configSubType)
                 return config;

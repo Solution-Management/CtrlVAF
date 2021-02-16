@@ -18,9 +18,8 @@ namespace CtrlVAF.Tests.CommandTests
             var conf = new Configuration() { Name = "Tester", ID = 1234 };
             var environment = new EventHandlerEnvironment();
 
-            var dispatcher = new Dispatcher();
             var command = new BeforeSetPropertiesCommand<Configuration>() { Env = environment, Configuration = conf };
-            dispatcher.Dispatch(command);
+            CommandDispatcher.Dispatch(command);
 
             Assert.AreEqual(expected, environment.CurrentUserID);
         }
@@ -34,9 +33,8 @@ namespace CtrlVAF.Tests.CommandTests
             var conf = new Configuration() { Name = "Tester", ID = 1234 };
             var environment = new EventHandlerEnvironment();
 
-            var dispatcher = new Dispatcher();
             var command = new AfterSetPropertiesCommand<Configuration>() { Env = environment, Configuration = conf };
-            dispatcher.Dispatch(command);
+            CommandDispatcher.Dispatch(command);
 
             Assert.AreEqual(expectedID, environment.CurrentUserID);
             Assert.AreEqual(expectedName, environment.Input);
