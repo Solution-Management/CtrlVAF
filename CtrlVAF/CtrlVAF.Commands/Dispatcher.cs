@@ -18,7 +18,13 @@ namespace CtrlVAF.Commands
 
             var executingAssembly = Assembly.GetCallingAssembly();
             var types = executingAssembly.GetTypes();
-            Type[] concreteTypes = types.Where(t => t.IsClass && t.GetInterfaces().Contains(handlerType)).ToArray();
+
+            Type[] concreteTypes = types.Where(
+                t => 
+                    t.IsClass && 
+                    t.GetInterfaces().Contains(handlerType)
+                    )
+                .ToArray();
 
             if (!concreteTypes.Any()) return;
 
