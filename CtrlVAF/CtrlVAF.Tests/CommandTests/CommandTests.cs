@@ -3,7 +3,6 @@ using CtrlVAF.Commands;
 using CtrlVAF.Commands.Commands;
 using MFiles.VAF.Common;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
 
 namespace CtrlVAF.Tests.CommandTests
 {
