@@ -1,4 +1,5 @@
-﻿using MFiles.VAF.Configuration;
+﻿using CtrlVAF.Models;
+using MFiles.VAF.Configuration;
 
 using MFilesAPI;
 
@@ -11,20 +12,35 @@ using System.Threading.Tasks;
 
 namespace CtrlVAF.Validators
 {
-    public static class ValidationDispatcher
+    public class ValidationDispatcher : IDispatcher
     {
-        public static IEnumerable<ValidationFinding> Dispatch(Vault vault, object config)
+        public IEnumerable<ValidationFinding> Dispatch(Vault vault, object config)
         {
-            var callingAssembly = config.GetType().Assembly;
-            var allTypes = callingAssembly.GetTypes();
+            var handlerType = typeof(ICustomValidator);
 
-            Type[] concreteTypes = allTypes.Where(
-                t =>
+            // Attempt to get types from the cache
+            if (_typeCache.TryGetValue(handlerType, out var cachedTypes))
+            {
+                return HandleConcreteTypes(cachedTypes, vault, config);
+            }
+
+            // Obtain the types of the assemblies
+            var concreteTypes = _assemblies.SelectMany(a =>
+            {
+                return a.GetTypes().Where(t =>
                     t.IsClass &&
-                    t.GetInterfaces().Contains(typeof(ICustomValidator))
-                )
-                .ToArray();
+                    t.GetInterfaces().Contains(handlerType)
+                    );
+            });
 
+            // Add the concrete types to cache
+            _typeCache.TryAdd(handlerType, concreteTypes);
+
+            return HandleConcreteTypes(concreteTypes, vault, config);
+        }
+
+        private IEnumerable<ValidationFinding> HandleConcreteTypes(IEnumerable<Type> concreteTypes, Vault vault, object config)
+        {
             if (!concreteTypes.Any())
                 yield break;
 
@@ -45,10 +61,9 @@ namespace CtrlVAF.Validators
                     yield return finding;
                 }
             }
-
         }
 
-        private static object GetConfigPropertyOfType(object config, Type configSubType)
+        private object GetConfigPropertyOfType(object config, Type configSubType)
         {
             if (config.GetType() == configSubType)
                 return config;

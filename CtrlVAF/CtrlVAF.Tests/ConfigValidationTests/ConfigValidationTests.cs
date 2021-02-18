@@ -15,7 +15,9 @@ namespace CtrlVAF.Tests.ConfigValidationTests
 
             //Runs ICustomValidator.Validate(vault, config) on all classes that implement CustomValidator<T> 
             //where T is the configuration class or a class used by it's members.
-            var results = ValidationDispatcher.Dispatch(new MFilesAPI.Vault(), new Configuration {Name = "", ID = 42 });
+            var dispatcher = new ValidationDispatcher();
+            dispatcher.IncludeAssemblies(typeof(Configuration));
+            var results = dispatcher.Dispatch(new MFilesAPI.Vault(), new Configuration {Name = "", ID = 42 });
 
             Assert.AreEqual(expected, results.Count());
         }
@@ -35,10 +37,11 @@ namespace CtrlVAF.Tests.ConfigValidationTests
                 }
             };
 
-            var results = ValidationDispatcher.Dispatch(new MFilesAPI.Vault(), config);
+            var dispatcher = new ValidationDispatcher();
+            dispatcher.IncludeAssemblies(typeof(Configuration));
+            var results = dispatcher.Dispatch(new MFilesAPI.Vault(), config);
 
             Assert.AreEqual(expected, results.Count());
-
         }
     }
 }

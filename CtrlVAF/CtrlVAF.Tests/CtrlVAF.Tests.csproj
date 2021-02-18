@@ -95,6 +95,10 @@
       <Project>{a473ed6c-0e80-4bcc-a07f-359c36313565}</Project>
       <Name>CtrlVAF.Commands</Name>
     </ProjectReference>
+    <ProjectReference Include="..\CtrlVAF.Models\CtrlVAF.Models.csproj">
+      <Project>{54188975-1D5E-49E1-A854-5FE4987E83F4}</Project>
+      <Name>CtrlVAF.Models</Name>
+    </ProjectReference>
     <ProjectReference Include="..\CtrlVAF.Validators\CtrlVAF.Validators.csproj">
       <Project>{3a0d3152-1468-4b0a-8ac7-8ed3322c8602}</Project>
       <Name>CtrlVAF.Validators</Name>

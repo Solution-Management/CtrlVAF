@@ -135,10 +135,17 @@
     <Compile Include="Commands\ReplicationAfterCreateNewObjectFinalizeCommand.cs" />
     <Compile Include="CommandDispatcher.cs" />
     <Compile Include="Handlers\ICommandHandler.cs" />
+    <Compile Include="Handlers\TestHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CtrlVAF.Models\CtrlVAF.Models.csproj">
+      <Project>{54188975-1d5e-49e1-a854-5fe4987e83f4}</Project>
+      <Name>CtrlVAF.Models</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

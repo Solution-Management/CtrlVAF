@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CtrlVAF.Tests", "CtrlVAF.Te
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CtrlVAF.Validators", "CtrlVAF.Validators\CtrlVAF.Validators.csproj", "{3A0D3152-1468-4B0A-8AC7-8ED3322C8602}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CtrlVAF.Models", "CtrlVAF.Models\CtrlVAF.Models.csproj", "{54188975-1D5E-49E1-A854-5FE4987E83F4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{3A0D3152-1468-4B0A-8AC7-8ED3322C8602}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3A0D3152-1468-4B0A-8AC7-8ED3322C8602}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3A0D3152-1468-4B0A-8AC7-8ED3322C8602}.Release|Any CPU.Build.0 = Release|Any CPU
+		{54188975-1D5E-49E1-A854-5FE4987E83F4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{54188975-1D5E-49E1-A854-5FE4987E83F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{54188975-1D5E-49E1-A854-5FE4987E83F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{54188975-1D5E-49E1-A854-5FE4987E83F4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

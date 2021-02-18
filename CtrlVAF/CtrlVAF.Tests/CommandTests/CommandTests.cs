@@ -17,8 +17,9 @@ namespace CtrlVAF.Tests.CommandTests
             var conf = new Configuration() { Name = "Tester", ID = 1234 };
             var environment = new EventHandlerEnvironment();
 
+            var dispatcher = new CommandDispatcher();
             var command = new BeforeSetPropertiesCommand<Configuration>() { Env = environment, Configuration = conf };
-            CommandDispatcher.Dispatch(command);
+            dispatcher.Dispatch(command);
 
             Assert.AreEqual(expected, environment.CurrentUserID);
         }
@@ -32,12 +33,41 @@ namespace CtrlVAF.Tests.CommandTests
             var conf = new Configuration() { Name = "Tester", ID = 1234 };
             var environment = new EventHandlerEnvironment();
 
+            var dispatcher = new CommandDispatcher();
             var command = new AfterSetPropertiesCommand<Configuration>() { Env = environment, Configuration = conf };
-            CommandDispatcher.Dispatch(command);
+            dispatcher.Dispatch(command);
 
             Assert.AreEqual(expectedID, environment.CurrentUserID);
             Assert.AreEqual(expectedName, environment.Input);
         }
+
+        [TestMethod]
+        public void AssertThat_ChangesMadeInMultipleTypesOfHandlers_PropagateToEnvironment()
+        {
+            var expectedID = 1234;
+            var expectedName = "Tester";
+
+            var expectedID2 = 4321;
+            var expectedName2 = "Tester";
+
+            var conf = new Configuration() { Name = "Tester", ID = 1234 };
+            var environment = new EventHandlerEnvironment();
+
+            var dispatcher = new CommandDispatcher();
+            var command = new AfterSetPropertiesCommand<Configuration>() { Env = environment, Configuration = conf };
+            dispatcher.Dispatch(command);
+
+            Assert.AreEqual(expectedID, environment.CurrentUserID);
+            Assert.AreEqual(expectedName, environment.Input);
+
+            var conf2 = new Configuration() { Name = "Tester", ID = 4321 };
+            var command2 = new BeforeSetPropertiesCommand<Configuration>() { Env = environment, Configuration = conf2 };
+            dispatcher.Dispatch(command2);
+
+            Assert.AreEqual(expectedID2, environment.CurrentUserID);
+            Assert.AreEqual(expectedName2, environment.Input);
+        }
+
 
         [TestMethod]
         public void AssertThat_FailuresInDefaultDispatchMethod_ThrowsNoException()
@@ -45,8 +75,9 @@ namespace CtrlVAF.Tests.CommandTests
             var conf = new Configuration() { };
             var environment = new EventHandlerEnvironment();
 
+            var dispatcher = new CommandDispatcher();
             var command = new AfterCheckInChangesCommand<Configuration>() { Env = environment, Configuration = conf };
-            CommandDispatcher.Dispatch(command);
+            dispatcher.Dispatch(command);
 
             Assert.IsTrue(true);
         }
@@ -57,11 +88,12 @@ namespace CtrlVAF.Tests.CommandTests
             var conf = new Configuration() { };
             var environment = new EventHandlerEnvironment();
 
+            var dispatcher = new CommandDispatcher();
             var command = new AfterCheckInChangesCommand<Configuration>() { Env = environment, Configuration = conf };
 
             Assert.ThrowsException<NotImplementedException>(() =>
             {
-                CommandDispatcher.Dispatch(command, false, (e) => throw e);
+                dispatcher.Dispatch(command, false, (e) => throw e);
             });
         }
 
@@ -71,12 +103,109 @@ namespace CtrlVAF.Tests.CommandTests
             var conf = new Configuration() { };
             var environment = new EventHandlerEnvironment();
 
+            var dispatcher = new CommandDispatcher();
             var command = new AfterCheckInChangesCommand<Configuration>() { Env = environment, Configuration = conf };
 
             Assert.ThrowsException<NotImplementedException>(() =>
             {
-                CommandDispatcher.Dispatch(command, true);
+                dispatcher.Dispatch(command, true);
             });
+        }
+
+        [TestMethod]
+        public void SpeedTest_50000Calls()
+        {
+            var conf = new Configuration() { Name = "Tester", ID = 1234 };
+            var environment = new EventHandlerEnvironment();
+            var dispatcher = new CommandDispatcher();
+            var command = new BeforeSetPropertiesCommand<Configuration>() { Env = environment, Configuration = conf };
+
+            for (int i = 0; i < 50000; i++)
+            {
+                dispatcher.Dispatch(command);
+            }
+
+            Assert.IsTrue(true);
+        }
+
+        [TestMethod]
+        public void SpeedTest_100000Calls()
+        {
+            var conf = new Configuration() { Name = "Tester", ID = 1234 };
+            var environment = new EventHandlerEnvironment();
+            var dispatcher = new CommandDispatcher();
+            var command = new BeforeSetPropertiesCommand<Configuration>() { Env = environment, Configuration = conf };
+
+            for (int i = 0; i < 100000; i++)
+            {
+                dispatcher.Dispatch(command);
+            }
+
+            Assert.IsTrue(true);
+        }
+
+        [TestMethod]
+        public void AssertThat_HandlerInDifferentAssembly_NotAdded_NoChanges()
+        {
+            var expected = 0;
+
+            var conf = new Commands.Handlers.TestConfiguration() { id = 1234 };
+            var environment = new EventHandlerEnvironment();
+
+            var dispatcher = new CommandDispatcher();
+            var command = new BeforeCheckInChangesCommand<Commands.Handlers.TestConfiguration>() { Env = environment, Configuration = conf };
+            dispatcher.Dispatch(command);
+
+            Assert.AreEqual(expected, environment.CurrentUserID);
+        }
+
+        [TestMethod]
+        public void AssertThat_HandlerInDifferentAssembly_Added_Changes()
+        {
+            var expected = 1234;
+
+            var conf = new Commands.Handlers.TestConfiguration() { id = 1234 };
+            var environment = new EventHandlerEnvironment();
+
+            var dispatcher = new CommandDispatcher();
+            dispatcher.IncludeAssemblies(typeof(Commands.Handlers.TestConfiguration).Assembly);
+            var command = new BeforeCheckInChangesCommand<Commands.Handlers.TestConfiguration>() { Env = environment, Configuration = conf };
+            dispatcher.Dispatch(command);
+
+            Assert.AreEqual(expected, environment.CurrentUserID);
+        }
+
+        [TestMethod]
+        public void AssertThat_HandlerInDifferentAssembly_AddedType_Changes()
+        {
+            var expected = 1234;
+
+            var conf = new Commands.Handlers.TestConfiguration() { id = 1234 };
+            var environment = new EventHandlerEnvironment();
+
+            var dispatcher = new CommandDispatcher();
+            dispatcher.IncludeAssemblies(typeof(Commands.Handlers.TestConfiguration).Assembly);
+            var command = new BeforeCheckInChangesCommand<Commands.Handlers.TestConfiguration>() { Env = environment, Configuration = conf };
+            dispatcher.Dispatch(command);
+
+            Assert.AreEqual(expected, environment.CurrentUserID);
+        }
+
+        [TestMethod]
+        public void SpeedTest_AdditionalAssembly_100000Calls()
+        {
+            var conf = new Commands.Handlers.TestConfiguration() { id = 1234 };
+            var environment = new EventHandlerEnvironment();
+            var dispatcher = new CommandDispatcher();
+            dispatcher.IncludeAssemblies(typeof(Commands.Handlers.TestConfiguration).Assembly);
+            var command = new BeforeCheckInChangesCommand<Commands.Handlers.TestConfiguration>() { Env = environment, Configuration = conf };
+
+            for (int i = 0; i < 100000; i++)
+            {
+                dispatcher.Dispatch(command);
+            }
+
+            Assert.IsTrue(true);
         }
     }
 }

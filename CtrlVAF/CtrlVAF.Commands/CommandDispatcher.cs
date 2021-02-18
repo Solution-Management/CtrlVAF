@@ -1,11 +1,15 @@
-﻿using CtrlVAF.Commands.Handlers;
+﻿using CtrlVAF.Commands.Commands;
+using CtrlVAF.Commands.Handlers;
+using CtrlVAF.Models;
 using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
 namespace CtrlVAF.Commands
 {
-    public static class CommandDispatcher
+    public class CommandDispatcher : IDispatcher
     {
         /// <summary>
         /// Main command dispatcher entry method. Typical usage of this method would be inside an event handler method inside the vault application base class.
@@ -15,28 +19,40 @@ namespace CtrlVAF.Commands
         /// <param name="command">The actual command itself</param>
         /// <param name="throwExceptions">Whether or not to stop executing ICommandHandlers upon exceptions and throw the exception</param>
         /// <param name="exceptionHandler">An exception handler to pass along or handle any ICommandHandler exceptions</param>
-        public static void Dispatch<TCommand>(TCommand command, bool throwExceptions = false, Action<Exception> exceptionHandler = null) where TCommand : class
+        public void Dispatch<TCommand>(TCommand command, bool throwExceptions = false, Action<Exception> exceptionHandler = null) where TCommand : class
         {
             // Instantiate a handlerType according to the TCommand type provided
-            Type handler = typeof(ICommandHandler<>);
-            Type handlerType = handler.MakeGenericType(command.GetType());
+            var handler = typeof(ICommandHandler<>);
+            var handlerType = handler.MakeGenericType(command.GetType());
+
+            // If the concrete types have already been retrieved and cached before, simply handle those
+            if (_typeCache.TryGetValue(handlerType, out var cachedTypes))
+            {
+                HandleConcreteTypes(cachedTypes, command, throwExceptions, exceptionHandler);
+                return;
+            }
 
             // Obtain the types of the executing assembly
-            var executingAssembly = Assembly.GetCallingAssembly();
-            var types = executingAssembly.GetTypes();
-
-            // Obtain the concrete types in the assembly where the handleType is included as an interface
-            Type[] concreteTypes = types.Where(
-                t =>
+            var concreteTypes = _assemblies.SelectMany(a =>
+            {
+                return a.GetTypes().Where(t =>
                     t.IsClass &&
                     t.GetInterfaces().Contains(handlerType)
-                    )
-                .ToArray();
+                    );
+            });
 
+            // Cache the concrete types
+            _typeCache.TryAdd(handlerType, concreteTypes);
+
+            HandleConcreteTypes(concreteTypes, command, throwExceptions, exceptionHandler);
+        }
+
+        private void HandleConcreteTypes<TCommand>(IEnumerable<Type> concreteTypes, TCommand command, bool throwExceptions = false, Action<Exception> exceptionHandler = null) where TCommand : class
+        {
             // If none, return
             if (!concreteTypes.Any()) return;
 
-            foreach (Type type in concreteTypes)
+            foreach (var type in concreteTypes)
             {
                 try
                 {
