@@ -13,13 +13,13 @@ namespace CtrlVAF.Models
         /// <summary>
         /// Cache to hold the concrete types found for each type of dispatcher execution type
         /// </summary>
-        protected ConcurrentDictionary<Type, IEnumerable<Type>> _typeCache = new ConcurrentDictionary<Type, IEnumerable<Type>>();
+        protected ConcurrentDictionary<Type, IEnumerable<Type>> TypeCache = new ConcurrentDictionary<Type, IEnumerable<Type>>();
 
         /// <summary>
         /// List of additional assemblies to look through for concrete types.
         /// Always contains the calling assembly!
         /// </summary>
-        protected List<Assembly> _assemblies = new List<Assembly>() { Assembly.GetCallingAssembly() };
+        protected List<Assembly> Assemblies = new List<Assembly>() { Assembly.GetCallingAssembly() };
 
         /// <summary>
         /// Method to include additional assemblies in which to look for ICommandHandlers. The calling assembly is always included.
@@ -28,8 +28,8 @@ namespace CtrlVAF.Models
         /// <returns>The same CommandDispatcher</returns>
         public IDispatcher IncludeAssemblies(params Assembly[] assemblies)
         {
-            _assemblies.AddRange(assemblies);
-            _assemblies = _assemblies.Distinct().ToList();
+            Assemblies.AddRange(assemblies);
+            Assemblies = Assemblies.Distinct().ToList();
             return this;
         }
 

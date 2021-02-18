@@ -19,13 +19,13 @@ namespace CtrlVAF.Validators
             var handlerType = typeof(ICustomValidator);
 
             // Attempt to get types from the cache
-            if (_typeCache.TryGetValue(handlerType, out var cachedTypes))
+            if (TypeCache.TryGetValue(handlerType, out var cachedTypes))
             {
                 return HandleConcreteTypes(cachedTypes, vault, config);
             }
 
             // Obtain the types of the assemblies
-            var concreteTypes = _assemblies.SelectMany(a =>
+            var concreteTypes = Assemblies.SelectMany(a =>
             {
                 return a.GetTypes().Where(t =>
                     t.IsClass &&
@@ -34,7 +34,7 @@ namespace CtrlVAF.Validators
             });
 
             // Add the concrete types to cache
-            _typeCache.TryAdd(handlerType, concreteTypes);
+            TypeCache.TryAdd(handlerType, concreteTypes);
 
             return HandleConcreteTypes(concreteTypes, vault, config);
         }

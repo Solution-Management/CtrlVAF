@@ -9,7 +9,7 @@ using System.Reflection;
 
 namespace CtrlVAF.Commands
 {
-    public class CommandDispatcher : IDispatcher
+    public class CommandDispatcher : IVoidDispatcher
     {
         /// <summary>
         /// Main command dispatcher entry method. Typical usage of this method would be inside an event handler method inside the vault application base class.
@@ -19,21 +19,21 @@ namespace CtrlVAF.Commands
         /// <param name="command">The actual command itself</param>
         /// <param name="throwExceptions">Whether or not to stop executing ICommandHandlers upon exceptions and throw the exception</param>
         /// <param name="exceptionHandler">An exception handler to pass along or handle any ICommandHandler exceptions</param>
-        public void Dispatch<TCommand>(TCommand command, bool throwExceptions = false, Action<Exception> exceptionHandler = null) where TCommand : class
+        public override void Dispatch<TCommand>(TCommand command, bool throwExceptions = false, Action<Exception> exceptionHandler = null)
         {
             // Instantiate a handlerType according to the TCommand type provided
             var handler = typeof(ICommandHandler<>);
             var handlerType = handler.MakeGenericType(command.GetType());
 
             // If the concrete types have already been retrieved and cached before, simply handle those
-            if (_typeCache.TryGetValue(handlerType, out var cachedTypes))
+            if (TypeCache.TryGetValue(handlerType, out var cachedTypes))
             {
                 HandleConcreteTypes(cachedTypes, command, throwExceptions, exceptionHandler);
                 return;
             }
 
             // Obtain the types of the executing assembly
-            var concreteTypes = _assemblies.SelectMany(a =>
+            var concreteTypes = Assemblies.SelectMany(a =>
             {
                 return a.GetTypes().Where(t =>
                     t.IsClass &&
@@ -42,7 +42,7 @@ namespace CtrlVAF.Commands
             });
 
             // Cache the concrete types
-            _typeCache.TryAdd(handlerType, concreteTypes);
+            TypeCache.TryAdd(handlerType, concreteTypes);
 
             HandleConcreteTypes(concreteTypes, command, throwExceptions, exceptionHandler);
         }
