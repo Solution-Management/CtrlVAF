@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("CtrlVAF.Validators")]
+[assembly: AssemblyTitle("CtrlVAF.Core")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("CtrlVAF.Validators")]
+[assembly: AssemblyProduct("CtrlVAF.Core")]
 [assembly: AssemblyCopyright("Copyright ©  2021")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("3a0d3152-1468-4b0a-8ac7-8ed3322c8602")]
+[assembly: Guid("cc724d5e-1339-477a-b608-f738fdf0c7f6")]
 
 // Version information for an assembly consists of the following four values:
 //

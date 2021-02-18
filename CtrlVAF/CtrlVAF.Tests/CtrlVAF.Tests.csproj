@@ -41,7 +41,7 @@
   <ItemGroup>
     <Reference Include="Interop.MFilesAPI, Version=7.0.0.0, Culture=neutral, PublicKeyToken=f1b4733f444f7ad0, processorArchitecture=MSIL">
       <HintPath>..\packages\MFiles.VAF.2.2.0.10\lib\net45\Interop.MFilesAPI.dll</HintPath>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
     </Reference>
     <Reference Include="MFiles.Crypto, Version=2.2.0.10, Culture=neutral, PublicKeyToken=fa007b370d17fe5e, processorArchitecture=MSIL">
       <HintPath>..\packages\MFiles.VAF.2.2.0.10\lib\net45\MFiles.Crypto.dll</HintPath>
@@ -91,6 +91,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+<<<<<<< Updated upstream
     <ProjectReference Include="..\CtrlVAF.Commands\CtrlVAF.Commands.csproj">
       <Project>{a473ed6c-0e80-4bcc-a07f-359c36313565}</Project>
       <Name>CtrlVAF.Commands</Name>
@@ -102,6 +103,11 @@
     <ProjectReference Include="..\CtrlVAF.Validators\CtrlVAF.Validators.csproj">
       <Project>{3a0d3152-1468-4b0a-8ac7-8ed3322c8602}</Project>
       <Name>CtrlVAF.Validators</Name>
+=======
+    <ProjectReference Include="..\CtrlVAF.Core\CtrlVAF.Core.csproj">
+      <Project>{cc724d5e-1339-477a-b608-f738fdf0c7f6}</Project>
+      <Name>CtrlVAF.Core</Name>
+>>>>>>> Stashed changes
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />

@@ -1,4 +1,6 @@
-﻿using MFiles.VAF.Common;
+﻿using CtrlVAF.Core;
+
+using MFiles.VAF.Common;
 using MFiles.VAF.Extensions.MultiServerMode;
 using MFiles.VAF.MultiserverMode;
 
@@ -14,10 +16,61 @@ using System.Threading.Tasks;
 
 namespace CtrlVAF.BackgroundOperations
 {
-    class BackgroundDispatcher
+    public class BackgroundDispatcher<TConfig> : Dispatcher<object> where TConfig : class, new()
     {
+        private Core.ConfigurableVaultApplicationBase<TConfig> vaultApplication;
 
-        public void Dispatch<TConfig>(ConfigurableVaultApplicationBase<TConfig> vaultApplication) where TConfig : class, new()
+        public BackgroundDispatcher(Core.ConfigurableVaultApplicationBase<TConfig> vaultApplication)
+        {
+            this.vaultApplication = vaultApplication;
+        }
+
+        public override object Dispatch() 
+        {
+            Type[] concreteTypes = GetTypes();
+                        
+            if (!concreteTypes.Any())
+                return null;
+
+            return DispatchTypes(concreteTypes);
+        }
+
+        private object GetConfigPropertyOfType(object config, Type configSubType)
+        {
+            if (config.GetType() == configSubType)
+                return config;
+
+            var configProperties = config.GetType().GetProperties();
+
+            foreach (var configProperty in configProperties)
+            {
+                if (!configProperty.PropertyType.IsClass)
+                    continue;
+
+                var subConfig = configProperty.GetValue(config);
+
+                if (configProperty.PropertyType == configSubType)
+                    return subConfig;
+            }
+
+            foreach (var configProperty in configProperties)
+            {
+                if (!configProperty.PropertyType.IsClass)
+                    continue;
+
+                var subConfig = configProperty.GetValue(config);
+
+                var subsubConfig = GetConfigPropertyOfType(subConfig, configSubType);
+                if (subsubConfig == null)
+                    continue;
+                else
+                    return subsubConfig;
+            }
+
+            return null;
+        }
+
+        protected internal override Type[] GetTypes()
         {
             var applicationAssembly = Assembly.GetAssembly(vaultApplication.GetType());
             var allTypes = applicationAssembly.GetTypes();
@@ -29,10 +82,12 @@ namespace CtrlVAF.BackgroundOperations
                     t.IsDefined(typeof(BackgroundOperationAttribute))
                 )
                 .ToArray();
-                        
-            if (!concreteTypes.Any())
-                return;
 
+            return concreteTypes;
+        }
+
+        protected internal override object DispatchTypes(Type[] concreteTypes)
+        {
             List<string> PermanentBackgroundOperationNames = new List<string>();
             List<string> OnDemandBackgroundOperationNames = new List<string>();
 
@@ -82,7 +137,7 @@ namespace CtrlVAF.BackgroundOperations
             string message = "";
 
             if (PermanentBackgroundOperationNames.Any())
-                message += $"Permanent background operation classes: " + Environment.NewLine + 
+                message += $"Permanent background operation classes: " + Environment.NewLine +
                     JsonConvert.SerializeObject(PermanentBackgroundOperationNames, Formatting.Indented) + Environment.NewLine;
 
             if (OnDemandBackgroundOperationNames.Any())
@@ -90,46 +145,11 @@ namespace CtrlVAF.BackgroundOperations
                     JsonConvert.SerializeObject(OnDemandBackgroundOperationNames, Formatting.Indented) + Environment.NewLine;
 
             SysUtils.ReportInfoToEventLog(
-                $"{vaultApplication.GetType().Name} - BackgroundOperations", 
+                $"{vaultApplication.GetType().Name} - BackgroundOperations",
                 message
                 );
-            
-        }
-
-        private object GetConfigPropertyOfType(object config, Type configSubType)
-        {
-            if (config.GetType() == configSubType)
-                return config;
-
-            var configProperties = config.GetType().GetProperties();
-
-            foreach (var configProperty in configProperties)
-            {
-                if (!configProperty.PropertyType.IsClass)
-                    continue;
-
-                var subConfig = configProperty.GetValue(config);
-
-                if (configProperty.PropertyType == configSubType)
-                    return subConfig;
-            }
-
-            foreach (var configProperty in configProperties)
-            {
-                if (!configProperty.PropertyType.IsClass)
-                    continue;
-
-                var subConfig = configProperty.GetValue(config);
-
-                var subsubConfig = GetConfigPropertyOfType(subConfig, configSubType);
-                if (subsubConfig == null)
-                    continue;
-                else
-                    return subsubConfig;
-            }
 
             return null;
         }
-
     }
 }

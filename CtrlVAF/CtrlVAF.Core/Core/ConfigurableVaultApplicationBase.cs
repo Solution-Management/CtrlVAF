@@ -1,15 +1,15 @@
-﻿using MFiles.VAF.Common;
+﻿using CtrlVAF.BackgroundOperations;
+using CtrlVAF.Core.Attributes;
+
+using MFiles.VAF.Common;
+using MFiles.VAF.Configuration;
 using MFiles.VAF.Extensions.MultiServerMode;
-using MFiles.VAF.MultiserverMode;
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Reflection;
 
 
-namespace CtrlVAF.BackgroundOperations
+namespace CtrlVAF.Core
 {
     public abstract class ConfigurableVaultApplicationBase<TSecureConfiguration> : 
         MFiles.VAF.Extensions.MultiServerMode.ConfigurableVaultApplicationBase<TSecureConfiguration> where TSecureConfiguration : class, new()
@@ -34,20 +34,28 @@ namespace CtrlVAF.BackgroundOperations
         {
             TaskQueueBackgroundOperationManager = new TaskQueueBackgroundOperationManager(
                 this,
-                this.GetType().FullName.Replace(".", "-") + "-BackgroundOperations"
+                this.GetType().FullName.Replace(".", "-") + " - BackgroundOperations"
                 );
 
-            var dispatcher = new BackgroundDispatcher();
+            Dispatcher<object> dispatcher = new BackgroundDispatcher<TSecureConfiguration>(this);
+
+            if(this.GetType().IsDefined(typeof(UseLicensingAttribute)))
+            {
+                var content = License?.Content<LicenseContentBase>();
+
+                dispatcher = new LicensedDispatcher<object>(dispatcher, content);
+            }
 
             try
             {
-                dispatcher.Dispatch(this);
+                dispatcher.Dispatch();
             }
             catch(Exception e)
             {
                 SysUtils.ReportErrorMessageToEventLog("Could not dispatch.", e);
                 return;
             }
+
             base.StartApplication();
         }
     }

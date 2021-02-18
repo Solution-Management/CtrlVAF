@@ -60,7 +60,7 @@ If you specify `CustomConfiguration` the member **CustomConfig** will be accessi
 
 ### Registering to the VaultApplication
 
-To load this background task into the **VaultApplication** it just needs to inherit from `CtrVAF.BackgroundOperations.ConfigurableVaultApplicationBase`. This class implements the **StartApplication()** function to load the classes specified following the above method.
+To load this background task into the **VaultApplication** it just needs to inherit from `CtrVAF.Core.ConfigurableVaultApplicationBase`. This class implements the **StartApplication()** function to load the classes specified following the above method.
 
 When overriding this method be sure to keep the call to `base.StartApplication()`.
 
