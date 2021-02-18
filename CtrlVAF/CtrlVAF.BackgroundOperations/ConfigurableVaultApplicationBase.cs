@@ -27,6 +27,9 @@ namespace CtrlVAF.BackgroundOperations
             return Configuration;
         }
 
+        /// <summary>
+        /// Registers background operations
+        /// </summary>
         protected override void StartApplication()
         {
             TaskQueueBackgroundOperationManager = new TaskQueueBackgroundOperationManager(

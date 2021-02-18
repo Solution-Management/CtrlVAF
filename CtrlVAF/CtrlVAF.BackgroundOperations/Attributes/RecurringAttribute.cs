@@ -20,6 +20,6 @@ namespace CtrlVAF.BackgroundOperations
         /// <summary>
         /// Interval for the permanent background operation
         /// </summary>
-        internal int IntervalInMinutes { get; set; } = 10;
+        public int IntervalInMinutes { get; private set; } = 10;
     }
 }

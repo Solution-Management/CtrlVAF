@@ -10,7 +10,7 @@ namespace CtrlVAF.BackgroundOperations
 {
     interface IBackgroundTask
     {
-        object Configuration { get; set; }
+        object Config { set; }
 
         void Task(TaskProcessorJob job, TaskQueueDirective directive);
     }

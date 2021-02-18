@@ -46,7 +46,7 @@ namespace CtrlVAF.BackgroundOperations
 
                 object subConfig = GetConfigPropertyOfType(config, configSubType);
 
-                task.Configuration = subConfig;
+                task.Config = subConfig;
 
                 BackgroundOperationAttribute operationInfo = concreteType.GetCustomAttribute<BackgroundOperationAttribute>();
 

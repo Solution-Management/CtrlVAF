@@ -13,12 +13,8 @@ namespace CtrlVAF.BackgroundOperations
                                                                 where TDirective : TaskQueueDirective, new()
                                                                 where TConfig : class, new()
     {
-        public object Configuration
+        public object Config
         {
-            get
-            {
-                return Config;
-            }
             set
             {
                 if (value.GetType() != typeof(TConfig))
@@ -26,11 +22,11 @@ namespace CtrlVAF.BackgroundOperations
 
                 var newValue = (TConfig)value;
 
-                Config = newValue;
+                Configuration = newValue;
             }
         }
 
-        protected TConfig Config { get; set; }
+        protected TConfig Configuration { get; set; }
 
         public void Task(TaskProcessorJob job, TaskQueueDirective directive)
         {

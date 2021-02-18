@@ -17,6 +17,6 @@ namespace CtrlVAF.BackgroundOperations
             this.Name = Name;
         }
 
-        public string Name { get; set; }
+        public string Name { get; private set; }
     }
 }

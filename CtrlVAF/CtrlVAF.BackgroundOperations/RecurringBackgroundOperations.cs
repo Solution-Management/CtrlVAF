@@ -17,6 +17,13 @@ namespace CtrlVAF.BackgroundOperations
             return BackgroundOperations.Keys.Contains(name);
         }
 
+        public TaskQueueBackgroundOperation GetOperation(string name)
+        {
+            if (BackgroundOperations.ContainsKey(name))
+                return BackgroundOperations[name].Operation;
+            return null;
+        }
+
         internal void AddBackgroundOperation(string name, TaskQueueBackgroundOperation operation, TimeSpan interval)
         {
             if (BackgroundOperations.ContainsKey(name))
