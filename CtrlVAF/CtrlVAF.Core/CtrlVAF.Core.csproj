@@ -78,6 +78,8 @@
     <Compile Include="BackgroundOperations\IBackgroundTask.cs" />
     <Compile Include="BackgroundOperations\OnDemandBackgroundOperations.cs" />
     <Compile Include="BackgroundOperations\RecurringBackgroundOperations.cs" />
+    <Compile Include="Core\Dispatcher.cs" />
+    <Compile Include="Core\LicensedDispatcher.cs" />
     <Compile Include="EventHandlers\CommandDispatcher.cs" />
     <Compile Include="EventHandlers\Commands\AfterBeginTransactionCommand.cs" />
     <Compile Include="EventHandlers\Commands\AfterBringOnlineCommand.cs" />
@@ -153,16 +155,20 @@
     <Compile Include="EventHandlers\Commands\ReplicationAfterCheckInChangesCommand.cs" />
     <Compile Include="EventHandlers\Commands\ReplicationAfterCreateNewObjectFinalizeCommand.cs" />
     <Compile Include="EventHandlers\Handlers\ICommandHandler.cs" />
+    <Compile Include="EventHandlers\Handlers\TestHandler.cs" />
     <Compile Include="Validators\CustomValidator.cs" />
     <Compile Include="Validators\ICustomValidator.cs" />
     <Compile Include="Validators\ValidatorDispatcher.cs" />
-    <Compile Include="Core\Dispatcher.cs" />
-    <Compile Include="Core\LicensedDispatcher.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\CtrlVAF.Models\CtrlVAF.Models.csproj">
+      <Project>{54188975-1d5e-49e1-a854-5fe4987e83f4}</Project>
+      <Name>CtrlVAF.Models</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

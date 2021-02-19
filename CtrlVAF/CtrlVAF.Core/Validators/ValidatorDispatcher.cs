@@ -1,5 +1,4 @@
-﻿using CtrlVAF.Models;
-using MFiles.VAF.Configuration;
+﻿using MFiles.VAF.Configuration;
 
 using CtrlVAF.Core;
 
@@ -8,19 +7,9 @@ using MFilesAPI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CtrlVAF.Validators
 {
-<<<<<<< Updated upstream:CtrlVAF/CtrlVAF.Validators/ValidationDispatcher.cs
-    public class ValidationDispatcher : IDispatcher
-    {
-        public IEnumerable<ValidationFinding> Dispatch(Vault vault, object config)
-        {
-            var handlerType = typeof(ICustomValidator);
-=======
     public class ValidatorDispatcher : Dispatcher<IEnumerable<ValidationFinding>>
     {
         private Vault Vault;
@@ -34,50 +23,38 @@ namespace CtrlVAF.Validators
 
         public override IEnumerable<ValidationFinding> Dispatch()
         {
-            Type[] types = GetTypes();
+            var types = GetTypes();
 
-            return DispatchTypes(types);
+            return HandleConcreteTypes(types);
         }
 
-        protected internal override Type[] GetTypes()
+        protected internal override IEnumerable<Type> GetTypes()
         {
-            var callingAssembly = Config.GetType().Assembly;
-            var allTypes = callingAssembly.GetTypes();
->>>>>>> Stashed changes:CtrlVAF/CtrlVAF.Core/Validators/ValidatorDispatcher.cs
+            var handlerType = Config.GetType();
 
             // Attempt to get types from the cache
             if (TypeCache.TryGetValue(handlerType, out var cachedTypes))
             {
-                return HandleConcreteTypes(cachedTypes, vault, config);
+                return cachedTypes;
             }
 
-            // Obtain the types of the assemblies
-            var concreteTypes = Assemblies.SelectMany(a =>
-            {
-                return a.GetTypes().Where(t =>
+            var concreteTypes = Assemblies.SelectMany(a => {
+                return a
+                .GetTypes()
+                .Where(t =>
                     t.IsClass &&
-                    t.GetInterfaces().Contains(handlerType)
+                    t.GetInterfaces().Contains(typeof(ICustomValidator))
                     );
-            });
-
-<<<<<<< Updated upstream:CtrlVAF/CtrlVAF.Validators/ValidationDispatcher.cs
-            // Add the concrete types to cache
+            }); 
+            
             TypeCache.TryAdd(handlerType, concreteTypes);
 
-            return HandleConcreteTypes(concreteTypes, vault, config);
-        }
-
-        private IEnumerable<ValidationFinding> HandleConcreteTypes(IEnumerable<Type> concreteTypes, Vault vault, object config)
-        {
-            if (!concreteTypes.Any())
-=======
             return concreteTypes;
         }
 
-        protected internal override IEnumerable<ValidationFinding> DispatchTypes(Type[] types)
+        protected internal override IEnumerable<ValidationFinding> HandleConcreteTypes(IEnumerable<Type> types)
         {
             if (!types.Any())
->>>>>>> Stashed changes:CtrlVAF/CtrlVAF.Core/Validators/ValidatorDispatcher.cs
                 yield break;
 
             foreach (Type concreteType in types)
@@ -96,11 +73,8 @@ namespace CtrlVAF.Validators
                 {
                     yield return finding;
                 }
-<<<<<<< Updated upstream:CtrlVAF/CtrlVAF.Validators/ValidationDispatcher.cs
             }
-=======
-            }
->>>>>>> Stashed changes:CtrlVAF/CtrlVAF.Core/Validators/ValidatorDispatcher.cs
+            
         }
 
         private object GetConfigPropertyOfType(object config, Type configSubType)

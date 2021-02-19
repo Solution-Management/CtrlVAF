@@ -3,6 +3,7 @@
 using MFiles.VAF.Configuration;
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
@@ -31,24 +32,23 @@ namespace CtrlVAF.Core
 
         public override TReturn Dispatch()
         {
-            Type[] types =  GetTypes();
+            var types =  GetTypes();
 
             if (!types.Any())
                 return default;
 
-            return DispatchTypes(types);
+            return HandleConcreteTypes(types);
         }
 
-        protected internal override Type[] GetTypes()
+        protected internal override IEnumerable<Type> GetTypes()
         {
-            Type[] types = dispatcher.GetTypes();
+            var types = dispatcher.GetTypes();
 
-            Type[] filteredTypes = new Type[0];
 
             //If the license is not valid, remove all classes with the attribute [LicenseRequired]
             if (license == null || !license.IsValid)
             {
-                filteredTypes = types
+                var filteredTypes = types
                 .Where(t =>
                    !t.IsDefined(typeof(LicenseRequiredAttribute), false)
                 )
@@ -59,8 +59,9 @@ namespace CtrlVAF.Core
 
             //If the license is valid, and the license has modules, 
             //remove classes which required licensing AND are in modules not contained in the licensed modules
-            if (license.Modules.Any())
-                filteredTypes = types
+            if (license?.Modules?.Any() == true)
+            {
+                var filteredTypes = types
                     .Where(t =>
                     {
                         //Keep types that don't require a license
@@ -76,15 +77,17 @@ namespace CtrlVAF.Core
                         else
                             return modules.Intersect(license.Modules).Any();
                     }
-                    )
-                    .ToArray();
+                    );
 
-            return filteredTypes;
+                return filteredTypes;
+            }
+
+            return types;
         }
 
-        protected internal override TReturn DispatchTypes(Type[] types)
+        protected internal override TReturn HandleConcreteTypes(IEnumerable<Type> types)
         {
-            return dispatcher.DispatchTypes(types);
+            return dispatcher.HandleConcreteTypes(types);
         }
     }
 }

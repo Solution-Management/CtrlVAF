@@ -19,7 +19,7 @@ namespace CtrlVAF.Models
         /// List of additional assemblies to look through for concrete types.
         /// Always contains the calling assembly!
         /// </summary>
-        protected List<Assembly> Assemblies = new List<Assembly>() { Assembly.GetCallingAssembly() };
+        protected List<Assembly> Assemblies = new List<Assembly>() { };
 
         /// <summary>
         /// Method to include additional assemblies in which to look for ICommandHandlers. The calling assembly is always included.

@@ -18,21 +18,23 @@ namespace CtrlVAF.BackgroundOperations
 {
     public class BackgroundDispatcher<TConfig> : Dispatcher<object> where TConfig : class, new()
     {
-        private Core.ConfigurableVaultApplicationBase<TConfig> vaultApplication;
+        private readonly Core.ConfigurableVaultApplicationBase<TConfig> vaultApplication;
 
         public BackgroundDispatcher(Core.ConfigurableVaultApplicationBase<TConfig> vaultApplication)
         {
             this.vaultApplication = vaultApplication;
+
+            IncludeAssemblies(Assembly.GetCallingAssembly());
         }
 
-        public override object Dispatch() 
+        public override object Dispatch()
         {
-            Type[] concreteTypes = GetTypes();
-                        
+            var concreteTypes = GetTypes();
+
             if (!concreteTypes.Any())
                 return null;
 
-            return DispatchTypes(concreteTypes);
+            return HandleConcreteTypes(concreteTypes);
         }
 
         private object GetConfigPropertyOfType(object config, Type configSubType)
@@ -70,23 +72,21 @@ namespace CtrlVAF.BackgroundOperations
             return null;
         }
 
-        protected internal override Type[] GetTypes()
+        protected internal override IEnumerable<Type> GetTypes()
         {
-            var applicationAssembly = Assembly.GetAssembly(vaultApplication.GetType());
-            var allTypes = applicationAssembly.GetTypes();
-
-            Type[] concreteTypes = allTypes.Where(
-                t =>
+            var concreteTypes = Assemblies.SelectMany(a =>
+            {
+                return a.GetTypes().Where( t =>
                     t.IsClass &&
                     t.GetInterfaces().Contains(typeof(IBackgroundTask)) &&
                     t.IsDefined(typeof(BackgroundOperationAttribute))
-                )
-                .ToArray();
+                    );
+            });
 
             return concreteTypes;
         }
 
-        protected internal override object DispatchTypes(Type[] concreteTypes)
+        protected internal override object HandleConcreteTypes(IEnumerable<Type> concreteTypes)
         {
             List<string> PermanentBackgroundOperationNames = new List<string>();
             List<string> OnDemandBackgroundOperationNames = new List<string>();
