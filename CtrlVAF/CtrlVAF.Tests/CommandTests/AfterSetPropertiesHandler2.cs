@@ -10,7 +10,7 @@ namespace CtrlVAF.Tests.CommandTests
 {
     public class AfterSetPropertiesHandler2 : ICommandHandler<AfterSetPropertiesCommand<Configuration>>
     {
-        public void Handle(AfterSetPropertiesCommand<Configuration> command)
+        public override void Handle(AfterSetPropertiesCommand<Configuration> command)
         {
             command.Env.Input = command.Configuration.Name;
         }

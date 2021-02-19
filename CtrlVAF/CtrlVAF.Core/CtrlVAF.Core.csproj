@@ -152,6 +152,7 @@
     <Compile Include="EventHandlers\Commands\BeforeTakeOfflineCommand.cs" />
     <Compile Include="EventHandlers\Commands\BeforeUndeleteObjectCommand.cs" />
     <Compile Include="EventHandlers\Commands\IEventHandlerCommand.cs" />
+    <Compile Include="Validators\IEventHandlerCommand.cs" />
     <Compile Include="EventHandlers\Commands\ReplicationAfterCheckInChangesCommand.cs" />
     <Compile Include="EventHandlers\Commands\ReplicationAfterCreateNewObjectFinalizeCommand.cs" />
     <Compile Include="EventHandlers\Handlers\ICommandHandler.cs" />

@@ -42,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IDispatcher.cs" />
+    <Compile Include="ICtrlVAFCommand.cs" />
     <Compile Include="IVoidDispatcher.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -14,7 +14,7 @@ namespace CtrlVAF.Commands.Handlers
 
     public class TestHandler : ICommandHandler<BeforeCheckInChangesCommand<TestConfiguration>>
     {
-        public void Handle(BeforeCheckInChangesCommand<TestConfiguration> command)
+        public override void Handle(BeforeCheckInChangesCommand<TestConfiguration> command)
         {
             command.Env.CurrentUserID = command.Configuration.id;
         }

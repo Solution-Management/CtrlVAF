@@ -1,4 +1,5 @@
 ﻿using CtrlVAF.Core.Attributes;
+using CtrlVAF.Models;
 
 using MFiles.VAF.Configuration;
 
@@ -18,6 +19,8 @@ namespace CtrlVAF.Core
     {
         private LicenseContentBase license;
         private Dispatcher<TReturn> dispatcher;
+
+        public new List<ICtrlVAFCommand> Commands { get => dispatcher.Commands; set => dispatcher.Commands = value; }
 
         /// <summary>
         /// Wraps a dispatcher with logic checking the application's licensing status when evaluating types.
@@ -88,6 +91,12 @@ namespace CtrlVAF.Core
         protected internal override TReturn HandleConcreteTypes(IEnumerable<Type> types)
         {
             return dispatcher.HandleConcreteTypes(types);
+        }
+
+        public override IDispatcher AddCommand(ICtrlVAFCommand command)
+        {
+            dispatcher.AddCommand(command);
+            return this;
         }
     }
 }

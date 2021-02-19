@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using CtrlVAF.Models;
 
 namespace CtrlVAF.Validators
 {
@@ -15,6 +16,11 @@ namespace CtrlVAF.Validators
     {
         private Vault Vault;
         private object Config;
+
+        public override IDispatcher AddCommand(ICtrlVAFCommand command)
+        {
+            return this;
+        }
 
         public ValidatorDispatcher(Vault vault, object config)
         {

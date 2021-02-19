@@ -11,6 +11,13 @@ namespace CtrlVAF.Models
     public abstract class IDispatcher
     {
         /// <summary>
+        /// Adds a command to be dispatched.
+        /// </summary>
+        /// <param name="command"></param>
+        /// <returns></returns>
+        public abstract IDispatcher AddCommand(ICtrlVAFCommand command);
+        
+        /// <summary>
         /// Cache to hold the concrete types found for each type of dispatcher execution type
         /// </summary>
         protected ConcurrentDictionary<Type, IEnumerable<Type>> TypeCache = new ConcurrentDictionary<Type, IEnumerable<Type>>();

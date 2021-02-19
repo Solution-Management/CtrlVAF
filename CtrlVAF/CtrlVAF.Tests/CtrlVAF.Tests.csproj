@@ -81,6 +81,9 @@
     <Compile Include="CommandTests\BeforeSetPropertiesHandler.cs" />
     <Compile Include="CommandTests\CommandTests.cs" />
     <Compile Include="CommandTests\Configuration.cs" />
+    <Compile Include="CommandTests\CustomCommands.cs" />
+    <Compile Include="CommandTests\CustomCommandHandlers.cs" />
+    <Compile Include="CommandTests\SpeedTests.cs" />
     <Compile Include="ConfigValidationTests\Child_ConfigurationValidator.cs" />
     <Compile Include="ConfigValidationTests\Configuration.cs" />
     <Compile Include="ConfigValidationTests\ConfigurationValidator.cs" />

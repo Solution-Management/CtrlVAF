@@ -1,6 +1,4 @@
-﻿using CtrlVAF.Models;
-
-using MFiles.VAF.Common;
+﻿using MFiles.VAF.Common;
 using MFilesAPI;
 using System;
 using System.Collections.Generic;
@@ -8,12 +6,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CtrlVAF.Commands.Commands
+namespace CtrlVAF.Models
 {
-    public interface IEventHandlerCommand<T>: ICtrlVAFCommand
+    public interface IEventHandlerCommand<T>: IEventHandlerCommand
     {
         EventHandlerEnvironment Env { get; set; }
         T Configuration { get; set; }
     }
 
+    public interface IEventHandlerCommand
+    {
+
+    }
 }

@@ -12,7 +12,7 @@ namespace CtrlVAF.Tests.LicensingTests
     [LicenseRequired]
     class LicensedCommandHandler_AllModules : ICommandHandler<TestLicenseCommand>
     {
-        public void Handle(TestLicenseCommand command)
+        public override void Handle(TestLicenseCommand command)
         {
             command.Result *= 3;
         }

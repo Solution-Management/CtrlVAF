@@ -26,7 +26,9 @@ namespace CtrlVAF.Tests.LicensingTests
                 Result = 1
             };
 
-            Dispatcher<object> dispatcher = new CommandDispatcher<TestLicenseCommand>(command);
+            Dispatcher<object> dispatcher = new CommandDispatcher();
+
+            dispatcher.AddCommand(command);
 
             dispatcher.Dispatch();
 
@@ -46,13 +48,15 @@ namespace CtrlVAF.Tests.LicensingTests
                 Result = 1
             };
 
-            Dispatcher<object> dispatcher = new CommandDispatcher<TestLicenseCommand>(command);
+            Dispatcher<object> dispatcher = new CommandDispatcher();
 
             TestLicenseContent licenseContent = new TestLicenseContent();
 
             licenseContent.SetValidity(false);
 
             dispatcher = new LicensedDispatcher<object>(dispatcher, licenseContent);
+
+            dispatcher.AddCommand(command);
 
             dispatcher.Dispatch();
 
@@ -72,13 +76,15 @@ namespace CtrlVAF.Tests.LicensingTests
                 Result = 1
             };
 
-            Dispatcher<object> dispatcher = new CommandDispatcher<TestLicenseCommand>(command);
+            Dispatcher<object> dispatcher = new CommandDispatcher();
 
             TestLicenseContent licenseContent = new TestLicenseContent();
 
             licenseContent.SetValidity(true);
 
             dispatcher = new LicensedDispatcher<object>(dispatcher, licenseContent);
+
+            dispatcher.AddCommand(command);
 
             dispatcher.Dispatch();
 
@@ -98,7 +104,9 @@ namespace CtrlVAF.Tests.LicensingTests
                 Result = 1
             };
 
-            Dispatcher<object> dispatcher = new CommandDispatcher<TestLicenseCommand>(command);
+            Dispatcher<object> dispatcher = new CommandDispatcher();
+
+            dispatcher.AddCommand(command);
 
             TestLicenseContent licenseContent = new TestLicenseContent();
 
@@ -126,7 +134,9 @@ namespace CtrlVAF.Tests.LicensingTests
                 Result = 1
             };
 
-            Dispatcher<object> dispatcher = new CommandDispatcher<TestLicenseCommand>(command);
+            Dispatcher<object> dispatcher = new CommandDispatcher();
+
+            dispatcher.AddCommand(command);
 
             TestLicenseContent licenseContent = new TestLicenseContent();
 
@@ -154,7 +164,7 @@ namespace CtrlVAF.Tests.LicensingTests
                 Result = 1
             };
 
-            Dispatcher<object> dispatcher = new CommandDispatcher<TestLicenseCommand>(command);
+            Dispatcher<object> dispatcher = new CommandDispatcher();
 
             TestLicenseContent licenseContent = new TestLicenseContent();
 
@@ -163,6 +173,8 @@ namespace CtrlVAF.Tests.LicensingTests
             licenseContent.Modules = new List<string> { "Module1","Module2" };
 
             dispatcher = new LicensedDispatcher<object>(dispatcher, licenseContent);
+
+            dispatcher.AddCommand(command);
 
             dispatcher.Dispatch();
 

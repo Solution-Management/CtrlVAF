@@ -11,7 +11,7 @@ namespace CtrlVAF.Tests.CommandTests
 
     public class BeforeSetPropertiesHandler : ICommandHandler<BeforeSetPropertiesCommand<Configuration>>
     {
-        public void Handle(BeforeSetPropertiesCommand<Configuration> command)
+        public override void Handle(BeforeSetPropertiesCommand<Configuration> command)
         {
             command.Env.CurrentUserID = command.Configuration.ID;
         }

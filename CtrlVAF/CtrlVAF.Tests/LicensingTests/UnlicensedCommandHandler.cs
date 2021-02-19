@@ -11,7 +11,7 @@ namespace CtrlVAF.Tests.LicensingTests
 {
     class UnlicensedCommandHandler: ICommandHandler<TestLicenseCommand>
     {
-        public void Handle(TestLicenseCommand command)
+        public override void Handle(TestLicenseCommand command)
         {
             command.Result *= 2; 
         }

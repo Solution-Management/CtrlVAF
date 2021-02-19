@@ -10,7 +10,7 @@ namespace CtrlVAF.Tests.CommandTests
 {
     public class AfterCheckInChangesFailureHandler : ICommandHandler<AfterCheckInChangesCommand<Configuration>>
     {
-        public void Handle(AfterCheckInChangesCommand<Configuration> command)
+        public override void Handle(AfterCheckInChangesCommand<Configuration> command)
         {
             throw new NotImplementedException();
         }

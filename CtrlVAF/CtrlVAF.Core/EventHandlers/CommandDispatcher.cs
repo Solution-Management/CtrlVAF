@@ -1,3 +1,4 @@
+using CtrlVAF.Commands.Commands;
 using CtrlVAF.Commands.Handlers;
 using CtrlVAF.Core;
 using CtrlVAF.Models;
@@ -19,9 +20,8 @@ namespace CtrlVAF.Commands
     //    /// <param name="throwExceptions">Whether or not to stop executing ICommandHandlers upon exceptions and throw the exception</param>
     //    /// <param name="exceptionHandler">An exception handler to pass along or handle any ICommandHandler exceptions</param>
 
-    public class CommandDispatcher<TCommand> : Dispatcher<object> where TCommand : class, new()
+    public class CommandDispatcher : Dispatcher<object> 
     {
-        private readonly TCommand command;
         private readonly bool throwExceptions = false;
         private readonly Action<Exception> exceptionHandler = null;
 
@@ -32,13 +32,19 @@ namespace CtrlVAF.Commands
         /// <param name="command">A command of type TCommand that has inherited from <see cref="Commands.IEventHandlerCommand{T}"/></param>
         /// <param name="throwExceptions">Whether or not to stop executing ICommandHandlers upon exceptions and throw the exception</param>
         /// <param name="exceptionHandler">An exception handler to pass along or handle any ICommandHandler exceptions</param>
-        public CommandDispatcher(TCommand command, bool throwExceptions = false, Action<Exception> exceptionHandler = null)
+        public CommandDispatcher(bool throwExceptions = false, Action<Exception> exceptionHandler = null)
         {
-            this.command = command;
             this.throwExceptions = throwExceptions;
             this.exceptionHandler = exceptionHandler;
 
             IncludeAssemblies(Assembly.GetCallingAssembly());
+        }
+
+        public override IDispatcher AddCommand(ICtrlVAFCommand command)
+        {
+            Commands.Add(command);
+            Commands = Commands.Distinct().ToList();
+            return this;
         }
 
         /// <inheritdoc/>
@@ -46,48 +52,68 @@ namespace CtrlVAF.Commands
         {
             var concreteTypes = GetTypes();
 
-            // If none, return
-            if (!concreteTypes.Any()) return null;
-
             return HandleConcreteTypes(concreteTypes);
         }
 
         protected internal override IEnumerable<Type> GetTypes()
         {
             // Instantiate a handlerType according to the TCommand type provided
-            var handler = typeof(ICommandHandler<>);
-            var handlerType = handler.MakeGenericType(command.GetType());
+            Type handlerType = typeof(ICommandHandler);
+            List<Type> dispatchableHandlerTypes = new List<Type>();
 
-            //If the concrete types have already been retrieved and cached before, simply handle those
-            if (TypeCache.TryGetValue(handlerType, out var cachedTypes))
+            foreach (ICtrlVAFCommand command in Commands)
             {
-                HandleConcreteTypes(cachedTypes);
-                return cachedTypes.ToArray();
+                Type commandType = command.GetType();
+
+                //If the concrete types have already been retrieved and cached before, simply handle those
+                if (TypeCache.TryGetValue(commandType, out var cachedTypes))
+                {
+                    dispatchableHandlerTypes.AddRange(cachedTypes);
+                    continue;
+                }
+
+                List<Type> handlerTypes = new List<Type>();
+
+                foreach (Assembly assembly in Assemblies)
+                {
+                    var types = assembly.GetTypes();
+
+                    foreach (Type type in types)
+                    {
+                        if (type.IsClass && 
+                            type.GetInterfaces().Contains(handlerType) &&
+                            type.BaseType.IsGenericType &&
+                            type.BaseType.GetGenericArguments().Contains(commandType))
+                            handlerTypes.Add(type);
+                    }
+                }
+
+                TypeCache.TryAdd(commandType, handlerTypes);
+
+                dispatchableHandlerTypes.AddRange(handlerTypes);
             }
 
-            //Obtain the types of the executing assembly
-            var concreteTypes = Assemblies.SelectMany(a =>
-            {
-                return a.GetTypes().Where(t =>
-                    t.IsClass &&
-                    t.GetInterfaces().Contains(handlerType)
-                    );
-            });
-
-            TypeCache.TryAdd(handlerType, concreteTypes);
-
-            return concreteTypes;
-
+            return dispatchableHandlerTypes;
         }
 
         protected internal override object HandleConcreteTypes(IEnumerable<Type> types)
         {
+            // If none, return
+            if (!types.Any()) return null;
+
             foreach (Type type in types)
             {
+                //get the right command for the type from typecache
+                Type commandType = TypeCache.FirstOrDefault(kv => kv.Value.Contains(type)).Key;
+
+                if (commandType == default)
+                    continue;
+
+                var command = Commands.FirstOrDefault(cmd => cmd.GetType() == commandType);
                 try
                 {
                     // Create instances of the concrete ICommandHandlers and handle them
-                    var concreteHandler = Activator.CreateInstance(type) as ICommandHandler<TCommand>;
+                    var concreteHandler = Activator.CreateInstance(type) as ICommandHandler;
                     concreteHandler?.Handle(command);
                 }
                 catch (Exception e)

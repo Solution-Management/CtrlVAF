@@ -33,5 +33,20 @@ namespace CtrlVAF.Core
         /// <param name="types">a list of types which can be instantiated and will behave as expected</param>
         /// <returns>The result or <see cref="default"/> for no result.</returns>
         protected internal abstract TReturn HandleConcreteTypes(IEnumerable<Type> types);
+
+        public List<ICtrlVAFCommand> Commands { get; set; } = new List<ICtrlVAFCommand>();
+
+
+        /// <summary>
+        /// Adds a command to be dispatched.
+        /// </summary>
+        /// <param name="command"></param>
+        /// <returns></returns>
+        public override IDispatcher AddCommand(ICtrlVAFCommand command)
+        {
+            Commands.Add(command);
+            Commands = Commands.Distinct().ToList();
+            return this;
+        }
     }
 }
