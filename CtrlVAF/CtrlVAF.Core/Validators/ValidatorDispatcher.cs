@@ -33,10 +33,10 @@ namespace CtrlVAF.Validators
 
         protected internal override IEnumerable<Type> GetTypes()
         {
-            var handlerType = Config.GetType();
+            var configType = Config.GetType();
 
             // Attempt to get types from the cache
-            if (TypeCache.TryGetValue(handlerType, out var cachedTypes))
+            if (TypeCache.TryGetValue(configType, out var cachedTypes))
             {
                 return cachedTypes;
             }
@@ -50,7 +50,7 @@ namespace CtrlVAF.Validators
                     );
             }); 
             
-            TypeCache.TryAdd(handlerType, concreteTypes);
+            TypeCache.TryAdd(configType, concreteTypes);
 
             return concreteTypes;
         }
