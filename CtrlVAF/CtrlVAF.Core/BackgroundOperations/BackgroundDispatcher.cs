@@ -75,6 +75,8 @@ namespace CtrlVAF.BackgroundOperations
 
         protected internal override IEnumerable<Type> GetTypes(params ICtrlVAFCommand[] commands)
         {
+            IncludeAssemblies(typeof(TConfig));
+
             var concreteTypes = Assemblies.SelectMany(a =>
             {
                 return a.GetTypes().Where( t =>

@@ -43,6 +43,8 @@ namespace CtrlVAF.Validators
 
             var configType = validatorCommand.GetType().GenericTypeArguments[0];
 
+            IncludeAssemblies(configType);
+
             // Attempt to get types from the cache
             if (TypeCache.TryGetValue(configType, out var cachedTypes))
             {
