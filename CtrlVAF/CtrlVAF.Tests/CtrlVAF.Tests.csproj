@@ -88,6 +88,7 @@
     <Compile Include="ConfigValidationTests\Configuration.cs" />
     <Compile Include="ConfigValidationTests\ConfigurationValidator.cs" />
     <Compile Include="ConfigValidationTests\ConfigValidationTests.cs" />
+    <Compile Include="ConfigValidationTests\SpeedTests.cs" />
     <Compile Include="LicensingTests\Configuration.cs" />
     <Compile Include="LicensingTests\LicensedCommandHandler_AllModules.cs" />
     <Compile Include="LicensingTests\LicensedCommandHandler_Module1.cs" />

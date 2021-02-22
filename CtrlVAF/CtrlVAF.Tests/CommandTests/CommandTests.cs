@@ -73,7 +73,6 @@ namespace CtrlVAF.Tests.CommandTests
 
             Dispatcher dispatcher = new EventDispatcher();
                 
-
             Assert.ThrowsException<NotImplementedException>(() =>
             {
                 dispatcher.Dispatch((e) => throw e, command);

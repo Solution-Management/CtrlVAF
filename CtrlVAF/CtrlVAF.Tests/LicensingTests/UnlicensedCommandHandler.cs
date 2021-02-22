@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace CtrlVAF.Tests.LicensingTests
 {
-    class UnlicensedCommandHandler: ICommandHandler<TestLicenseCommand>
+    class UnlicensedCommandHandler: CommandHandler<TestLicenseCommand>
     {
         public override void Handle(TestLicenseCommand command)
         {

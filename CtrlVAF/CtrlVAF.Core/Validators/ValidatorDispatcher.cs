@@ -9,24 +9,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using CtrlVAF.Models;
+using System.Collections.Concurrent;
 
 namespace CtrlVAF.Validators
 {
     public class ValidatorDispatcher : Dispatcher<IEnumerable<ValidationFinding>>
     {
-        private Vault Vault;
-        private object Config;
+        
 
-        public ValidatorDispatcher(Vault vault, object config)
+        public ValidatorDispatcher()
         {
-            Vault = vault;
-            Config = config;
-
-            IncludeAssemblies(Assembly.GetCallingAssembly());
         }
 
         public override IEnumerable<ValidationFinding> Dispatch(params ICtrlVAFCommand[] commands)
         {
+            IncludeAssemblies(Assembly.GetCallingAssembly());
+
             var types = GetTypes(commands);
 
             return HandleConcreteTypes(types, commands);
@@ -34,87 +32,111 @@ namespace CtrlVAF.Validators
 
         protected internal override IEnumerable<Type> GetTypes(params ICtrlVAFCommand[] commands)
         {
-            var configType = Config.GetType();
+            var validatorCommand = commands.FirstOrDefault(
+                cmd => 
+                cmd.GetType().IsGenericType && 
+                cmd.GetType().GetGenericTypeDefinition() == typeof(ValidatorCommand<>)
+                );
+
+            if (validatorCommand == null)
+                return new List<Type>();
+
+            var configType = validatorCommand.GetType().GenericTypeArguments[0];
 
             // Attempt to get types from the cache
             if (TypeCache.TryGetValue(configType, out var cachedTypes))
             {
-                return cachedTypes;
+                return cachedTypes.Distinct();
             }
 
-            var concreteTypes = Assemblies.SelectMany(a => {
+            var concreteTypes = Assemblies.SelectMany(a =>
+            {
                 return a
                 .GetTypes()
                 .Where(t =>
                     t.IsClass &&
                     t.GetInterfaces().Contains(typeof(ICustomValidator))
                     );
-            }); 
-            
+            });
+
             TypeCache.TryAdd(configType, concreteTypes);
 
             return concreteTypes;
         }
 
-        protected internal override IEnumerable<ValidationFinding> HandleConcreteTypes(IEnumerable<Type> types, params ICtrlVAFCommand[] commands)
+        protected internal override IEnumerable<ValidationFinding> HandleConcreteTypes(IEnumerable<Type> concreteValidators, params ICtrlVAFCommand[] commands)
         {
-            if (!types.Any())
+            if (!concreteValidators.Any())
                 yield break;
 
-            foreach (Type concreteType in types)
+            //Get any validator command
+            var validatorCommand = commands.FirstOrDefault(
+                cmd =>
+                cmd.GetType().IsGenericType &&
+                cmd.GetType().GetGenericTypeDefinition() == typeof(ValidatorCommand<>)
+                );
+
+            if (validatorCommand == null)
+                yield break;
+
+
+            foreach (Type concreteValidator in concreteValidators)
             {
-                //Find config property (or sub-property) matching the generic argument of the basetype
-                Type configSubType = concreteType.BaseType.GenericTypeArguments[0];
+                if (ResultsCache.TryGetValue(concreteValidator, out IEnumerable<ValidationFinding> findings))
+                {
+                    //Do nothing. We got the cached values already
+                }
+                else
+                {
+                    var concreteHandler = Activator.CreateInstance(concreteValidator) as ICustomValidator;
 
-                var subConfig = GetConfigPropertyOfType(Config, configSubType);
+                    findings = concreteHandler.Validate(validatorCommand);
 
-                if (subConfig == null)
-                    continue;
+                    ResultsCache.TryAdd(concreteValidator, findings);
+                }
 
-                var concreteHandler = Activator.CreateInstance(concreteType) as ICustomValidator;
-
-                foreach (var finding in concreteHandler.Validate(Vault, subConfig))
+                foreach (var finding in findings)
                 {
                     yield return finding;
                 }
             }
-            
+
         }
 
-        private object GetConfigPropertyOfType(object config, Type configSubType)
-        {
-            if (config.GetType() == configSubType)
-                return config;
+        //private object GetConfigPropertyOfType(object config, Type configSubType)
+        //{
+        //    if (config.GetType() == configSubType)
+        //        return config;
 
-            var configProperties = config.GetType().GetProperties();
+        //    var configProperties = config.GetType().GetProperties();
 
-            foreach (var configProperty in configProperties)
-            {
-                if (!configProperty.PropertyType.IsClass)
-                    continue;
+        //    foreach (var configProperty in configProperties)
+        //    {
+        //        if (!configProperty.PropertyType.IsClass)
+        //            continue;
 
-                var subConfig = configProperty.GetValue(config);
+        //        var subConfig = configProperty.GetValue(config);
 
-                if (configProperty.PropertyType == configSubType)
-                    return subConfig;
-            }
+        //        if (configProperty.PropertyType == configSubType)
+        //            return subConfig;
+        //    }
 
-            foreach (var configProperty in configProperties)
-            {
-                if (!configProperty.PropertyType.IsClass)
-                    continue;
+        //    foreach (var configProperty in configProperties)
+        //    {
+        //        if (!configProperty.PropertyType.IsClass)
+        //            continue;
 
-                var subConfig = configProperty.GetValue(config);
+        //        var subConfig = configProperty.GetValue(config);
 
-                var subsubConfig = GetConfigPropertyOfType(subConfig, configSubType);
-                if (subsubConfig == null)
-                    continue;
-                else
-                    return subsubConfig;
+        //        var subsubConfig = GetConfigPropertyOfType(subConfig, configSubType);
+        //        if (subsubConfig == null)
+        //            continue;
+        //        else
+        //            return subsubConfig;
 
-            }
+        //    }
 
-            return null;
-        }
+        //    return null;
+        //}
     }
 }

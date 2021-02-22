@@ -24,12 +24,12 @@ namespace CtrlVAF.BackgroundOperations
         public BackgroundDispatcher(Core.ConfigurableVaultApplicationBase<TConfig> vaultApplication)
         {
             this.vaultApplication = vaultApplication;
-
-            IncludeAssemblies(Assembly.GetCallingAssembly());
         }
 
         public override void Dispatch(params ICtrlVAFCommand[] commands)
         {
+            IncludeAssemblies(Assembly.GetCallingAssembly());
+
             var concreteTypes = GetTypes();
 
             if (!concreteTypes.Any())

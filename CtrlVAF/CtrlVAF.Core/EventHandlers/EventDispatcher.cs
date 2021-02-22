@@ -32,14 +32,12 @@ namespace CtrlVAF.Commands
         /// <param name="exceptionHandler">An exception handler to pass along or handle any ICommandHandler exceptions</param>
         public EventDispatcher()
         {
-            IncludeAssemblies(Assembly.GetCallingAssembly());
         }
 
         /// <inheritdoc/>
         public override void Dispatch(params ICtrlVAFCommand[] commands)
         {
-            if (commands.Where(command => !command.GetType().GetInterfaces().Contains(typeof(IEventHandlerCommand))).Any())
-                throw new InvalidOperationException("The event dispatcher received an unexpected command type.");
+            IncludeAssemblies(Assembly.GetCallingAssembly());
 
             var concreteTypes = GetTypes(commands);
 
@@ -59,7 +57,7 @@ namespace CtrlVAF.Commands
                 //If the concrete types have already been retrieved and cached before, simply handle those
                 if (TypeCache.TryGetValue(commandType, out var cachedTypes))
                 {
-                    dispatchableHandlerTypes.AddRange(cachedTypes);
+                    dispatchableHandlerTypes.AddRange(cachedTypes.Distinct());
                     continue;
                 }
 

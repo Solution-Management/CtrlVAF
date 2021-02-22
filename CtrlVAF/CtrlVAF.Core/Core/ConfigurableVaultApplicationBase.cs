@@ -7,13 +7,16 @@ using MFiles.VAF.Common;
 using MFiles.VAF.Configuration;
 using MFiles.VAF.Extensions.MultiServerMode;
 
+using MFilesAPI;
+
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 
 
 namespace CtrlVAF.Core
 {
-    public abstract class ConfigurableVaultApplicationBase<TSecureConfiguration> :
+    public abstract partial class ConfigurableVaultApplicationBase<TSecureConfiguration> :
         MFiles.VAF.Extensions.MultiServerMode.ConfigurableVaultApplicationBase<TSecureConfiguration> where TSecureConfiguration : class, new()
     {
         public TaskQueueBackgroundOperationManager TaskQueueBackgroundOperationManager { get; set; }
@@ -28,15 +31,20 @@ namespace CtrlVAF.Core
 
         public Dispatcher EventDispatcher { get; private set; }
 
+        public Dispatcher<IEnumerable<ValidationFinding>> ValidatorDispatcher { get; private set; }
+
         internal TSecureConfiguration GetConfig()
         {
             return Configuration;
         }
 
-        public ConfigurableVaultApplicationBase(){
+        public override void StartOperations(Vault vaultPersistent)
+        {
             BackgroundDispatcher = new BackgroundDispatcher<TSecureConfiguration>(this);
 
             EventDispatcher = new EventDispatcher();
+
+            ValidatorDispatcher = new ValidatorDispatcher();
 
             if (this.GetType().IsDefined(typeof(UseLicensingAttribute)))
             {
@@ -45,7 +53,11 @@ namespace CtrlVAF.Core
                 BackgroundDispatcher = new LicensedDispatcher(BackgroundDispatcher, content);
 
                 EventDispatcher = new LicensedDispatcher(EventDispatcher, content);
+
+                ValidatorDispatcher = new LicensedDispatcher<IEnumerable<ValidationFinding>>(ValidatorDispatcher, content);
             }
+
+            base.StartOperations(vaultPersistent);
         }
 
         /// <summary>
@@ -69,6 +81,13 @@ namespace CtrlVAF.Core
             }
 
             base.StartApplication();
+        }
+
+        protected override IEnumerable<ValidationFinding> CustomValidation(Vault vault, TSecureConfiguration config)
+        {
+            var command = new ValidatorCommand<TSecureConfiguration> { Vault = vault, Configuration = config };
+
+            return ValidatorDispatcher.Dispatch(command);
         }
     }
 }

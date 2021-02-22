@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace CtrlVAF.Tests.CommandTests
 {
-    class CustomCommandHandler_1 : ICommandHandler<CustomCommand_1>
+    class CustomCommandHandler_1 : CommandHandler<CustomCommand_1>
     {
         public override void Handle(CustomCommand_1 command)
         {
@@ -16,7 +16,7 @@ namespace CtrlVAF.Tests.CommandTests
         }
     }
 
-    class CustomCommandHandler_2 : ICommandHandler<CustomCommand_2>
+    class CustomCommandHandler_2 : CommandHandler<CustomCommand_2>
     {
         public override void Handle(CustomCommand_2 command)
         {

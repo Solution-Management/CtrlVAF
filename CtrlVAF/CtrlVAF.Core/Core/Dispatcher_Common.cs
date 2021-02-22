@@ -31,6 +31,8 @@ namespace CtrlVAF.Core
         public IDispatcher_Common IncludeAssemblies(params Assembly[] assemblies)
         {
             Assemblies.AddRange(assemblies);
+            //Never search CtrlVAF.Core
+            Assemblies.RemoveAll(a => a == GetType().Assembly);
             Assemblies = Assemblies.Distinct().ToList();
             return this;
         }
@@ -52,6 +54,6 @@ namespace CtrlVAF.Core
         /// <returns>Array of suitable types</returns>
         protected internal abstract IEnumerable<Type> GetTypes(params ICtrlVAFCommand[] commands);
 
-        
+
     }
 }

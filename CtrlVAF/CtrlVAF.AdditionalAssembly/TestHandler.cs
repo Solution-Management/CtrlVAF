@@ -14,7 +14,7 @@ namespace CtrlVAF.Additional
         public int id = 0;
     }
 
-    public class TestHandler : ICommandHandler<BeforeCheckInChangesCommand<TestConfiguration>>
+    public class TestHandler : CommandHandler<BeforeCheckInChangesCommand<TestConfiguration>>
     {
         public override void Handle(BeforeCheckInChangesCommand<TestConfiguration> command)
         {

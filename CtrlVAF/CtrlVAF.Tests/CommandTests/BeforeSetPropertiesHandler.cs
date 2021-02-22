@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace CtrlVAF.Tests.CommandTests
 {
 
-    public class BeforeSetPropertiesHandler : ICommandHandler<BeforeSetPropertiesCommand<Configuration>>
+    public class BeforeSetPropertiesHandler : CommandHandler<BeforeSetPropertiesCommand<Configuration>>
     {
         public override void Handle(BeforeSetPropertiesCommand<Configuration> command)
         {

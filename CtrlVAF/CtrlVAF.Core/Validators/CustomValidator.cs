@@ -1,4 +1,6 @@
-﻿using MFiles.VAF.Configuration;
+﻿using CtrlVAF.Models;
+
+using MFiles.VAF.Configuration;
 
 using MFilesAPI;
 
@@ -6,18 +8,17 @@ using System.Collections.Generic;
 
 namespace CtrlVAF.Validators
 {
-    public abstract class CustomValidator<T>: ICustomValidator
+    public abstract class CustomValidator<TCommand>: ICustomValidator where TCommand: class, new()
     {
-        public IEnumerable<ValidationFinding> Validate(Vault vault, object configuration)
+        public IEnumerable<ValidationFinding> Validate(ICtrlVAFCommand command)
         {
-            if (configuration.GetType() != typeof(T))
-                return new ValidationFinding[] { };
+            if (command.GetType() != typeof(TCommand))
+                return new ValidationFinding[0];
 
-            else
-                return Validate(vault, (T)configuration);
-
+            else return Validate(command as TCommand);
         }
 
-        protected abstract IEnumerable<ValidationFinding> Validate(Vault vault, T configuration);
+        public abstract IEnumerable<ValidationFinding> Validate(TCommand command);
+        
     }
 }

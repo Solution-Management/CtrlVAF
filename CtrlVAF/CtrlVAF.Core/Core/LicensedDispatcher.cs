@@ -33,6 +33,8 @@ namespace CtrlVAF.Core
 
         public override TReturn Dispatch(params ICtrlVAFCommand[] commands)
         {
+            dispatcher.IncludeAssemblies(Assembly.GetCallingAssembly());
+
             var types =  GetTypes(commands);
 
             if (!types.Any())
@@ -106,6 +108,8 @@ namespace CtrlVAF.Core
 
         public override void Dispatch(params ICtrlVAFCommand[] commands)
         {
+            dispatcher.IncludeAssemblies(Assembly.GetCallingAssembly());
+
             var types = GetTypes(commands);
 
             HandleConcreteTypes(types, commands);

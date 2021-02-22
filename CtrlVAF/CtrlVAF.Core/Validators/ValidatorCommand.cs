@@ -1,7 +1,5 @@
 ﻿using CtrlVAF.Models;
 
-using MFiles.VAF.Configuration;
-
 using MFilesAPI;
 
 using System;
@@ -12,8 +10,11 @@ using System.Threading.Tasks;
 
 namespace CtrlVAF.Validators
 {
-    public interface ICustomValidator
+    public class ValidatorCommand<TConfig>: ICtrlVAFCommand
     {
-        IEnumerable<ValidationFinding> Validate(ICtrlVAFCommand command);
+        public Vault Vault { get; set; }
+
+        public TConfig Configuration { get; set; }
     }
+
 }

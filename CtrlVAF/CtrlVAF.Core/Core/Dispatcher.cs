@@ -16,6 +16,8 @@ namespace CtrlVAF.Core
 
         public void Dispatch(Action<Exception> exceptionHandler, params ICtrlVAFCommand[] commands)
         {
+            IncludeAssemblies(Assembly.GetCallingAssembly());
+
             try
             {
                 Dispatch(commands);
@@ -44,6 +46,9 @@ namespace CtrlVAF.Core
     /// <typeparam name="TReturn">The return type of the Dispatch method. If no return is expected this should be type object.</typeparam>
     public abstract class Dispatcher<TReturn> : Dispatcher_Common, IDispatcher<TReturn>
     {
+        protected ConcurrentDictionary<Type, TReturn> ResultsCache
+            = new ConcurrentDictionary<Type, TReturn>();
+
         /// <inheritdoc/>
         public abstract TReturn Dispatch(params ICtrlVAFCommand[] commands);
 
@@ -55,6 +60,8 @@ namespace CtrlVAF.Core
         /// <returns>an object of <see cref="TReturn"/> or null if an exception occured</returns>
         public TReturn Dispatch(Action<Exception> exceptionHandler, params ICtrlVAFCommand[] commands)
         {
+            IncludeAssemblies(Assembly.GetCallingAssembly());
+
             try
             {
                 return Dispatch(commands);

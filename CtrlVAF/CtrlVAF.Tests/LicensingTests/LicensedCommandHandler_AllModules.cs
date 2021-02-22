@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace CtrlVAF.Tests.LicensingTests
 {
     [LicenseRequired]
-    class LicensedCommandHandler_AllModules : ICommandHandler<TestLicenseCommand>
+    class LicensedCommandHandler_AllModules : CommandHandler<TestLicenseCommand>
     {
         public override void Handle(TestLicenseCommand command)
         {

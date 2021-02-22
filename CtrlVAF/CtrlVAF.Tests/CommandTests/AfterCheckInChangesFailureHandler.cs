@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace CtrlVAF.Tests.CommandTests
 {
-    public class AfterCheckInChangesFailureHandler : ICommandHandler<AfterCheckInChangesCommand<Configuration>>
+    public class AfterCheckInChangesFailureHandler : CommandHandler<AfterCheckInChangesCommand<Configuration>>
     {
         public override void Handle(AfterCheckInChangesCommand<Configuration> command)
         {

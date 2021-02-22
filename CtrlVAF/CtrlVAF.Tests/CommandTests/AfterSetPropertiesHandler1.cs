@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace CtrlVAF.Tests.CommandTests
 {
-    public class AfterSetPropertiesHandler1 : ICommandHandler<AfterSetPropertiesCommand<Configuration>>
+    public class AfterSetPropertiesHandler1 : CommandHandler<AfterSetPropertiesCommand<Configuration>>
     {
         public override void Handle(AfterSetPropertiesCommand<Configuration> command)
         {
