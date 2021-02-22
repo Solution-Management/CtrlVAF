@@ -74,9 +74,8 @@
     <Compile Include="BackgroundOperations\Attributes\RecurringAttribute.cs" />
     <Compile Include="BackgroundOperations\BackgroundDispatcher.cs" />
     <Compile Include="BackgroundOperations\BackgroundTask.cs" />
-    <Compile Include="Core\ConfigurableVaultApplicationBase\VaultApplicationBaseEvents.cs" />
     <Compile Include="Core\Dispatcher_Common.cs" />
-    <Compile Include="Core\ConfigurableVaultApplicationBase\ConfigurableVaultApplicationBase.cs" />
+    <Compile Include="Core\ConfigurableVaultApplicationBase.cs" />
     <Compile Include="BackgroundOperations\IBackgroundTask.cs" />
     <Compile Include="BackgroundOperations\OnDemandBackgroundOperations.cs" />
     <Compile Include="BackgroundOperations\RecurringBackgroundOperations.cs" />
