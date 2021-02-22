@@ -42,8 +42,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IDispatcher.cs" />
+    <Compile Include="IDispatcher_Common.cs" />
     <Compile Include="ICtrlVAFCommand.cs" />
-    <Compile Include="IVoidDispatcher.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

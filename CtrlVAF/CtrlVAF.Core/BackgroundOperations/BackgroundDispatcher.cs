@@ -17,7 +17,7 @@ using System.Threading.Tasks;
 
 namespace CtrlVAF.BackgroundOperations
 {
-    public class BackgroundDispatcher<TConfig> : Dispatcher<object> where TConfig : class, new()
+    public class BackgroundDispatcher<TConfig> : Dispatcher where TConfig : class, new()
     {
         private readonly Core.ConfigurableVaultApplicationBase<TConfig> vaultApplication;
 
@@ -28,14 +28,14 @@ namespace CtrlVAF.BackgroundOperations
             IncludeAssemblies(Assembly.GetCallingAssembly());
         }
 
-        public override object Dispatch()
+        public override void Dispatch(params ICtrlVAFCommand[] commands)
         {
             var concreteTypes = GetTypes();
 
             if (!concreteTypes.Any())
-                return null;
+                return;
 
-            return HandleConcreteTypes(concreteTypes);
+            HandleConcreteTypes(concreteTypes);
         }
 
         private object GetConfigPropertyOfType(object config, Type configSubType)
@@ -73,7 +73,7 @@ namespace CtrlVAF.BackgroundOperations
             return null;
         }
 
-        protected internal override IEnumerable<Type> GetTypes()
+        protected internal override IEnumerable<Type> GetTypes(params ICtrlVAFCommand[] commands)
         {
             var concreteTypes = Assemblies.SelectMany(a =>
             {
@@ -87,7 +87,7 @@ namespace CtrlVAF.BackgroundOperations
             return concreteTypes;
         }
 
-        protected internal override object HandleConcreteTypes(IEnumerable<Type> concreteTypes)
+        protected internal override void HandleConcreteTypes(IEnumerable<Type> concreteTypes, params ICtrlVAFCommand[] commands)
         {
             List<string> PermanentBackgroundOperationNames = new List<string>();
             List<string> OnDemandBackgroundOperationNames = new List<string>();
@@ -150,7 +150,7 @@ namespace CtrlVAF.BackgroundOperations
                 message
                 );
 
-            return null;
+            return;
         }
 
     }

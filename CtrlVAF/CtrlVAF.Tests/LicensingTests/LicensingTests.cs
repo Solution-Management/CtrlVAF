@@ -26,11 +26,9 @@ namespace CtrlVAF.Tests.LicensingTests
                 Result = 1
             };
 
-            Dispatcher<object> dispatcher = new CommandDispatcher();
+            Dispatcher dispatcher = new EventDispatcher();
 
-            dispatcher.AddCommand(command);
-
-            dispatcher.Dispatch();
+            dispatcher.Dispatch(command);
 
             Assert.AreEqual(expextedResult, command.Result);
         }
@@ -48,17 +46,15 @@ namespace CtrlVAF.Tests.LicensingTests
                 Result = 1
             };
 
-            Dispatcher<object> dispatcher = new CommandDispatcher();
+            Dispatcher dispatcher = new EventDispatcher();
 
             TestLicenseContent licenseContent = new TestLicenseContent();
 
             licenseContent.SetValidity(false);
 
-            dispatcher = new LicensedDispatcher<object>(dispatcher, licenseContent);
+            dispatcher = new LicensedDispatcher(dispatcher, licenseContent);
 
-            dispatcher.AddCommand(command);
-
-            dispatcher.Dispatch();
+            dispatcher.Dispatch(commands: command);
 
             Assert.AreEqual(expextedResult, command.Result);
         }
@@ -76,17 +72,15 @@ namespace CtrlVAF.Tests.LicensingTests
                 Result = 1
             };
 
-            Dispatcher<object> dispatcher = new CommandDispatcher();
+            Dispatcher dispatcher = new EventDispatcher();
 
             TestLicenseContent licenseContent = new TestLicenseContent();
 
             licenseContent.SetValidity(true);
 
-            dispatcher = new LicensedDispatcher<object>(dispatcher, licenseContent);
+            dispatcher = new LicensedDispatcher(dispatcher, licenseContent);
 
-            dispatcher.AddCommand(command);
-
-            dispatcher.Dispatch();
+            dispatcher.Dispatch(command);
 
             Assert.AreEqual(expextedResult, command.Result);
         }
@@ -104,9 +98,7 @@ namespace CtrlVAF.Tests.LicensingTests
                 Result = 1
             };
 
-            Dispatcher<object> dispatcher = new CommandDispatcher();
-
-            dispatcher.AddCommand(command);
+            Dispatcher dispatcher = new EventDispatcher();
 
             TestLicenseContent licenseContent = new TestLicenseContent();
 
@@ -114,9 +106,9 @@ namespace CtrlVAF.Tests.LicensingTests
 
             licenseContent.Modules = new List<string> { "Module1" };
 
-            dispatcher = new LicensedDispatcher<object>(dispatcher, licenseContent);
+            dispatcher = new LicensedDispatcher(dispatcher, licenseContent);
 
-            dispatcher.Dispatch();
+            dispatcher.Dispatch(command);
 
             Assert.AreEqual(expextedResult, command.Result);
         }
@@ -134,9 +126,7 @@ namespace CtrlVAF.Tests.LicensingTests
                 Result = 1
             };
 
-            Dispatcher<object> dispatcher = new CommandDispatcher();
-
-            dispatcher.AddCommand(command);
+            Dispatcher dispatcher = new EventDispatcher();
 
             TestLicenseContent licenseContent = new TestLicenseContent();
 
@@ -144,9 +134,9 @@ namespace CtrlVAF.Tests.LicensingTests
 
             licenseContent.Modules = new List<string> { "Module2" };
 
-            dispatcher = new LicensedDispatcher<object>(dispatcher, licenseContent);
+            dispatcher = new LicensedDispatcher(dispatcher, licenseContent);
 
-            dispatcher.Dispatch();
+            dispatcher.Dispatch(command);
 
             Assert.AreEqual(expextedResult, command.Result);
         }
@@ -164,7 +154,7 @@ namespace CtrlVAF.Tests.LicensingTests
                 Result = 1
             };
 
-            Dispatcher<object> dispatcher = new CommandDispatcher();
+            Dispatcher dispatcher = new EventDispatcher();
 
             TestLicenseContent licenseContent = new TestLicenseContent();
 
@@ -172,11 +162,9 @@ namespace CtrlVAF.Tests.LicensingTests
 
             licenseContent.Modules = new List<string> { "Module1","Module2" };
 
-            dispatcher = new LicensedDispatcher<object>(dispatcher, licenseContent);
+            dispatcher = new LicensedDispatcher(dispatcher, licenseContent);
 
-            dispatcher.AddCommand(command);
-
-            dispatcher.Dispatch();
+            dispatcher.Dispatch(command);
 
             Assert.AreEqual(expextedResult, command.Result);
         }

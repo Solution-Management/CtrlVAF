@@ -17,11 +17,6 @@ namespace CtrlVAF.Validators
         private Vault Vault;
         private object Config;
 
-        public override IDispatcher AddCommand(ICtrlVAFCommand command)
-        {
-            return this;
-        }
-
         public ValidatorDispatcher(Vault vault, object config)
         {
             Vault = vault;
@@ -30,14 +25,14 @@ namespace CtrlVAF.Validators
             IncludeAssemblies(Assembly.GetCallingAssembly());
         }
 
-        public override IEnumerable<ValidationFinding> Dispatch()
+        public override IEnumerable<ValidationFinding> Dispatch(params ICtrlVAFCommand[] commands)
         {
-            var types = GetTypes();
+            var types = GetTypes(commands);
 
-            return HandleConcreteTypes(types);
+            return HandleConcreteTypes(types, commands);
         }
 
-        protected internal override IEnumerable<Type> GetTypes()
+        protected internal override IEnumerable<Type> GetTypes(params ICtrlVAFCommand[] commands)
         {
             var configType = Config.GetType();
 
@@ -61,7 +56,7 @@ namespace CtrlVAF.Validators
             return concreteTypes;
         }
 
-        protected internal override IEnumerable<ValidationFinding> HandleConcreteTypes(IEnumerable<Type> types)
+        protected internal override IEnumerable<ValidationFinding> HandleConcreteTypes(IEnumerable<Type> types, params ICtrlVAFCommand[] commands)
         {
             if (!types.Any())
                 yield break;

@@ -1,5 +1,7 @@
 ﻿using CtrlVAF.BackgroundOperations;
+using CtrlVAF.Commands;
 using CtrlVAF.Core.Attributes;
+using CtrlVAF.Validators;
 
 using MFiles.VAF.Common;
 using MFiles.VAF.Configuration;
@@ -11,7 +13,7 @@ using System.Reflection;
 
 namespace CtrlVAF.Core
 {
-    public abstract class ConfigurableVaultApplicationBase<TSecureConfiguration> : 
+    public abstract class ConfigurableVaultApplicationBase<TSecureConfiguration> :
         MFiles.VAF.Extensions.MultiServerMode.ConfigurableVaultApplicationBase<TSecureConfiguration> where TSecureConfiguration : class, new()
     {
         public TaskQueueBackgroundOperationManager TaskQueueBackgroundOperationManager { get; set; }
@@ -22,9 +24,28 @@ namespace CtrlVAF.Core
         public OnDemandBackgroundOperations OnDemandBackgroundOperations { get; }
              = new OnDemandBackgroundOperations();
 
+        public Dispatcher BackgroundDispatcher { get; private set; }
+
+        public Dispatcher EventDispatcher { get; private set; }
+
         internal TSecureConfiguration GetConfig()
         {
             return Configuration;
+        }
+
+        public ConfigurableVaultApplicationBase(){
+            BackgroundDispatcher = new BackgroundDispatcher<TSecureConfiguration>(this);
+
+            EventDispatcher = new EventDispatcher();
+
+            if (this.GetType().IsDefined(typeof(UseLicensingAttribute)))
+            {
+                var content = License?.Content<LicenseContentBase>();
+
+                BackgroundDispatcher = new LicensedDispatcher(BackgroundDispatcher, content);
+
+                EventDispatcher = new LicensedDispatcher(EventDispatcher, content);
+            }
         }
 
         /// <summary>
@@ -37,22 +58,13 @@ namespace CtrlVAF.Core
                 this.GetType().FullName.Replace(".", "-") + " - BackgroundOperations"
                 );
 
-            Dispatcher<object> dispatcher = new BackgroundDispatcher<TSecureConfiguration>(this);
-
-            if(this.GetType().IsDefined(typeof(UseLicensingAttribute)))
-            {
-                var content = License?.Content<LicenseContentBase>();
-
-                dispatcher = new LicensedDispatcher<object>(dispatcher, content);
-            }
-
             try
             {
-                dispatcher.Dispatch();
+                BackgroundDispatcher.Dispatch();
             }
             catch(Exception e)
             {
-                SysUtils.ReportErrorMessageToEventLog("Could not dispatch.", e);
+                SysUtils.ReportErrorMessageToEventLog("Could not dispatch the background operations.", e);
                 return;
             }
 

@@ -102,6 +102,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\CtrlVAF.AdditionalAssembly\CtrlVAF.AdditionalAssembly.csproj">
+      <Project>{6ccb9743-0cc3-4f1c-8bbb-4df2897ddb88}</Project>
+      <Name>CtrlVAF.AdditionalAssembly</Name>
+    </ProjectReference>
     <ProjectReference Include="..\CtrlVAF.Core\CtrlVAF.Core.csproj">
       <Project>{cc724d5e-1339-477a-b608-f738fdf0c7f6}</Project>
       <Name>CtrlVAF.Core</Name>

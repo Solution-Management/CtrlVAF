@@ -20,8 +20,6 @@ namespace CtrlVAF.Core
         private LicenseContentBase license;
         private Dispatcher<TReturn> dispatcher;
 
-        public new List<ICtrlVAFCommand> Commands { get => dispatcher.Commands; set => dispatcher.Commands = value; }
-
         /// <summary>
         /// Wraps a dispatcher with logic checking the application's licensing status when evaluating types.
         /// </summary>
@@ -33,19 +31,19 @@ namespace CtrlVAF.Core
             this.dispatcher = dispatcher;
         }
 
-        public override TReturn Dispatch()
+        public override TReturn Dispatch(params ICtrlVAFCommand[] commands)
         {
-            var types =  GetTypes();
+            var types =  GetTypes(commands);
 
             if (!types.Any())
                 return default;
 
-            return HandleConcreteTypes(types);
+            return HandleConcreteTypes(types, commands);
         }
 
-        protected internal override IEnumerable<Type> GetTypes()
+        protected internal override IEnumerable<Type> GetTypes(params ICtrlVAFCommand[] commands)
         {
-            var types = dispatcher.GetTypes();
+            var types = dispatcher.GetTypes(commands);
 
 
             //If the license is not valid, remove all classes with the attribute [LicenseRequired]
@@ -88,15 +86,82 @@ namespace CtrlVAF.Core
             return types;
         }
 
-        protected internal override TReturn HandleConcreteTypes(IEnumerable<Type> types)
+        protected internal override TReturn HandleConcreteTypes(IEnumerable<Type> types, params ICtrlVAFCommand[] commands)
         {
-            return dispatcher.HandleConcreteTypes(types);
+            return dispatcher.HandleConcreteTypes(types, commands);
         }
 
-        public override IDispatcher AddCommand(ICtrlVAFCommand command)
+    }
+
+    public class LicensedDispatcher : Dispatcher
+    {
+        private LicenseContentBase license;
+        private Dispatcher dispatcher;
+
+        public LicensedDispatcher(Dispatcher dispatcher, LicenseContentBase license = null)
         {
-            dispatcher.AddCommand(command);
-            return this;
+            this.license = license;
+            this.dispatcher = dispatcher;
         }
+
+        public override void Dispatch(params ICtrlVAFCommand[] commands)
+        {
+            var types = GetTypes(commands);
+
+            HandleConcreteTypes(types, commands);
+        }
+
+        protected internal override IEnumerable<Type> GetTypes(params ICtrlVAFCommand[] commands)
+        {
+            var types = dispatcher.GetTypes(commands);
+
+            //If the license is not valid, remove all classes with the attribute [LicenseRequired]
+            if (license == null || !license.IsValid)
+            {
+                var filteredTypes = types
+                .Where(t =>
+                   !t.IsDefined(typeof(LicenseRequiredAttribute), false)
+                )
+                .ToArray();
+
+                return filteredTypes;
+            }
+
+            //If the license is valid, and the license has modules, 
+            //remove classes which required licensing AND are in modules not contained in the licensed modules
+            if (license?.Modules?.Any() == true)
+            {
+                var filteredTypes = types
+                    .Where(t =>
+                    {
+                        //Keep types that don't require a license
+                        if (!t.IsDefined(typeof(LicenseRequiredAttribute), false))
+                            return true;
+
+                        string[] modules = t.GetCustomAttribute<LicenseRequiredAttribute>().Modules;
+
+                        //If it has no modules specified, keep it
+                        if (modules == null || !modules.Any())
+                            return true;
+                        //Keep it only if one of the specified modules is licensed.
+                        else
+                            return modules.Intersect(license.Modules).Any();
+                    }
+                    );
+
+                return filteredTypes;
+            }
+
+            return types;
+        }
+
+        protected internal override void HandleConcreteTypes(IEnumerable<Type> types, params ICtrlVAFCommand[] commands)
+        {
+            if (!types.Any())
+                return;
+            dispatcher.HandleConcreteTypes(types, commands);
+        }
+
+        
     }
 }

@@ -20,10 +20,8 @@ namespace CtrlVAF.Commands
     //    /// <param name="throwExceptions">Whether or not to stop executing ICommandHandlers upon exceptions and throw the exception</param>
     //    /// <param name="exceptionHandler">An exception handler to pass along or handle any ICommandHandler exceptions</param>
 
-    public class CommandDispatcher : Dispatcher<object> 
+    public class EventDispatcher : Dispatcher
     {
-        private readonly bool throwExceptions = false;
-        private readonly Action<Exception> exceptionHandler = null;
 
         /// <summary>
         /// Typical usage of this class would be inside an event handler method inside the vault application base class.
@@ -32,36 +30,29 @@ namespace CtrlVAF.Commands
         /// <param name="command">A command of type TCommand that has inherited from <see cref="Commands.IEventHandlerCommand{T}"/></param>
         /// <param name="throwExceptions">Whether or not to stop executing ICommandHandlers upon exceptions and throw the exception</param>
         /// <param name="exceptionHandler">An exception handler to pass along or handle any ICommandHandler exceptions</param>
-        public CommandDispatcher(bool throwExceptions = false, Action<Exception> exceptionHandler = null)
+        public EventDispatcher()
         {
-            this.throwExceptions = throwExceptions;
-            this.exceptionHandler = exceptionHandler;
-
             IncludeAssemblies(Assembly.GetCallingAssembly());
         }
 
-        public override IDispatcher AddCommand(ICtrlVAFCommand command)
-        {
-            Commands.Add(command);
-            Commands = Commands.Distinct().ToList();
-            return this;
-        }
-
         /// <inheritdoc/>
-        public override object Dispatch()
+        public override void Dispatch(params ICtrlVAFCommand[] commands)
         {
-            var concreteTypes = GetTypes();
+            if (commands.Where(command => !command.GetType().GetInterfaces().Contains(typeof(IEventHandlerCommand))).Any())
+                throw new InvalidOperationException("The event dispatcher received an unexpected command type.");
 
-            return HandleConcreteTypes(concreteTypes);
+            var concreteTypes = GetTypes(commands);
+
+            HandleConcreteTypes(concreteTypes, commands);
         }
 
-        protected internal override IEnumerable<Type> GetTypes()
+        protected internal override IEnumerable<Type> GetTypes(params ICtrlVAFCommand[] commands)
         {
             // Instantiate a handlerType according to the TCommand type provided
             Type handlerType = typeof(ICommandHandler);
             List<Type> dispatchableHandlerTypes = new List<Type>();
 
-            foreach (ICtrlVAFCommand command in Commands)
+            foreach (ICtrlVAFCommand command in commands)
             {
                 Type commandType = command.GetType();
 
@@ -96,10 +87,10 @@ namespace CtrlVAF.Commands
             return dispatchableHandlerTypes;
         }
 
-        protected internal override object HandleConcreteTypes(IEnumerable<Type> types)
+        protected internal override void HandleConcreteTypes(IEnumerable<Type> types, params ICtrlVAFCommand[] commands)
         {
             // If none, return
-            if (!types.Any()) return null;
+            if (!types.Any()) return;
 
             foreach (Type type in types)
             {
@@ -109,28 +100,13 @@ namespace CtrlVAF.Commands
                 if (commandType == default)
                     continue;
 
-                var command = Commands.FirstOrDefault(cmd => cmd.GetType() == commandType);
-                try
-                {
+                var command = commands.FirstOrDefault(cmd => cmd.GetType() == commandType);
+                
                     // Create instances of the concrete ICommandHandlers and handle them
                     var concreteHandler = Activator.CreateInstance(type) as ICommandHandler;
                     concreteHandler?.Handle(command);
-                }
-                catch (Exception e)
-                {
-                    // If anything happens during, let the exception handler do it for us
-                    if (exceptionHandler != null)
-                    {
-                        exceptionHandler(e);
-                    }
-
-                    if (throwExceptions)
-                    {
-                        throw e;
-                    }
-                }
             }
-            return null;
+            return;
         }
     }
 }

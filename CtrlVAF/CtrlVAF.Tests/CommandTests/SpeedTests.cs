@@ -15,19 +15,17 @@ namespace CtrlVAF.Tests.CommandTests
         [TestMethod]
         public void SpeedTest_AdditionalAssembly_100000Calls()
         {
-            var conf = new Commands.Handlers.TestConfiguration() { id = 1234 };
+            var conf = new Additional.TestConfiguration() { id = 1234 };
             var environment = new EventHandlerEnvironment();
-            var command = new BeforeCheckInChangesCommand<Commands.Handlers.TestConfiguration>() { Env = environment, Configuration = conf };
+            var command = new BeforeCheckInChangesCommand<Additional.TestConfiguration>() { Env = environment, Configuration = conf };
 
-            var dispatcher = new CommandDispatcher();
+            var dispatcher = new EventDispatcher();
 
-            dispatcher.IncludeAssemblies(typeof(Commands.Handlers.TestConfiguration).Assembly);
-
-            dispatcher.AddCommand(command);
+            dispatcher.IncludeAssemblies(typeof(Additional.TestConfiguration).Assembly);
 
             for (int i = 0; i < 100000; i++)
             {
-                dispatcher.Dispatch();
+                dispatcher.Dispatch(command);
             }
 
             Assert.IsTrue(true);
@@ -41,13 +39,11 @@ namespace CtrlVAF.Tests.CommandTests
 
             var command = new BeforeSetPropertiesCommand<Configuration>() { Env = environment, Configuration = conf };
 
-            var dispatcher = new CommandDispatcher();
-
-            dispatcher.AddCommand(command);
+            var dispatcher = new EventDispatcher();
 
             for (int i = 0; i < 50000; i++)
             {
-                dispatcher.Dispatch();
+                dispatcher.Dispatch(command);
             }
 
             Assert.IsTrue(true);
@@ -60,13 +56,11 @@ namespace CtrlVAF.Tests.CommandTests
             var environment = new EventHandlerEnvironment();
             var command = new BeforeSetPropertiesCommand<Configuration>() { Env = environment, Configuration = conf };
 
-            var dispatcher = new CommandDispatcher();
-
-            dispatcher.AddCommand(command);
+            var dispatcher = new EventDispatcher();
 
             for (int i = 0; i < 100000; i++)
             {
-                dispatcher.Dispatch();
+                dispatcher.Dispatch(command);
             }
 
             Assert.IsTrue(true);
