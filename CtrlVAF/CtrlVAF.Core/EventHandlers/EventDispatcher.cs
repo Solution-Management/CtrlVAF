@@ -101,9 +101,9 @@ namespace CtrlVAF.Commands
             {
                 var commandType = command.GetType();
 
-                if(TypeCache.TryGetValue(commandType, out IEnumerable<Type> handlerTypes))
+                if(TypeCache.TryGetValue(commandType, out IEnumerable<Type> concreteHandlerTypes))
                 {
-                    foreach (Type concreteHandlerType in handlerTypes)
+                    foreach (Type concreteHandlerType in concreteHandlerTypes)
                     {
                         if (handledTypes.Contains(concreteHandlerType) || !types.Contains(concreteHandlerType))
                             continue;
