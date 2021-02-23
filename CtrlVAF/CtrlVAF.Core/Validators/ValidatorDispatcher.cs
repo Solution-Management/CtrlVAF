@@ -84,11 +84,7 @@ namespace CtrlVAF.Validators
 
             foreach (Type concreteValidator in concreteValidators)
             {
-                if (ResultsCache.TryGetValue(concreteValidator, out IEnumerable<ValidationFinding> findings))
-                {
-                    //Do nothing. We got the cached values already
-                }
-                else
+                if (!ResultsCache.TryGetValue(concreteValidator, out IEnumerable<ValidationFinding> findings))
                 {
                     var concreteHandler = Activator.CreateInstance(concreteValidator) as ICustomValidator;
 
@@ -96,49 +92,12 @@ namespace CtrlVAF.Validators
 
                     ResultsCache.TryAdd(concreteValidator, findings);
                 }
-
+                
                 foreach (var finding in findings)
                 {
                     yield return finding;
                 }
             }
-
         }
-
-        //private object GetConfigPropertyOfType(object config, Type configSubType)
-        //{
-        //    if (config.GetType() == configSubType)
-        //        return config;
-
-        //    var configProperties = config.GetType().GetProperties();
-
-        //    foreach (var configProperty in configProperties)
-        //    {
-        //        if (!configProperty.PropertyType.IsClass)
-        //            continue;
-
-        //        var subConfig = configProperty.GetValue(config);
-
-        //        if (configProperty.PropertyType == configSubType)
-        //            return subConfig;
-        //    }
-
-        //    foreach (var configProperty in configProperties)
-        //    {
-        //        if (!configProperty.PropertyType.IsClass)
-        //            continue;
-
-        //        var subConfig = configProperty.GetValue(config);
-
-        //        var subsubConfig = GetConfigPropertyOfType(subConfig, configSubType);
-        //        if (subsubConfig == null)
-        //            continue;
-        //        else
-        //            return subsubConfig;
-
-        //    }
-
-        //    return null;
-        //}
     }
 }

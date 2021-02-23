@@ -35,7 +35,7 @@ namespace CtrlVAF.Core
         {
             dispatcher.IncludeAssemblies(Assembly.GetCallingAssembly());
 
-            var types =  GetTypes(commands);
+            var types = GetTypes(commands);
 
             if (!types.Any())
                 return default;
@@ -47,45 +47,7 @@ namespace CtrlVAF.Core
         {
             var types = dispatcher.GetTypes(commands);
 
-
-            //If the license is not valid, remove all classes with the attribute [LicenseRequired]
-            if (license == null || !license.IsValid)
-            {
-                var filteredTypes = types
-                .Where(t =>
-                   !t.IsDefined(typeof(LicenseRequiredAttribute), false)
-                )
-                .ToArray();
-
-                return filteredTypes;
-            }
-
-            //If the license is valid, and the license has modules, 
-            //remove classes which required licensing AND are in modules not contained in the licensed modules
-            if (license?.Modules?.Any() == true)
-            {
-                var filteredTypes = types
-                    .Where(t =>
-                    {
-                        //Keep types that don't require a license
-                        if (!t.IsDefined(typeof(LicenseRequiredAttribute), false))
-                            return true;
-
-                        string[] modules = t.GetCustomAttribute<LicenseRequiredAttribute>().Modules;
-
-                        //If it has no modules specified, keep it
-                        if (modules == null || !modules.Any())
-                            return true;
-                        //Keep it only if one of the specified modules is licensed.
-                        else
-                            return modules.Intersect(license.Modules).Any();
-                    }
-                    );
-
-                return filteredTypes;
-            }
-
-            return types;
+            return LicenseFilterHelper.FilterTypesOnLicense(types, license);
         }
 
         protected internal override TReturn HandleConcreteTypes(IEnumerable<Type> types, params ICtrlVAFCommand[] commands)
@@ -119,8 +81,25 @@ namespace CtrlVAF.Core
         {
             var types = dispatcher.GetTypes(commands);
 
+            return LicenseFilterHelper.FilterTypesOnLicense(types, license);
+        }
+
+        protected internal override void HandleConcreteTypes(IEnumerable<Type> types, params ICtrlVAFCommand[] commands)
+        {
+            if (!types.Any())
+                return;
+            dispatcher.HandleConcreteTypes(types, commands);
+        }
+
+
+    }
+
+    internal static class LicenseFilterHelper
+    {
+        public static IEnumerable<Type> FilterTypesOnLicense(IEnumerable<Type> types, LicenseContentBase licenseContent)
+        {
             //If the license is not valid, remove all classes with the attribute [LicenseRequired]
-            if (license == null || !license.IsValid)
+            if (licenseContent == null || !licenseContent.IsValid)
             {
                 var filteredTypes = types
                 .Where(t =>
@@ -133,7 +112,7 @@ namespace CtrlVAF.Core
 
             //If the license is valid, and the license has modules, 
             //remove classes which required licensing AND are in modules not contained in the licensed modules
-            if (license?.Modules?.Any() == true)
+            if (licenseContent?.Modules?.Any() == true)
             {
                 var filteredTypes = types
                     .Where(t =>
@@ -149,7 +128,7 @@ namespace CtrlVAF.Core
                             return true;
                         //Keep it only if one of the specified modules is licensed.
                         else
-                            return modules.Intersect(license.Modules).Any();
+                            return modules.Intersect(licenseContent.Modules).Any();
                     }
                     );
 
@@ -159,13 +138,5 @@ namespace CtrlVAF.Core
             return types;
         }
 
-        protected internal override void HandleConcreteTypes(IEnumerable<Type> types, params ICtrlVAFCommand[] commands)
-        {
-            if (!types.Any())
-                return;
-            dispatcher.HandleConcreteTypes(types, commands);
-        }
-
-        
     }
 }

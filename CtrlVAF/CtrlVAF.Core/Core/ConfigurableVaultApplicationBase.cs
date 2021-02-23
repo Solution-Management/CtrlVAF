@@ -11,6 +11,7 @@ using MFilesAPI;
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 
@@ -87,7 +88,9 @@ namespace CtrlVAF.Core
         {
             var command = new ValidatorCommand<TSecureConfiguration> { Vault = vault, Configuration = config };
 
-            return ValidatorDispatcher.Dispatch(command);
+            var findings =  ValidatorDispatcher.Dispatch(command);
+
+            return findings.Concat(base.CustomValidation(vault, config));
         }
     }
 }

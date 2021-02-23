@@ -50,14 +50,19 @@ namespace CtrlVAF.Commands
             Type handlerType = typeof(IEventHandler<>);
             List<Type> dispatchableHandlerTypes = new List<Type>();
 
+            List<Type> parsedCommands = new List<Type>();
+
             foreach (ICtrlVAFCommand command in commands)
             {
                 Type commandType = command.GetType();
 
+                if (parsedCommands.Contains(commandType))
+                    continue;
+
                 //If the concrete types have already been retrieved and cached before, simply handle those
                 if (TypeCache.TryGetValue(commandType, out var cachedTypes))
                 {
-                    dispatchableHandlerTypes.AddRange(cachedTypes.Distinct());
+                    dispatchableHandlerTypes.AddRange(cachedTypes);
                     continue;
                 }
 
@@ -82,12 +87,14 @@ namespace CtrlVAF.Commands
                     }
                 }
 
-                TypeCache.TryAdd(commandType, handlerTypes);
+                TypeCache.TryAdd(commandType, handlerTypes.Distinct());
 
                 dispatchableHandlerTypes.AddRange(handlerTypes);
+
+                parsedCommands.Add(commandType);
             }
 
-            return dispatchableHandlerTypes;
+            return dispatchableHandlerTypes.Distinct();
         }
 
         protected internal override void HandleConcreteTypes(IEnumerable<Type> types, params ICtrlVAFCommand[] commands)
