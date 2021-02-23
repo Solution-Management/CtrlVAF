@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace CtrlVAF.Tests.CommandTests
 {
-    public class AfterSetPropertiesHandler1 : CommandHandler<AfterSetPropertiesCommand<Configuration>>
+    public class AfterSetPropertiesHandler1 : IEventHandler<AfterSetPropertiesCommand<Configuration>>
     {
-        public override void Handle(AfterSetPropertiesCommand<Configuration> command)
+        public void Handle(AfterSetPropertiesCommand<Configuration> command)
         {
             command.Env.CurrentUserID = command.Configuration.ID;
         }

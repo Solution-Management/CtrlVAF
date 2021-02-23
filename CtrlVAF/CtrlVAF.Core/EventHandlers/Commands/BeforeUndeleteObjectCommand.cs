@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace CtrlVAF.Commands.Commands
 {
-    public class BeforeUndeleteObjectCommand<T> : IEventHandlerCommand<T>
+    public class BeforeUndeleteObjectCommand<T> : IEventCommand<T>
     {
         public EventHandlerEnvironment Env { get; set; }
         public T Configuration { get; set; }

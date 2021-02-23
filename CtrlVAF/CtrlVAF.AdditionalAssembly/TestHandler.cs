@@ -14,9 +14,9 @@ namespace CtrlVAF.Additional
         public int id = 0;
     }
 
-    public class TestHandler : CommandHandler<BeforeCheckInChangesCommand<TestConfiguration>>
+    public class TestHandler : IEventHandler<BeforeCheckInChangesCommand<TestConfiguration>>
     {
-        public override void Handle(BeforeCheckInChangesCommand<TestConfiguration> command)
+        public void Handle(BeforeCheckInChangesCommand<TestConfiguration> command)
         {
             command.Env.CurrentUserID = command.Configuration.id;
         }

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace CtrlVAF.Commands.Commands
 {
-    public class BeforeFileDownloadCommand<T> : IEventHandlerCommand<T>
+    public class BeforeFileDownloadCommand<T> : IEventCommand<T>
     {
         public EventHandlerEnvironment Env { get; set; }
         public T Configuration { get; set; }

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace CtrlVAF.Tests.LicensingTests
 {
-    class TestLicenseCommand: IEventHandlerCommand<Configuration>
+    class TestLicenseCommand: IEventCommand<Configuration>
     {
         public EventHandlerEnvironment Env { get; set; }
         public Configuration Configuration { get; set; }

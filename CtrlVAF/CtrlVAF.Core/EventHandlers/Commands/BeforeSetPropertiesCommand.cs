@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace CtrlVAF.Commands.Commands
 {
-    public class BeforeSetPropertiesCommand<T> : IEventHandlerCommand<T>
+    public class BeforeSetPropertiesCommand<T> : IEventCommand<T>
     {
         public EventHandlerEnvironment Env { get; set; }
         public T Configuration { get; set; }

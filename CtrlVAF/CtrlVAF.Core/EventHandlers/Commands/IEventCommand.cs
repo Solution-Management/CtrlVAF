@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace CtrlVAF.Commands.Commands
 {
-    public interface IEventHandlerCommand<T>: ICtrlVAFCommand
+    public interface IEventCommand<T>: ICtrlVAFCommand
     {
         EventHandlerEnvironment Env { get; set; }
         T Configuration { get; set; }

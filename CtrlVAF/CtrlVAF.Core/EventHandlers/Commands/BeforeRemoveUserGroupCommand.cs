@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace CtrlVAF.Commands.Commands
 {
-    public class BeforeRemoveUserGroupCommand<T> : IEventHandlerCommand<T>
+    public class BeforeRemoveUserGroupCommand<T> : IEventCommand<T>
     {
         public EventHandlerEnvironment Env { get; set; }
         public T Configuration { get; set; }

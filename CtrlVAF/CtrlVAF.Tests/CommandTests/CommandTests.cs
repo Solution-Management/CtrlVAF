@@ -6,6 +6,7 @@ using CtrlVAF.Additional;
 
 using MFiles.VAF.Common;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Diagnostics;
 
 namespace CtrlVAF.Tests.CommandTests
 {
@@ -170,7 +171,46 @@ namespace CtrlVAF.Tests.CommandTests
             Assert.AreEqual(expected, Env.CurrentUserID);
         }
 
-        
+        [TestMethod]
+        public void AssertThat_HandlerWasCalledTwice_WithDifferentCommands()
+        {
+            int expected = 20;
+
+            var config = new Configuration();
+            var env = new EventHandlerEnvironment { CurrentUserID = 0 };
+
+            var command_3 = new CustomCommand_3 { Configuration = config, Env = env };
+            var command_4 = new CustomCommand_4 { Configuration = config, Env = env };
+
+            var dispatcher = new EventDispatcher();
+
+            //The same handler is called twice, but in a different dispatch call, so it is executed twice
+            dispatcher.Dispatch(command_3);
+            dispatcher.Dispatch(command_4);
+
+            Assert.AreEqual(expected, env.CurrentUserID);
+        }
+
+        [TestMethod]
+        public void AssertThat_HandlerWasCalledOnce_WithDifferentCommands()
+        {
+            int expected = 10;
+
+            var config = new Configuration();
+            var env = new EventHandlerEnvironment { CurrentUserID = 0 };
+
+            var command_3 = new CustomCommand_3 { Configuration = config, Env = env };
+            var command_4 = new CustomCommand_4 { Configuration = config, Env = env };
+
+            var dispatcher = new EventDispatcher();
+
+            //These commands call the same handler so the handler is only executed for the first command
+            dispatcher.Dispatch(command_3, command_4);
+
+            Assert.AreEqual(expected, env.CurrentUserID);
+        }
+
+
     }
 }
 

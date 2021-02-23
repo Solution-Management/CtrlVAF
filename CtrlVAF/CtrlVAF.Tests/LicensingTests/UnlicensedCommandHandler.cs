@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace CtrlVAF.Tests.LicensingTests
 {
-    class UnlicensedCommandHandler: CommandHandler<TestLicenseCommand>
+    class UnlicensedCommandHandler: IEventHandler<TestLicenseCommand>
     {
-        public override void Handle(TestLicenseCommand command)
+        public void Handle(TestLicenseCommand command)
         {
             command.Result *= 2; 
         }

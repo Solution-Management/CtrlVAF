@@ -10,14 +10,27 @@ using System.Threading.Tasks;
 
 namespace CtrlVAF.Tests.CommandTests
 {
-    class CustomCommand_1: IEventHandlerCommand<Configuration>
+    class CustomCommand_1: IEventCommand<Configuration>
     {
         public EventHandlerEnvironment Env { get; set; }
 
         public Configuration Configuration { get; set; }
     }
 
-    class CustomCommand_2 : IEventHandlerCommand<Configuration>
+    class CustomCommand_2 : IEventCommand<Configuration>
+    {
+        public EventHandlerEnvironment Env { get; set; }
+
+        public Configuration Configuration { get; set; }
+    }
+    class CustomCommand_3 : IEventCommand<Configuration>
+    {
+        public EventHandlerEnvironment Env { get; set; }
+
+        public Configuration Configuration { get; set; }
+    }
+
+    class CustomCommand_4 : IEventCommand<Configuration>
     {
         public EventHandlerEnvironment Env { get; set; }
 

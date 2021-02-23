@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace CtrlVAF.Commands.Commands
 {
-    public class AfterDestroyObjectVersionCommand<T> : IEventHandlerCommand<T>
+    public class AfterDestroyObjectVersionCommand<T> : IEventCommand<T>
     {
         public EventHandlerEnvironment Env { get; set; }
         public T Configuration { get; set; }

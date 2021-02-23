@@ -10,7 +10,7 @@ using System.Reflection;
 
 namespace CtrlVAF.Commands
 {
-  
+
     //    /// <summary>
     //    /// Main command dispatcher entry method. Typical usage of this method would be inside an event handler method inside the vault application base class.
     //    /// Once called, the dispatcher will locate any ICommandHandlers using the same TCommand interface and invoke their handle method.
@@ -27,7 +27,7 @@ namespace CtrlVAF.Commands
         /// Typical usage of this class would be inside an event handler method inside the vault application base class.
         /// Once called, the dispatcher will locate any ICommandHandlers using the same TCommand interface and invoke their handle method.
         /// </summary>
-        /// <param name="command">A command of type TCommand that has inherited from <see cref="Commands.IEventHandlerCommand{T}"/></param>
+        /// <param name="command">A command of type TCommand that has inherited from <see cref="Commands.IEventCommand{T}"/></param>
         /// <param name="throwExceptions">Whether or not to stop executing ICommandHandlers upon exceptions and throw the exception</param>
         /// <param name="exceptionHandler">An exception handler to pass along or handle any ICommandHandler exceptions</param>
         public EventDispatcher()
@@ -47,7 +47,7 @@ namespace CtrlVAF.Commands
         protected internal override IEnumerable<Type> GetTypes(params ICtrlVAFCommand[] commands)
         {
             // Instantiate a handlerType according to the TCommand type provided
-            Type handlerType = typeof(ICommandHandler);
+            Type handlerType = typeof(IEventHandler<>);
             List<Type> dispatchableHandlerTypes = new List<Type>();
 
             foreach (ICtrlVAFCommand command in commands)
@@ -69,11 +69,16 @@ namespace CtrlVAF.Commands
 
                     foreach (Type type in types)
                     {
-                        if (type.IsClass && 
-                            type.GetInterfaces().Contains(handlerType) &&
-                            type.BaseType.IsGenericType &&
-                            type.BaseType.GetGenericArguments().Contains(commandType))
-                            handlerTypes.Add(type);
+                        if (type.IsClass)
+                        {
+                            var commandHandlerInterfaces = type.GetInterfaces().Where(t =>
+                            t.IsGenericType &&
+                            t.GetGenericTypeDefinition() == handlerType &&
+                            t.GenericTypeArguments[0] == commandType);
+
+                            if (commandHandlerInterfaces.Any())
+                                handlerTypes.Add(type);
+                        }
                     }
                 }
 
@@ -90,20 +95,41 @@ namespace CtrlVAF.Commands
             // If none, return
             if (!types.Any()) return;
 
-            foreach (Type type in types)
+            List<Type> handledTypes = new List<Type>();
+
+            foreach (ICtrlVAFCommand command in commands)
             {
-                //get the right command for the type from typecache
-                Type commandType = TypeCache.FirstOrDefault(kv => kv.Value.Contains(type)).Key;
+                var commandType = command.GetType();
 
-                if (commandType == default)
-                    continue;
+                if(TypeCache.TryGetValue(commandType, out IEnumerable<Type> handlerTypes))
+                {
+                    foreach (Type concreteHandlerType in handlerTypes)
+                    {
+                        if (handledTypes.Contains(concreteHandlerType) || !types.Contains(concreteHandlerType))
+                            continue;
 
-                var command = commands.FirstOrDefault(cmd => cmd.GetType() == commandType);
-                
-                    // Create instances of the concrete ICommandHandlers and handle them
-                    var concreteHandler = Activator.CreateInstance(type) as ICommandHandler;
-                    concreteHandler?.Handle(command);
+                        var concreteHandler = Activator.CreateInstance(concreteHandlerType);
+
+                        var handleMethod = concreteHandlerType.GetMethod(nameof(IEventHandler<object>.Handle), new Type[] { commandType });
+
+                        try
+                        {
+                            handleMethod.Invoke(concreteHandler, new object[] { command });
+                        }
+                        catch (TargetInvocationException te)
+                        {
+                            throw te.InnerException;
+                        }
+                        catch (Exception e)
+                        {
+                            throw e;
+                        }
+
+                        handledTypes.Add(concreteHandlerType);
+                    }
+                }
             }
+
             return;
         }
     }

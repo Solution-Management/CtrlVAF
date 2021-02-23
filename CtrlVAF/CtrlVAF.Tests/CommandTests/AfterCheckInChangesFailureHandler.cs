@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace CtrlVAF.Tests.CommandTests
 {
-    public class AfterCheckInChangesFailureHandler : CommandHandler<AfterCheckInChangesCommand<Configuration>>
+    public class AfterCheckInChangesFailureHandler : IEventHandler<AfterCheckInChangesCommand<Configuration>>
     {
-        public override void Handle(AfterCheckInChangesCommand<Configuration> command)
+        public void Handle(AfterCheckInChangesCommand<Configuration> command)
         {
             throw new NotImplementedException();
         }

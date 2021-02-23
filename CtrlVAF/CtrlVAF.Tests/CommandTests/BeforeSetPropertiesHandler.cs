@@ -9,11 +9,12 @@ using System.Threading.Tasks;
 namespace CtrlVAF.Tests.CommandTests
 {
 
-    public class BeforeSetPropertiesHandler : CommandHandler<BeforeSetPropertiesCommand<Configuration>>
+    public class BeforeSetPropertiesHandler : IEventHandler<BeforeSetPropertiesCommand<Configuration>>
     {
-        public override void Handle(BeforeSetPropertiesCommand<Configuration> command)
+        public void Handle(BeforeSetPropertiesCommand<Configuration> command)
         {
             command.Env.CurrentUserID = command.Configuration.ID;
         }
+       
     }
 }
