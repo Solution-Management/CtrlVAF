@@ -10,11 +10,10 @@ using System.Threading.Tasks;
 
 namespace CtrlVAF.Validators
 {
-    public class ValidatorCommand<TConfig>: ICtrlVAFCommand
+    public class ValidatorCommand: ICtrlVAFCommand
     {
         public Vault Vault { get; set; }
 
-        public TConfig Configuration { get; set; }
     }
 
 }

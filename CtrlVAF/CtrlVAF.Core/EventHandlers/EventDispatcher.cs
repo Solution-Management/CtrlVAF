@@ -23,7 +23,6 @@ namespace CtrlVAF.Events
 
     public class EventDispatcher : Dispatcher
     {
-
         /// <summary>
         /// Typical usage of this class would be inside an event handler method inside the vault application base class.
         /// Once called, the dispatcher will locate any ICommandHandlers using the same TCommand interface and invoke their handle method.

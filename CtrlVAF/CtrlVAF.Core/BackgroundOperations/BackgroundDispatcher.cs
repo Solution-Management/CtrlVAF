@@ -35,40 +35,7 @@ namespace CtrlVAF.BackgroundOperations
             HandleConcreteTypes(concreteTypes);
         }
 
-        private object GetConfigPropertyOfType(object config, Type configSubType)
-        {
-            if (config.GetType() == configSubType)
-                return config;
-
-            var configProperties = config.GetType().GetProperties();
-
-            foreach (var configProperty in configProperties)
-            {
-                if (!configProperty.PropertyType.IsClass)
-                    continue;
-
-                var subConfig = configProperty.GetValue(config);
-
-                if (configProperty.PropertyType == configSubType)
-                    return subConfig;
-            }
-
-            foreach (var configProperty in configProperties)
-            {
-                if (!configProperty.PropertyType.IsClass)
-                    continue;
-
-                var subConfig = configProperty.GetValue(config);
-
-                var subsubConfig = GetConfigPropertyOfType(subConfig, configSubType);
-                if (subsubConfig == null)
-                    continue;
-                else
-                    return subsubConfig;
-            }
-
-            return null;
-        }
+        
 
         protected internal override IEnumerable<Type> GetTypes(params ICtrlVAFCommand[] commands)
         {
@@ -102,7 +69,7 @@ namespace CtrlVAF.BackgroundOperations
 
                 Type configSubType = concreteType.BaseType.GenericTypeArguments[0];
 
-                object subConfig = GetConfigPropertyOfType(config, configSubType);
+                object subConfig = Dispatcher_Helpers.GetConfigPropertyOfType(config, configSubType);
 
                 //Set the configuration
                 var configProperty = backgroundTaskHandler.GetType().GetProperty(nameof(IBackgroundTaskHandler<object, EmptyTQD>.Configuration));

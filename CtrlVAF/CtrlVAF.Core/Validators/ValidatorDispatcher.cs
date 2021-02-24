@@ -2,21 +2,23 @@
 
 using CtrlVAF.Core;
 
-using MFilesAPI;
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using CtrlVAF.Models;
-using System.Collections.Concurrent;
+using System.Runtime.ExceptionServices;
 
 namespace CtrlVAF.Validators
 {
-    public class ValidatorDispatcher : Dispatcher<IEnumerable<ValidationFinding>>
+    public class ValidatorDispatcher<TConfig> : Dispatcher<IEnumerable<ValidationFinding>>
+                                                where TConfig: class, new()
     {
-        public ValidatorDispatcher()
+        private ConfigurableVaultApplicationBase<TConfig> vaultApplication;
+
+        public ValidatorDispatcher(ConfigurableVaultApplicationBase<TConfig> vaultApplication)
         {
+            this.vaultApplication = vaultApplication; 
         }
 
         public override IEnumerable<ValidationFinding> Dispatch(params ICtrlVAFCommand[] commands)
@@ -32,14 +34,14 @@ namespace CtrlVAF.Validators
         {
             var validatorCommand = commands.FirstOrDefault(
                 cmd => 
-                cmd.GetType().IsGenericType && 
-                cmd.GetType().GetGenericTypeDefinition() == typeof(ValidatorCommand<>)
+                cmd.GetType() == typeof(ValidatorCommand) ||
+                cmd.GetType().BaseType == typeof(ValidatorCommand)
                 );
 
             if (validatorCommand == null)
                 return new List<Type>();
 
-            var configType = validatorCommand.GetType().GenericTypeArguments[0];
+            var configType = typeof(TConfig);
 
             IncludeAssemblies(configType);
 
@@ -55,7 +57,8 @@ namespace CtrlVAF.Validators
                 .GetTypes()
                 .Where(t =>
                     t.IsClass &&
-                    t.GetInterfaces().Contains(typeof(ICustomValidator))
+                    t.BaseType.IsGenericType &&
+                    t.BaseType.GetGenericTypeDefinition() == typeof(CustomValidator<,>)
                     );
             });
 
@@ -72,22 +75,43 @@ namespace CtrlVAF.Validators
             //Get any validator command
             var validatorCommand = commands.FirstOrDefault(
                 cmd =>
-                cmd.GetType().IsGenericType &&
-                cmd.GetType().GetGenericTypeDefinition() == typeof(ValidatorCommand<>)
+                cmd.GetType() == typeof(ValidatorCommand) ||
+                cmd.GetType().BaseType == typeof(ValidatorCommand)
                 );
 
             if (validatorCommand == null)
                 yield break;
 
-            foreach (Type concreteValidator in concreteValidators)
+            foreach (Type concreteValidatorType in concreteValidators)
             {
-                if (!ResultsCache.TryGetValue(concreteValidator, out IEnumerable<ValidationFinding> findings))
+                if (!ResultsCache.TryGetValue(concreteValidatorType, out IEnumerable<ValidationFinding> findings))
                 {
-                    var concreteHandler = Activator.CreateInstance(concreteValidator) as ICustomValidator;
+                    var concreteHandler = Activator.CreateInstance(concreteValidatorType);
 
-                    findings = concreteHandler.Validate(validatorCommand);
+                    //Set the configuration
+                    var configProperty = concreteValidatorType.GetProperty(nameof(ICustomValidator<object, ValidatorCommand>.Configuration));
 
-                    ResultsCache.TryAdd(concreteValidator, findings.ToList());
+                    var subConfig = Dispatcher_Helpers.GetConfigPropertyOfType(vaultApplication.GetConfig(), typeof(TConfig));
+
+                    configProperty.SetValue(concreteHandler, subConfig);
+
+                    var validateMethod = concreteValidatorType.GetMethod(nameof(ICustomValidator<object, ValidatorCommand>.Validate));
+
+                    try
+                    {
+                        findings = validateMethod.Invoke(concreteHandler, new object[] { validatorCommand })
+                                        as IEnumerable<ValidationFinding>;
+                    }
+                    catch (TargetInvocationException te)
+                    {
+                        ExceptionDispatchInfo.Capture(te.InnerException).Throw();
+                    }
+                    catch (Exception e)
+                    {
+                        throw e;
+                    }
+
+                    ResultsCache.TryAdd(concreteValidatorType, findings.ToList());
                 }
 
                 foreach (var finding in findings)

@@ -1,4 +1,5 @@
-﻿using CtrlVAF.Models;
+﻿using CtrlVAF.Core;
+using CtrlVAF.Models;
 
 using MFiles.VAF.Configuration;
 
@@ -12,8 +13,10 @@ using System.Threading.Tasks;
 
 namespace CtrlVAF.Validators
 {
-    public interface ICustomValidator
+    public interface ICustomValidator<TConfig, TCommand>: ICommandHandler<TConfig>
+        where TConfig: class, new()
+        where TCommand: ValidatorCommand
     {
-        IEnumerable<ValidationFinding> Validate(ICtrlVAFCommand command);
+        IEnumerable<ValidationFinding> Validate(TCommand command);
     }
 }

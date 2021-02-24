@@ -78,6 +78,7 @@
     <Compile Include="Core\ConfigurableVaultApplicationBase.cs" />
     <Compile Include="BackgroundOperations\OnDemandBackgroundOperations.cs" />
     <Compile Include="BackgroundOperations\RecurringBackgroundOperations.cs" />
+    <Compile Include="Core\Dispatcher_Helpers.cs" />
     <Compile Include="Core\ICommandHandler.cs" />
     <Compile Include="Core\LicensedDispatcher.cs" />
     <Compile Include="Core\Dispatcher.cs" />

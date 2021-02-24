@@ -9,5 +9,6 @@ namespace CtrlVAF.Core
     public interface ICommandHandler<TConfiguration> where TConfiguration: class, new()
     {
         TConfiguration Configuration { get; }
+
     }
 }

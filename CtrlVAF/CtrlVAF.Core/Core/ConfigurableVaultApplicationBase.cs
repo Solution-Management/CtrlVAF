@@ -30,11 +30,11 @@ namespace CtrlVAF.Core
         public OnDemandBackgroundOperations OnDemandBackgroundOperations { get; }
              = new OnDemandBackgroundOperations();
 
-        public Dispatcher BackgroundDispatcher { get; private set; }
+        public Dispatcher BackgroundDispatcher { get; protected set; }
 
-        public Dispatcher EventDispatcher { get; private set; }
+        public Dispatcher EventDispatcher { get; protected set; }
 
-        public Dispatcher<IEnumerable<ValidationFinding>> ValidatorDispatcher { get; private set; }
+        public Dispatcher<IEnumerable<ValidationFinding>> ValidatorDispatcher { get; protected set; }
 
         internal TSecureConfiguration GetConfig()
         {
@@ -47,7 +47,7 @@ namespace CtrlVAF.Core
 
             EventDispatcher = new EventDispatcher();
 
-            ValidatorDispatcher = new ValidatorDispatcher();
+            ValidatorDispatcher = new ValidatorDispatcher<TSecureConfiguration>(this);
 
             if (this.GetType().IsDefined(typeof(UseLicensingAttribute)))
             {
@@ -88,7 +88,7 @@ namespace CtrlVAF.Core
 
         protected override IEnumerable<ValidationFinding> CustomValidation(Vault vault, TSecureConfiguration config)
         {
-            var command = new ValidatorCommand<TSecureConfiguration> { Vault = vault, Configuration = config };
+            var command = new ValidatorCommand { Vault = vault};
 
             var findings =  ValidatorDispatcher.Dispatch(command);
 
