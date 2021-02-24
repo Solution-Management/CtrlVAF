@@ -25,7 +25,7 @@ namespace CtrlVAF.Validators
 
             var types = GetTypes(commands);
 
-            return HandleConcreteTypes(types, commands);
+            return HandleConcreteTypes(types, commands).ToArray();
         }
 
         protected internal override IEnumerable<Type> GetTypes(params ICtrlVAFCommand[] commands)
@@ -67,7 +67,7 @@ namespace CtrlVAF.Validators
         protected internal override IEnumerable<ValidationFinding> HandleConcreteTypes(IEnumerable<Type> concreteValidators, params ICtrlVAFCommand[] commands)
         {
             if (!concreteValidators.Any())
-                return new ValidationFinding[0];
+                yield break;
 
             //Get any validator command
             var validatorCommand = commands.FirstOrDefault(
@@ -77,9 +77,7 @@ namespace CtrlVAF.Validators
                 );
 
             if (validatorCommand == null)
-                return new ValidationFinding[0];
-
-            List<ValidationFinding> allFindings = new List<ValidationFinding>();
+                yield break;
 
             foreach (Type concreteValidator in concreteValidators)
             {
@@ -92,10 +90,11 @@ namespace CtrlVAF.Validators
                     ResultsCache.TryAdd(concreteValidator, findings.ToList());
                 }
 
-                allFindings.AddRange(findings);
+                foreach (var finding in findings)
+                {
+                    yield return finding;
+                }
             }
-
-            return allFindings;
         }
     }
 }
