@@ -88,10 +88,12 @@ namespace CtrlVAF.Validators
                 {
                     var concreteHandler = Activator.CreateInstance(concreteValidatorType);
 
+                    var subConfigType = concreteValidatorType.BaseType.GenericTypeArguments[0];
+
                     //Set the configuration
                     var configProperty = concreteValidatorType.GetProperty(nameof(ICustomValidator<object, ValidatorCommand>.Configuration));
 
-                    var subConfig = Dispatcher_Helpers.GetConfigPropertyOfType(vaultApplication.GetConfig(), typeof(TConfig));
+                    var subConfig = Dispatcher_Helpers.GetConfigPropertyOfType(vaultApplication.GetConfig(), subConfigType);
 
                     configProperty.SetValue(concreteHandler, subConfig);
 
