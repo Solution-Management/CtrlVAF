@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CtrlVAF.Commands.Handlers
+namespace CtrlVAF.Events.Handlers
 {
     public interface IEventHandler<TCommand> where TCommand : class, ICtrlVAFCommand
     {

@@ -1,6 +1,6 @@
 ﻿using System;
-using CtrlVAF.Commands;
-using CtrlVAF.Commands.Commands;
+using CtrlVAF.Events;
+using CtrlVAF.Events.Commands;
 using CtrlVAF.Core;
 using CtrlVAF.Additional;
 

@@ -1,5 +1,5 @@
-﻿using CtrlVAF.Commands.Handlers;
-using CtrlVAF.Commands.Commands;
+﻿using CtrlVAF.Events.Handlers;
+using CtrlVAF.Events.Commands;
 
 using System;
 using System.Collections.Generic;

@@ -1,4 +1,4 @@
-﻿using CtrlVAF.Commands.Commands;
+﻿using CtrlVAF.Events.Commands;
 
 using MFiles.VAF.Common;
 

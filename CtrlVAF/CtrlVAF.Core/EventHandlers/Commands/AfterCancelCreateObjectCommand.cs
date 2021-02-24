@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CtrlVAF.Commands.Commands
+namespace CtrlVAF.Events.Commands
 {
     public class AfterCancelCreateObjectCommand<T> : IEventCommand<T>
     {

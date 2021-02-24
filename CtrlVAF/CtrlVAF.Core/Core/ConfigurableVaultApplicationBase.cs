@@ -1,6 +1,6 @@
 ﻿using CtrlVAF.BackgroundOperations;
-using CtrlVAF.Commands;
-using CtrlVAF.Commands.Commands;
+using CtrlVAF.Events;
+using CtrlVAF.Events.Commands;
 using CtrlVAF.Core.Attributes;
 using CtrlVAF.Validators;
 

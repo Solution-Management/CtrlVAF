@@ -1,5 +1,5 @@
-using CtrlVAF.Commands.Commands;
-using CtrlVAF.Commands.Handlers;
+using CtrlVAF.Events.Commands;
+using CtrlVAF.Events.Handlers;
 using CtrlVAF.Core;
 using CtrlVAF.Models;
 
@@ -9,7 +9,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.ExceptionServices;
 
-namespace CtrlVAF.Commands
+namespace CtrlVAF.Events
 {
 
     //    /// <summary>
