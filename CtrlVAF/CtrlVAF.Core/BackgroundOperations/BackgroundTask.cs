@@ -13,20 +13,7 @@ namespace CtrlVAF.BackgroundOperations
                                                                 where TDirective : TaskQueueDirective, new()
                                                                 where TConfig : class, new()
     {
-        public object Config
-        {
-            set
-            {
-                if (value.GetType() != typeof(TConfig))
-                    throw new InvalidCastException($"Expected type '{typeof(TConfig).FullName}' but got '{value.GetType().FullName}'");
-
-                var newValue = (TConfig)value;
-
-                Configuration = newValue;
-            }
-        }
-
-        protected TConfig Configuration { get; set; }
+        public TConfig Configuration { get; set; }
 
         public void Task(TaskProcessorJob job, TaskQueueDirective directive)
         {

@@ -79,10 +79,10 @@ namespace CtrlVAF.BackgroundOperations
 
             var concreteTypes = Assemblies.SelectMany(a =>
             {
-                return a.GetTypes().Where( t =>
-                    t.IsClass &&
-                    t.GetInterfaces().Contains(typeof(IBackgroundTask)) &&
-                    t.IsDefined(typeof(BackgroundOperationAttribute))
+                return a.GetTypes().Where(t =>
+                   t.IsClass &&
+                   t.GetInterfaces().Contains(typeof(IBackgroundTask)) &&
+                   t.IsDefined(typeof(BackgroundOperationAttribute))
                     );
             });
 
@@ -104,7 +104,8 @@ namespace CtrlVAF.BackgroundOperations
 
                 object subConfig = GetConfigPropertyOfType(config, configSubType);
 
-                task.Config = subConfig;
+                var configProperty = task.GetType().GetProperty(nameof(BackgroundTask<object, EmptyTQD>.Configuration));
+                configProperty.SetValue(task, subConfig);
 
                 BackgroundOperationAttribute operationInfo = concreteType.GetCustomAttribute<BackgroundOperationAttribute>();
 
@@ -120,7 +121,7 @@ namespace CtrlVAF.BackgroundOperations
                         task.Task
                         );
 
-                    vaultApplication.PermanentBackgroundOperations.AddBackgroundOperation(operationInfo.Name, operation, interval);
+                    vaultApplication.RecurringBackgroundOperations.AddBackgroundOperation(operationInfo.Name, operation, interval);
 
                     PermanentBackgroundOperationNames.Add(concreteType.FullName);
                 }
@@ -153,6 +154,11 @@ namespace CtrlVAF.BackgroundOperations
                 );
 
             return;
+        }
+
+        private class EmptyTQD : TaskQueueDirective
+        {
+
         }
 
     }

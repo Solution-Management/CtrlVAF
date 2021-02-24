@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace CtrlVAF.Commands.Handlers
 {
-    public interface IEventHandler<TCommand> where TCommand : class, new()
+    public interface IEventHandler<TCommand> where TCommand : class, ICtrlVAFCommand
     {
         void Handle(TCommand command);
     }

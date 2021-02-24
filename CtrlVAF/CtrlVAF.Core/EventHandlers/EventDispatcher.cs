@@ -118,7 +118,7 @@ namespace CtrlVAF.Commands
 
                         var concreteHandler = Activator.CreateInstance(concreteHandlerType);
 
-                        var handleMethod = concreteHandlerType.GetMethod(nameof(IEventHandler<object>.Handle), new Type[] { commandType });
+                        var handleMethod = concreteHandlerType.GetMethod(nameof(IEventHandler<IEventCommand<object>>.Handle), new Type[] { commandType });
 
                         try
                         {

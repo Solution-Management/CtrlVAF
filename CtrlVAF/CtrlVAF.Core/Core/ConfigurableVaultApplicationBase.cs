@@ -1,5 +1,6 @@
 ﻿using CtrlVAF.BackgroundOperations;
 using CtrlVAF.Commands;
+using CtrlVAF.Commands.Commands;
 using CtrlVAF.Core.Attributes;
 using CtrlVAF.Validators;
 
@@ -23,7 +24,7 @@ namespace CtrlVAF.Core
     {
         public TaskQueueBackgroundOperationManager TaskQueueBackgroundOperationManager { get; set; }
 
-        public RecurringBackgroundOperations PermanentBackgroundOperations { get; }
+        public RecurringBackgroundOperations RecurringBackgroundOperations { get; }
              = new RecurringBackgroundOperations();
 
         public OnDemandBackgroundOperations OnDemandBackgroundOperations { get; }
@@ -100,5 +101,7 @@ namespace CtrlVAF.Core
 
             base.OnConfigurationUpdated(context, clientOps, oldConfiguration);
         }
+
+        
     }
 }
