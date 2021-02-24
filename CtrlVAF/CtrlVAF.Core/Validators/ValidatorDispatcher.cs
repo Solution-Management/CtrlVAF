@@ -90,7 +90,7 @@ namespace CtrlVAF.Validators
 
                     findings = concreteHandler.Validate(validatorCommand);
 
-                    ResultsCache.TryAdd(concreteValidator, findings);
+                    ResultsCache.TryAdd(concreteValidator, findings.ToList());
                 }
                 
                 foreach (var finding in findings)
