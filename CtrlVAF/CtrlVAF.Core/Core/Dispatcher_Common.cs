@@ -53,7 +53,5 @@ namespace CtrlVAF.Core
         /// </summary>
         /// <returns>Array of suitable types</returns>
         protected internal abstract IEnumerable<Type> GetTypes(params ICtrlVAFCommand[] commands);
-
-
     }
 }

@@ -5,6 +5,7 @@ using CtrlVAF.Validators;
 
 using MFiles.VAF.Common;
 using MFiles.VAF.Configuration;
+using MFiles.VAF.Configuration.AdminConfigurations;
 using MFiles.VAF.Extensions.MultiServerMode;
 
 using MFilesAPI;
@@ -91,6 +92,13 @@ namespace CtrlVAF.Core
             var findings =  ValidatorDispatcher.Dispatch(command);
 
             return findings.Concat(base.CustomValidation(vault, config));
+        }
+
+        protected override void OnConfigurationUpdated(IConfigurationRequestContext context, ClientOperations clientOps, TSecureConfiguration oldConfiguration)
+        {
+            ValidatorDispatcher.ClearCache();
+
+            base.OnConfigurationUpdated(context, clientOps, oldConfiguration);
         }
     }
 }

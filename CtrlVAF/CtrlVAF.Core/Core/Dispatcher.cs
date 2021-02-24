@@ -38,6 +38,12 @@ namespace CtrlVAF.Core
         /// <param name="types">a list of types which can be instantiated and will behave as expected</param>
         /// <returns>The result or <see cref="default"/> for no result.</returns>
         protected internal abstract void HandleConcreteTypes(IEnumerable<Type> types, params ICtrlVAFCommand[] commands);
+
+        public virtual Dispatcher ClearCache()
+        {
+            TypeCache = new ConcurrentDictionary<Type, IEnumerable<Type>>();
+            return this;
+        }
     }
 
     /// <summary>
@@ -84,5 +90,11 @@ namespace CtrlVAF.Core
         /// <returns>The result or <see cref="default"/> for no result.</returns>
         protected internal abstract TReturn HandleConcreteTypes(IEnumerable<Type> types, params ICtrlVAFCommand[] commands);
 
+        public virtual Dispatcher<TReturn> ClearCache()
+        {
+            TypeCache = new ConcurrentDictionary<Type, IEnumerable<Type>>();
+            ResultsCache = new ConcurrentDictionary<Type, TReturn>();
+            return this;
+        }
     }
 }

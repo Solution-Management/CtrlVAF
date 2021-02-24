@@ -14,7 +14,4 @@ namespace CtrlVAF.Models
 
         IDispatcher_Common IncludeAssemblies(params Type[] types);
     }
-
-    
-
 }
