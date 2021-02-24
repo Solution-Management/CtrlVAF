@@ -117,7 +117,7 @@ namespace CtrlVAF.Core
         /// <returns></returns>
         public TReturn GetCachedResults(object keyObject)
         {
-            return ResultsCache[keyObject.GetType()];
+            return GetCachedResults(keyObject.GetType());
         }
     }
 }
