@@ -96,5 +96,25 @@ namespace CtrlVAF.Core
             ResultsCache = new ConcurrentDictionary<Type, TReturn>();
             return this;
         }
+
+        /// <summary>
+        /// Gets the cached results for the key type.
+        /// </summary>
+        /// <param name="keyType"></param>
+        /// <returns></returns>
+        public TReturn GetCachedResults(Type keyType)
+        {
+            return ResultsCache[keyType];
+        }
+
+        /// <summary>
+        /// Gets the cached results for the type of keyObject
+        /// </summary>
+        /// <param name="keyObject"></param>
+        /// <returns></returns>
+        public TReturn GetCachedResults(object keyObject)
+        {
+            return ResultsCache[keyObject.GetType()];
+        }
     }
 }

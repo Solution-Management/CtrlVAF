@@ -15,8 +15,6 @@ namespace CtrlVAF.Validators
 {
     public class ValidatorDispatcher : Dispatcher<IEnumerable<ValidationFinding>>
     {
-        
-
         public ValidatorDispatcher()
         {
         }
@@ -69,7 +67,7 @@ namespace CtrlVAF.Validators
         protected internal override IEnumerable<ValidationFinding> HandleConcreteTypes(IEnumerable<Type> concreteValidators, params ICtrlVAFCommand[] commands)
         {
             if (!concreteValidators.Any())
-                yield break;
+                return new ValidationFinding[0];
 
             //Get any validator command
             var validatorCommand = commands.FirstOrDefault(
@@ -79,8 +77,9 @@ namespace CtrlVAF.Validators
                 );
 
             if (validatorCommand == null)
-                yield break;
+                return new ValidationFinding[0];
 
+            List<ValidationFinding> allFindings = new List<ValidationFinding>();
 
             foreach (Type concreteValidator in concreteValidators)
             {
@@ -92,12 +91,11 @@ namespace CtrlVAF.Validators
 
                     ResultsCache.TryAdd(concreteValidator, findings.ToList());
                 }
-                
-                foreach (var finding in findings)
-                {
-                    yield return finding;
-                }
+
+                allFindings.AddRange(findings);
             }
+
+            return allFindings;
         }
     }
 }

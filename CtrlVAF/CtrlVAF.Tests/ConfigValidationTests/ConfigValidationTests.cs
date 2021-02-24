@@ -32,31 +32,26 @@ namespace CtrlVAF.Tests.ConfigValidationTests
             Assert.AreEqual(expected, results.Count());
         }
 
-        //[TestMethod]
-        //public void Assert_ChildConfiguration()
-        //{
-        //    var expected = 1;
+        [TestMethod]
+        public void Assert_ResultsAreCached()
+        {
+            var expected = 1;
 
-        //    var vault = new MFilesAPI.Vault();
+            var vault = new MFilesAPI.Vault();
+            var config = new Configuration { Name = "", ID = 42 };
 
-        //    Configuration config = new Configuration
-        //    {
-        //        Name = "name",
-        //        ID = 42,
-        //        ChildConfig = new Child_Configuration
-        //        {
-        //            Name = ""
-        //        }
-        //    };
+            Dispatcher<IEnumerable<ValidationFinding>> dispatcher = new ValidatorDispatcher();
+            dispatcher.IncludeAssemblies(typeof(Configuration));
 
-        //    Dispatcher<IEnumerable<ValidationFinding>> dispatcher = new ValidatorDispatcher();
-        //    dispatcher.IncludeAssemblies(typeof(Configuration));
+            var command = new ValidatorCommand<Configuration> { Configuration = config, Vault = vault };
 
-        //    var command = new ValidatorCommand<Configuration> { Vault = vault, Configuration = config };
+            dispatcher.Dispatch(command);
 
-        //    var results = dispatcher.Dispatch(command);
+            var results = dispatcher.GetCachedResults(typeof(ConfigurationValidator));
 
-        //    Assert.AreEqual(expected, results.Count());
-        //}
+            Assert.AreEqual(expected, results.Count());
+        }
+
+
     }
 }
