@@ -15,9 +15,6 @@ namespace CtrlVAF.Validators
 {
     public class ValidatorDispatcher : Dispatcher<IEnumerable<ValidationFinding>>
     {
-        public ValidatorDispatcher()
-        {
-        }
 
         public override IEnumerable<ValidationFinding> Dispatch(params ICtrlVAFCommand[] commands)
         {
