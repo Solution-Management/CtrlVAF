@@ -9,10 +9,12 @@ using System.Threading.Tasks;
 
 namespace CtrlVAF.Tests.ConfigValidationTests
 {
-    class ConfigurationValidator : CustomValidator<Configuration>
+    class ConfigurationValidator : CustomValidator<ValidatorCommand<Configuration>>
     {
-        protected override IEnumerable<ValidationFinding> Validate(Vault vault, Configuration configuration)
+        public override IEnumerable<ValidationFinding> Validate(ValidatorCommand<Configuration> command)
         {
+            var configuration = command.Configuration;
+
             if (string.IsNullOrWhiteSpace(configuration.Name))
                 yield return new ValidationFinding(
                     ValidationFindingType.Error,

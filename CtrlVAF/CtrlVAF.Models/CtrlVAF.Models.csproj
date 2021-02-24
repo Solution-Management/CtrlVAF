@@ -42,8 +42,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IDispatcher.cs" />
-    <Compile Include="IVoidDispatcher.cs" />
+    <Compile Include="IDispatcher_Common.cs" />
+    <Compile Include="ICtrlVAFCommand.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

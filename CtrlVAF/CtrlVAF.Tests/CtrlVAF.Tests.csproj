@@ -41,7 +41,7 @@
   <ItemGroup>
     <Reference Include="Interop.MFilesAPI, Version=7.0.0.0, Culture=neutral, PublicKeyToken=f1b4733f444f7ad0, processorArchitecture=MSIL">
       <HintPath>..\packages\MFiles.VAF.2.2.0.10\lib\net45\Interop.MFilesAPI.dll</HintPath>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
     </Reference>
     <Reference Include="MFiles.Crypto, Version=2.2.0.10, Culture=neutral, PublicKeyToken=fa007b370d17fe5e, processorArchitecture=MSIL">
       <HintPath>..\packages\MFiles.VAF.2.2.0.10\lib\net45\MFiles.Crypto.dll</HintPath>
@@ -81,27 +81,39 @@
     <Compile Include="CommandTests\BeforeSetPropertiesHandler.cs" />
     <Compile Include="CommandTests\CommandTests.cs" />
     <Compile Include="CommandTests\Configuration.cs" />
+    <Compile Include="CommandTests\CustomCommands.cs" />
+    <Compile Include="CommandTests\CustomCommandHandlers.cs" />
+    <Compile Include="CommandTests\SpeedTests.cs" />
     <Compile Include="ConfigValidationTests\Child_ConfigurationValidator.cs" />
     <Compile Include="ConfigValidationTests\Configuration.cs" />
     <Compile Include="ConfigValidationTests\ConfigurationValidator.cs" />
     <Compile Include="ConfigValidationTests\ConfigValidationTests.cs" />
+    <Compile Include="ConfigValidationTests\SpeedTests.cs" />
+    <Compile Include="LicensingTests\Configuration.cs" />
+    <Compile Include="LicensingTests\LicensedCommandHandler_AllModules.cs" />
+    <Compile Include="LicensingTests\LicensedCommandHandler_Module1.cs" />
+    <Compile Include="LicensingTests\LicensedCommandHandler_Module2.cs" />
+    <Compile Include="LicensingTests\TestLicenseCommand.cs" />
+    <Compile Include="LicensingTests\LicensingTests.cs" />
+    <Compile Include="LicensingTests\TestLicenseContent.cs" />
+    <Compile Include="LicensingTests\UnlicensedCommandHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CtrlVAF.Commands\CtrlVAF.Commands.csproj">
-      <Project>{a473ed6c-0e80-4bcc-a07f-359c36313565}</Project>
-      <Name>CtrlVAF.Commands</Name>
+    <ProjectReference Include="..\CtrlVAF.AdditionalAssembly\CtrlVAF.AdditionalAssembly.csproj">
+      <Project>{6ccb9743-0cc3-4f1c-8bbb-4df2897ddb88}</Project>
+      <Name>CtrlVAF.AdditionalAssembly</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CtrlVAF.Core\CtrlVAF.Core.csproj">
+      <Project>{cc724d5e-1339-477a-b608-f738fdf0c7f6}</Project>
+      <Name>CtrlVAF.Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\CtrlVAF.Models\CtrlVAF.Models.csproj">
-      <Project>{54188975-1D5E-49E1-A854-5FE4987E83F4}</Project>
+      <Project>{54188975-1d5e-49e1-a854-5fe4987e83f4}</Project>
       <Name>CtrlVAF.Models</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\CtrlVAF.Validators\CtrlVAF.Validators.csproj">
-      <Project>{3a0d3152-1468-4b0a-8ac7-8ed3322c8602}</Project>
-      <Name>CtrlVAF.Validators</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />

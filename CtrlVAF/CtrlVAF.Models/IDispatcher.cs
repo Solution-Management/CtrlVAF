@@ -1,47 +1,27 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace CtrlVAF.Models
 {
-    public abstract class IDispatcher
+    public interface IDispatcher<TReturn> : IDispatcher_Common
     {
         /// <summary>
-        /// Cache to hold the concrete types found for each type of dispatcher execution type
+        /// Main dispatcher entry method. Searches for suitable classes and instantiates them to execute some logic.
         /// </summary>
-        protected ConcurrentDictionary<Type, IEnumerable<Type>> TypeCache = new ConcurrentDictionary<Type, IEnumerable<Type>>();
+        /// <returns>Object of type <see cref="TReturn"/>. 
+        /// In case no suitable types are found or no return is expected this will be <see cref="default"/>. </returns>
+        TReturn Dispatch(params ICtrlVAFCommand[] commands);
+    }
 
-        /// <summary>
-        /// List of additional assemblies to look through for concrete types.
-        /// Always contains the calling assembly!
-        /// </summary>
-        protected List<Assembly> Assemblies = new List<Assembly>() { Assembly.GetCallingAssembly() };
 
+    public interface IDispatcher : IDispatcher_Common
+    {
         /// <summary>
-        /// Method to include additional assemblies in which to look for ICommandHandlers. The calling assembly is always included.
+        /// Main dispatcher entry method. Searches for suitable classes and instantiates them to execute some logic.
         /// </summary>
-        /// <param name="assemblies">The assemblies in which to look for</param>
-        /// <returns>The same CommandDispatcher</returns>
-        public IDispatcher IncludeAssemblies(params Assembly[] assemblies)
-        {
-            Assemblies.AddRange(assemblies);
-            Assemblies = Assemblies.Distinct().ToList();
-            return this;
-        }
-
-        /// <summary>
-        /// Overload method to IncludeAssmblies to allow for adding types directly and converting the Assmblies from these.
-        /// </summary>
-        /// <param name="types">The types of which to get the assemblies from</param>
-        /// <returns>The same CommandDispatcher</returns>
-        public IDispatcher IncludeAssemblies(params Type[] types)
-        {
-            var assemblies = types.Select(t => { return t.Assembly; }).ToArray();
-            return IncludeAssemblies(assemblies);
-        }
+        void Dispatch(params ICtrlVAFCommand[] commands);
     }
 }
