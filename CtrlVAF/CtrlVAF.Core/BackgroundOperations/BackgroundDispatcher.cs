@@ -9,11 +9,8 @@ using Newtonsoft.Json;
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CtrlVAF.BackgroundOperations
 {
@@ -80,10 +77,12 @@ namespace CtrlVAF.BackgroundOperations
             var concreteTypes = Assemblies.SelectMany(a =>
             {
                 return a.GetTypes().Where(t =>
-                   t.IsClass &&
-                   t.GetInterfaces().Contains(typeof(IBackgroundTask)) &&
-                   t.IsDefined(typeof(BackgroundOperationAttribute))
-                    );
+                {
+                    return t.IsClass &&
+                           t.BaseType.IsGenericType &&
+                           t.BaseType.GetGenericTypeDefinition() == typeof(BackgroundTaskHandler<,>) &&
+                           t.IsDefined(typeof(BackgroundOperationAttribute));
+                });
             });
 
             return concreteTypes;
@@ -96,16 +95,25 @@ namespace CtrlVAF.BackgroundOperations
 
             foreach (Type concreteType in concreteTypes)
             {
-                var task = Activator.CreateInstance(concreteType) as IBackgroundTask;
+                var backgroundTaskHandler = Activator.CreateInstance(concreteType);
 
+                //Get the right configuration subType and object
                 TConfig config = vaultApplication.GetConfig();
 
                 Type configSubType = concreteType.BaseType.GenericTypeArguments[0];
 
                 object subConfig = GetConfigPropertyOfType(config, configSubType);
 
-                var configProperty = task.GetType().GetProperty(nameof(BackgroundTask<object, EmptyTQD>.Configuration));
-                configProperty.SetValue(task, subConfig);
+                //Set the configuration
+                var configProperty = backgroundTaskHandler.GetType().GetProperty(nameof(IBackgroundTaskHandler<object, EmptyTQD>.Configuration));
+                configProperty.SetValue(backgroundTaskHandler, subConfig);
+
+                //Get the Task Action
+                var taskMethod = backgroundTaskHandler.GetType().GetMethod(nameof(IBackgroundTaskHandler<object, EmptyTQD>.Task));
+
+                Action<TaskProcessorJob, TaskQueueDirective> task = 
+                    (Action<TaskProcessorJob, TaskQueueDirective>)
+                    Delegate.CreateDelegate(typeof(Action<TaskProcessorJob, TaskQueueDirective>), concreteType, taskMethod);
 
                 BackgroundOperationAttribute operationInfo = concreteType.GetCustomAttribute<BackgroundOperationAttribute>();
 
@@ -118,7 +126,7 @@ namespace CtrlVAF.BackgroundOperations
                     TaskQueueBackgroundOperation operation = vaultApplication.TaskQueueBackgroundOperationManager.StartRecurringBackgroundOperation(
                         operationInfo.Name,
                         interval,
-                        task.Task
+                        task
                         );
 
                     vaultApplication.RecurringBackgroundOperations.AddBackgroundOperation(operationInfo.Name, operation, interval);
@@ -129,7 +137,7 @@ namespace CtrlVAF.BackgroundOperations
                 {
                     TaskQueueBackgroundOperation operation = vaultApplication.TaskQueueBackgroundOperationManager.CreateBackgroundOperation<TaskQueueDirective>(
                         operationInfo.Name,
-                        task.Task
+                        task
                         );
 
                     vaultApplication.OnDemandBackgroundOperations.AddBackgroundOperation(operationInfo.Name, operation);

@@ -73,12 +73,12 @@
     <Compile Include="BackgroundOperations\Attributes\BackgroundOperationAttribute.cs" />
     <Compile Include="BackgroundOperations\Attributes\RecurringAttribute.cs" />
     <Compile Include="BackgroundOperations\BackgroundDispatcher.cs" />
-    <Compile Include="BackgroundOperations\BackgroundTask.cs" />
+    <Compile Include="BackgroundOperations\IBackgroundTaskHandler.cs" />
     <Compile Include="Core\Dispatcher_Common.cs" />
     <Compile Include="Core\ConfigurableVaultApplicationBase.cs" />
-    <Compile Include="BackgroundOperations\IBackgroundTask.cs" />
     <Compile Include="BackgroundOperations\OnDemandBackgroundOperations.cs" />
     <Compile Include="BackgroundOperations\RecurringBackgroundOperations.cs" />
+    <Compile Include="Core\ICommandHandler.cs" />
     <Compile Include="Core\LicensedDispatcher.cs" />
     <Compile Include="Core\Dispatcher.cs" />
     <Compile Include="EventHandlers\EventDispatcher.cs" />
@@ -155,7 +155,7 @@
     <Compile Include="EventHandlers\Commands\IEventCommand.cs" />
     <Compile Include="EventHandlers\Commands\ReplicationAfterCheckInChangesCommand.cs" />
     <Compile Include="EventHandlers\Commands\ReplicationAfterCreateNewObjectFinalizeCommand.cs" />
-    <Compile Include="EventHandlers\Handlers\CommandHandler.cs" />
+    <Compile Include="EventHandlers\Handlers\EventHandler.cs" />
     <Compile Include="Validators\CustomValidator.cs" />
     <Compile Include="Validators\ICustomValidator.cs" />
     <Compile Include="Validators\ValidatorCommand.cs" />
