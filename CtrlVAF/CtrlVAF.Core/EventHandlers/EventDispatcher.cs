@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.ExceptionServices;
 
 namespace CtrlVAF.Commands
 {
@@ -125,7 +126,7 @@ namespace CtrlVAF.Commands
                         }
                         catch (TargetInvocationException te)
                         {
-                            throw te.InnerException;
+                            ExceptionDispatchInfo.Capture(te.InnerException).Throw();
                         }
                         catch (Exception e)
                         {
