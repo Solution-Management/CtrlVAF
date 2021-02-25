@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.ExceptionServices;
 
 namespace CtrlVAF.BackgroundOperations
 {
@@ -77,8 +78,23 @@ namespace CtrlVAF.BackgroundOperations
                         operationInfo.Name,
                         interval,
                         (job, directive) => 
-                        { 
-                            GetTask(concreteType)(job, directive); 
+                        {
+                            var backgroundTaskHandler = GetTaskHandler(concreteType);
+
+                            var taskMethod = backgroundTaskHandler.GetType().GetMethod(nameof(IBackgroundTaskHandler<object, EmptyTQD>.Task));
+
+                            try
+                            {
+                                taskMethod.Invoke(backgroundTaskHandler, new object[] { job, directive });
+                            }
+                            catch (TargetInvocationException te)
+                            {
+                                ExceptionDispatchInfo.Capture(te.InnerException).Throw();
+                            }
+                            catch (Exception e)
+                            {
+                                throw e;
+                            }
                         }
                         );
 
@@ -92,7 +108,22 @@ namespace CtrlVAF.BackgroundOperations
                         operationInfo.Name,
                         (job, directive) => 
                         {
-                            GetTask(concreteType)(job, directive);
+                            var backgroundTaskHandler = GetTaskHandler(concreteType);
+
+                            var taskMethod = backgroundTaskHandler.GetType().GetMethod(nameof(IBackgroundTaskHandler<object, EmptyTQD>.Task));
+
+                            try
+                            {
+                                taskMethod.Invoke(backgroundTaskHandler, new object[] { job, directive });
+                            }
+                            catch (TargetInvocationException te)
+                            {
+                                ExceptionDispatchInfo.Capture(te.InnerException).Throw();
+                            }
+                            catch (Exception e)
+                            {
+                                throw e;
+                            }
                         }
                         );
 
@@ -120,7 +151,8 @@ namespace CtrlVAF.BackgroundOperations
             return;
         }
 
-        private Action<TaskProcessorJob, TaskQueueDirective> GetTask(Type concreteType) {
+        private BackgroundTaskHandler GetTaskHandler(Type concreteType)
+        {
             var backgroundTaskHandler = Activator.CreateInstance(concreteType) as BackgroundTaskHandler;
 
             //Get the right configuration subType and object
@@ -140,14 +172,10 @@ namespace CtrlVAF.BackgroundOperations
             backgroundTaskHandler.RecurringBackgroundOperations = vaultApplication.RecurringBackgroundOperations;
             if (vaultApplication.ValidationResults.TryGetValue(subConfigType, out ValidationResults results))
                 backgroundTaskHandler.ValidationResults = results;
+            else
+                backgroundTaskHandler.ValidationResults = null;
 
-            //Get the Task Action
-            var taskMethod = backgroundTaskHandler.GetType().GetMethod(nameof(IBackgroundTaskHandler<object, EmptyTQD>.Task));
-
-            return (Action<TaskProcessorJob, TaskQueueDirective>)Delegate.CreateDelegate(
-                typeof(Action<TaskProcessorJob, TaskQueueDirective>),
-                concreteType, taskMethod
-                );
+            return backgroundTaskHandler;
         }
 
         private class EmptyTQD : TaskQueueDirective
