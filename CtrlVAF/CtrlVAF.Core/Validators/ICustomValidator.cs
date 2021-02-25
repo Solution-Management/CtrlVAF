@@ -19,4 +19,6 @@ namespace CtrlVAF.Validators
     {
         IEnumerable<ValidationFinding> Validate(TCommand command);
     }
+
+    
 }

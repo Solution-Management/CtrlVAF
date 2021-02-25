@@ -86,16 +86,17 @@ namespace CtrlVAF.Validators
             {
                 if (!ResultsCache.TryGetValue(concreteValidatorType, out IEnumerable<ValidationFinding> findings))
                 {
-                    var concreteHandler = Activator.CreateInstance(concreteValidatorType);
+                    var concreteHandler = Activator.CreateInstance(concreteValidatorType) as CustomValidator;
 
                     var subConfigType = concreteValidatorType.BaseType.GenericTypeArguments[0];
 
                     //Set the configuration
                     var configProperty = concreteValidatorType.GetProperty(nameof(ICustomValidator<object, ValidatorCommand>.Configuration));
-
                     var subConfig = Dispatcher_Helpers.GetConfigPropertyOfType(vaultApplication.GetConfig(), subConfigType);
-
                     configProperty.SetValue(concreteHandler, subConfig);
+
+                    //Set the PermanentVault
+                    concreteHandler.PermanentVault = vaultApplication.PermanentVault;
 
                     var validateMethod = concreteValidatorType.GetMethod(nameof(ICustomValidator<object, ValidatorCommand>.Validate));
 

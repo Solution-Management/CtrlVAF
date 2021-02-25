@@ -1,4 +1,6 @@
-﻿using CtrlVAF.Models;
+﻿using CtrlVAF.BackgroundOperations;
+using CtrlVAF.Core;
+using CtrlVAF.Models;
 
 using MFiles.VAF.Configuration;
 
@@ -8,13 +10,23 @@ using System.Collections.Generic;
 
 namespace CtrlVAF.Validators
 {
-    public abstract class CustomValidator<TConfig, TCommand>: ICustomValidator<TConfig, TCommand> 
+    public abstract class CustomValidator<TConfig, TCommand>: CustomValidator, ICustomValidator<TConfig, TCommand> 
         where TConfig: class, new()
         where TCommand: ValidatorCommand
     {
         public TConfig Configuration { get; internal set; }
 
+
         public abstract IEnumerable<ValidationFinding> Validate(TCommand command);
         
+    }
+
+    public abstract class CustomValidator: ICommandHandler
+    {
+        public Vault PermanentVault { get; internal set; }
+
+        public OnDemandBackgroundOperations OnDemandBackgroundOperations { get; internal set; } 
+
+        public RecurringBackgroundOperations RecurringBackgroundOperations { get; internal set; }
     }
 }

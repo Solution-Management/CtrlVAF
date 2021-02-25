@@ -82,6 +82,7 @@
     <Compile Include="Core\ICommandHandler.cs" />
     <Compile Include="Core\LicensedDispatcher.cs" />
     <Compile Include="Core\Dispatcher.cs" />
+    <Compile Include="Validators\ValidatorResults.cs" />
     <Compile Include="EventHandlers\EventDispatcher.cs" />
     <Compile Include="EventHandlers\Commands\AfterBeginTransactionCommand.cs" />
     <Compile Include="EventHandlers\Commands\AfterBringOnlineCommand.cs" />
