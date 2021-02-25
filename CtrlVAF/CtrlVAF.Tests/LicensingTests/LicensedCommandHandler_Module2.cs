@@ -10,9 +10,9 @@ using System.Threading.Tasks;
 namespace CtrlVAF.Tests.LicensingTests
 {
     [LicenseRequired(Modules = new string[] { "Module2" })]
-    class LicensedCommandHandler_Module2: IEventHandler<TestLicenseCommand>
+    class LicensedCommandHandler_Module2: EventHandler<Configuration, TestLicenseCommand>
     {
-        public void Handle(TestLicenseCommand command)
+        public override void Handle(TestLicenseCommand command)
         {
             command.Result *= 7;
         }

@@ -2,7 +2,9 @@
 using CtrlVAF.Core;
 using CtrlVAF.Core.Attributes;
 using CtrlVAF.Events;
-using CtrlVAF.Validators;
+using CtrlVAF.Validation;
+
+using MFiles.VAF.Common;
 
 using MFiles.VAF.Configuration;
 
@@ -17,9 +19,10 @@ using System.Threading.Tasks;
 
 namespace CtrlVAF.Tests
 {
-    class VaultApplication: ConfigurableVaultApplicationBase<Configuration>
+    class VaultApplication<TConfig>: ConfigurableVaultApplicationBase<TConfig>
+        where TConfig: class, new()
     {
-        private LicenseContentBase licenseContent = null;
+        public LicenseContentBase licenseContent = null;
 
         public VaultApplication(): base()
         {
@@ -31,18 +34,18 @@ namespace CtrlVAF.Tests
             licenseContent = content;
         }
 
-        public void SetConfig(Configuration config)
+        public void SetConfig(TConfig config)
         {
             Configuration = config;
         }
 
         public override void StartOperations(Vault vaultPersistent)
         {
-            BackgroundDispatcher = new BackgroundDispatcher<Configuration>(this);
+            BackgroundDispatcher = new BackgroundDispatcher<TConfig>(this);
 
-            EventDispatcher = new EventDispatcher();
+            EventDispatcher = new EventDispatcher<TConfig>(this);
 
-            ValidatorDispatcher = new ValidatorDispatcher<Configuration>(this);
+            ValidatorDispatcher = new ValidatorDispatcher<TConfig>(this);
 
             if (this.GetType().IsDefined(typeof(UseLicensingAttribute)))
             {
@@ -53,5 +56,7 @@ namespace CtrlVAF.Tests
                 ValidatorDispatcher = new LicensedDispatcher<IEnumerable<ValidationFinding>>(ValidatorDispatcher, licenseContent);
             }
         }
+
+
     }
 }

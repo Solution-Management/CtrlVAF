@@ -7,9 +7,8 @@ using System.Threading.Tasks;
 
 namespace CtrlVAF.Events.Commands
 {
-    public class AfterBeginTransactionCommand<T> : IEventCommand<T>
+    public class AfterBeginTransactionCommand : IEventCommand
     {
         public EventHandlerEnvironment Env { get; set; }
-        public T Configuration { get; set; }
     }
 }

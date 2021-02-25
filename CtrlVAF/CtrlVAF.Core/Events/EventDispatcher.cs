@@ -1,4 +1,3 @@
-using CtrlVAF.Events.Commands;
 using CtrlVAF.Events.Handlers;
 using CtrlVAF.Core;
 using CtrlVAF.Models;
@@ -8,10 +7,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.ExceptionServices;
+using MFiles.VAF.Common;
+using CtrlVAF.Core.Events.Attributes;
 
 namespace CtrlVAF.Events
 {
-
     //    /// <summary>
     //    /// Main command dispatcher entry method. Typical usage of this method would be inside an event handler method inside the vault application base class.
     //    /// Once called, the dispatcher will locate any ICommandHandlers using the same TCommand interface and invoke their handle method.
@@ -21,8 +21,11 @@ namespace CtrlVAF.Events
     //    /// <param name="throwExceptions">Whether or not to stop executing ICommandHandlers upon exceptions and throw the exception</param>
     //    /// <param name="exceptionHandler">An exception handler to pass along or handle any ICommandHandler exceptions</param>
 
-    public class EventDispatcher : Dispatcher
+    public class EventDispatcher<TConfig> : Dispatcher
+        where TConfig: class, new()
     {
+        private ConfigurableVaultApplicationBase<TConfig> vaultApplication;
+
         /// <summary>
         /// Typical usage of this class would be inside an event handler method inside the vault application base class.
         /// Once called, the dispatcher will locate any ICommandHandlers using the same TCommand interface and invoke their handle method.
@@ -30,13 +33,26 @@ namespace CtrlVAF.Events
         /// <param name="command">A command of type TCommand that has inherited from <see cref="Commands.IEventCommand{T}"/></param>
         /// <param name="throwExceptions">Whether or not to stop executing ICommandHandlers upon exceptions and throw the exception</param>
         /// <param name="exceptionHandler">An exception handler to pass along or handle any ICommandHandler exceptions</param>
-        public EventDispatcher()
+        public EventDispatcher(ConfigurableVaultApplicationBase<TConfig> vaultApplication)
         {
+            this.vaultApplication = vaultApplication;
         }
 
         /// <inheritdoc/>
         public override void Dispatch(params ICtrlVAFCommand[] commands)
         {
+            var wrongCommands = commands.ToList().RemoveAll(cmd =>
+               cmd.GetType() != typeof(EventCommand) ||
+               cmd.GetType().BaseType == typeof(EventCommand));
+            if (wrongCommands > 0)
+            {
+                SysUtils.ReportWarningToEventLog(
+                    "Event Dispatcher",
+                    "",
+                    new InvalidOperationException("Skipping commands that were not EventCommands")
+                    );
+            }
+
             IncludeAssemblies(Assembly.GetCallingAssembly());
 
             var concreteTypes = GetTypes(commands);
@@ -47,12 +63,12 @@ namespace CtrlVAF.Events
         protected internal override IEnumerable<Type> GetTypes(params ICtrlVAFCommand[] commands)
         {
             // Instantiate a handlerType according to the TCommand type provided
-            Type handlerType = typeof(IEventHandler<>);
+            Type abstractHandlerType = typeof(EventHandler<,>);
             List<Type> dispatchableHandlerTypes = new List<Type>();
 
             List<Type> parsedCommands = new List<Type>();
 
-            foreach (ICtrlVAFCommand command in commands)
+            foreach (EventCommand command in commands)
             {
                 Type commandType = command.GetType();
 
@@ -66,25 +82,23 @@ namespace CtrlVAF.Events
                     continue;
                 }
 
+                //get the event handlers that can handle this command type and are designated to handle the event described in the commands Env
                 List<Type> handlerTypes = new List<Type>();
-
                 foreach (Assembly assembly in Assemblies)
                 {
-                    var types = assembly.GetTypes();
+                    var commandHandlerTypes = assembly.GetTypes().Where(t =>
+                        t.IsClass &&
+                        t.BaseType.IsGenericType &&
+                        t.BaseType.GetGenericTypeDefinition() == abstractHandlerType &&
+                        t.BaseType.GenericTypeArguments[1] == commandType); ;
 
-                    foreach (Type type in types)
-                    {
-                        if (type.IsClass)
-                        {
-                            var commandHandlerInterfaces = type.GetInterfaces().Where(t =>
-                            t.IsGenericType &&
-                            t.GetGenericTypeDefinition() == handlerType &&
-                            t.GenericTypeArguments[0] == commandType);
+                    var eventHanderTypes = commandHandlerTypes.Where(t =>
+                        t.GetCustomAttributes<EventCommandHandlerAttribute>().Any(a =>
+                            a.EventHandlerTypeMatches(command.Env.EventType)
+                            )
+                        );
 
-                            if (commandHandlerInterfaces.Any())
-                                handlerTypes.Add(type);
-                        }
-                    }
+                    handlerTypes.AddRange(eventHanderTypes);
                 }
 
                 TypeCache.TryAdd(commandType, handlerTypes.Distinct());
@@ -115,9 +129,21 @@ namespace CtrlVAF.Events
                         if (handledTypes.Contains(concreteHandlerType) || !types.Contains(concreteHandlerType))
                             continue;
 
-                        var concreteHandler = Activator.CreateInstance(concreteHandlerType);
+                        var concreteHandler = Activator.CreateInstance(concreteHandlerType) as Handlers.EventHandler;
 
-                        var handleMethod = concreteHandlerType.GetMethod(nameof(IEventHandler<IEventCommand<object>>.Handle), new Type[] { commandType });
+                        var subConfigType = concreteHandlerType.BaseType.GenericTypeArguments[0];
+
+                        //Set the configuration
+                        var configProperty = concreteHandlerType.GetProperty(nameof(ICommandHandler<object>.Configuration));
+                        var subConfig = Dispatcher_Helpers.GetConfigPropertyOfType(vaultApplication.GetConfig(), subConfigType);
+                        configProperty.SetValue(concreteHandler, subConfig);
+
+                        //Set the configuration independent variables
+                        concreteHandler.PermanentVault = vaultApplication.PermanentVault;
+                        concreteHandler.OnDemandBackgroundOperations = vaultApplication.OnDemandBackgroundOperations;
+                        concreteHandler.RecurringBackgroundOperations = vaultApplication.RecurringBackgroundOperations;
+
+                        var handleMethod = concreteHandlerType.GetMethod(nameof(EventHandler<object, EventCommand>.Handle), new Type[] { commandType });
 
                         try
                         {

@@ -1,4 +1,4 @@
-﻿using CtrlVAF.Validators;
+﻿using CtrlVAF.Validation;
 using MFiles.VAF.Configuration;
 using MFilesAPI;
 using System;
@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace CtrlVAF.Tests.ConfigValidationTests
 {
-    class ConfigurationValidator : CustomValidator<Configuration, ValidatorCommand>
+    class ConfigurationValidator : CustomValidator<Configuration, ValidationCommand>
     {
-        public override IEnumerable<ValidationFinding> Validate(ValidatorCommand command)
+        public override IEnumerable<ValidationFinding> Validate(ValidationCommand command)
         {
             if (string.IsNullOrWhiteSpace(Configuration.Name))
                 yield return new ValidationFinding(

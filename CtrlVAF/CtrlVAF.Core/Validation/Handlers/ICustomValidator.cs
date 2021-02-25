@@ -11,11 +11,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CtrlVAF.Validators
+namespace CtrlVAF.Validation
 {
     public interface ICustomValidator<TConfig, TCommand>: ICommandHandler<TConfig>
         where TConfig: class, new()
-        where TCommand: ValidatorCommand
+        where TCommand: ValidationCommand
     {
         IEnumerable<ValidationFinding> Validate(TCommand command);
     }

@@ -1,4 +1,4 @@
-﻿using CtrlVAF.Events.Commands;
+﻿using CtrlVAF.Events;
 using CtrlVAF.Events.Handlers;
 
 using System;
@@ -14,11 +14,11 @@ namespace CtrlVAF.Additional
         public int id = 0;
     }
 
-    public class TestHandler : IEventHandler<BeforeCheckInChangesCommand<TestConfiguration>>
+    public class TestHandler : EventHandler<TestConfiguration, EventCommand>
     {
-        public void Handle(BeforeCheckInChangesCommand<TestConfiguration> command)
+        public override void Handle(EventCommand command)
         {
-            command.Env.CurrentUserID = command.Configuration.id;
+            command.Env.CurrentUserID = Configuration.id;
         }
     }
 }

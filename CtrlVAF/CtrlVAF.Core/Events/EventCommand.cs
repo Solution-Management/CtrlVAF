@@ -1,6 +1,6 @@
 ﻿using CtrlVAF.Models;
 
-using MFilesAPI;
+using MFiles.VAF.Common;
 
 using System;
 using System.Collections.Generic;
@@ -8,12 +8,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CtrlVAF.Validators
+namespace CtrlVAF.Events
 {
-    public class ValidatorCommand: ICtrlVAFCommand
+    public class EventCommand: ICtrlVAFCommand
     {
-        public Vault Vault { get; set; }
-
+        public EventHandlerEnvironment Env { get; set; }
     }
-
 }

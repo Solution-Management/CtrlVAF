@@ -8,17 +8,15 @@ using MFilesAPI;
 
 using System.Collections.Generic;
 
-namespace CtrlVAF.Validators
+namespace CtrlVAF.Validation
 {
     public abstract class CustomValidator<TConfig, TCommand>: CustomValidator, ICustomValidator<TConfig, TCommand> 
         where TConfig: class, new()
-        where TCommand: ValidatorCommand
+        where TCommand: ValidationCommand
     {
         public TConfig Configuration { get; internal set; }
 
-
         public abstract IEnumerable<ValidationFinding> Validate(TCommand command);
-        
     }
 
     public abstract class CustomValidator: ICommandHandler

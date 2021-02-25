@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CtrlVAF.Validators
+namespace CtrlVAF.Validation
 {
     class ValidatorResults: IEnumerable<KeyValuePair<Type, IEnumerable<ValidationFinding>>>
     {

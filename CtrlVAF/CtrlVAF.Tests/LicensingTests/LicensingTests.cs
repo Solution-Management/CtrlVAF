@@ -22,11 +22,12 @@ namespace CtrlVAF.Tests.LicensingTests
             TestLicenseCommand command = new TestLicenseCommand
             {
                 Env = new MFiles.VAF.Common.EventHandlerEnvironment(),
-                Configuration = new Configuration(),
                 Result = 1
             };
 
-            Dispatcher dispatcher = new EventDispatcher();
+            var va = Helpers.InitializeTestVA(new Configuration());
+
+            var dispatcher = va.EventDispatcher;
 
             dispatcher.Dispatch(command);
 
@@ -42,17 +43,16 @@ namespace CtrlVAF.Tests.LicensingTests
             TestLicenseCommand command = new TestLicenseCommand
             {
                 Env = new MFiles.VAF.Common.EventHandlerEnvironment(),
-                Configuration = new Configuration(),
                 Result = 1
             };
-
-            Dispatcher dispatcher = new EventDispatcher();
 
             TestLicenseContent licenseContent = new TestLicenseContent();
 
             licenseContent.SetValidity(false);
 
-            dispatcher = new LicensedDispatcher(dispatcher, licenseContent);
+            var va = Helpers.InitializeTestVA(new Configuration(), licenseContent);
+
+            Dispatcher dispatcher = va.EventDispatcher;
 
             dispatcher.Dispatch(commands: command);
 
@@ -68,17 +68,16 @@ namespace CtrlVAF.Tests.LicensingTests
             TestLicenseCommand command = new TestLicenseCommand
             {
                 Env = new MFiles.VAF.Common.EventHandlerEnvironment(),
-                Configuration = new Configuration(),
                 Result = 1
             };
-
-            Dispatcher dispatcher = new EventDispatcher();
 
             TestLicenseContent licenseContent = new TestLicenseContent();
 
             licenseContent.SetValidity(true);
 
-            dispatcher = new LicensedDispatcher(dispatcher, licenseContent);
+            var va = Helpers.InitializeTestVA(new Configuration(), licenseContent);
+
+            Dispatcher dispatcher = va.EventDispatcher;
 
             dispatcher.Dispatch(command);
 
@@ -94,11 +93,8 @@ namespace CtrlVAF.Tests.LicensingTests
             TestLicenseCommand command = new TestLicenseCommand
             {
                 Env = new MFiles.VAF.Common.EventHandlerEnvironment(),
-                Configuration = new Configuration(),
                 Result = 1
             };
-
-            Dispatcher dispatcher = new EventDispatcher();
 
             TestLicenseContent licenseContent = new TestLicenseContent();
 
@@ -106,7 +102,9 @@ namespace CtrlVAF.Tests.LicensingTests
 
             licenseContent.Modules = new List<string> { "Module1" };
 
-            dispatcher = new LicensedDispatcher(dispatcher, licenseContent);
+            var va = Helpers.InitializeTestVA(new Configuration(), licenseContent);
+
+            Dispatcher dispatcher = va.EventDispatcher;
 
             dispatcher.Dispatch(command);
 
@@ -122,11 +120,8 @@ namespace CtrlVAF.Tests.LicensingTests
             TestLicenseCommand command = new TestLicenseCommand
             {
                 Env = new MFiles.VAF.Common.EventHandlerEnvironment(),
-                Configuration = new Configuration(),
                 Result = 1
             };
-
-            Dispatcher dispatcher = new EventDispatcher();
 
             TestLicenseContent licenseContent = new TestLicenseContent();
 
@@ -134,7 +129,9 @@ namespace CtrlVAF.Tests.LicensingTests
 
             licenseContent.Modules = new List<string> { "Module2" };
 
-            dispatcher = new LicensedDispatcher(dispatcher, licenseContent);
+            var va = Helpers.InitializeTestVA(new Configuration(), licenseContent);
+
+            Dispatcher dispatcher = va.EventDispatcher;
 
             dispatcher.Dispatch(command);
 
@@ -150,11 +147,9 @@ namespace CtrlVAF.Tests.LicensingTests
             TestLicenseCommand command = new TestLicenseCommand
             {
                 Env = new MFiles.VAF.Common.EventHandlerEnvironment(),
-                Configuration = new Configuration(),
                 Result = 1
             };
 
-            Dispatcher dispatcher = new EventDispatcher();
 
             TestLicenseContent licenseContent = new TestLicenseContent();
 
@@ -162,7 +157,9 @@ namespace CtrlVAF.Tests.LicensingTests
 
             licenseContent.Modules = new List<string> { "Module1","Module2" };
 
-            dispatcher = new LicensedDispatcher(dispatcher, licenseContent);
+            var va = Helpers.InitializeTestVA(new Configuration(), licenseContent);
+
+            Dispatcher dispatcher = va.EventDispatcher;
 
             dispatcher.Dispatch(command);
 

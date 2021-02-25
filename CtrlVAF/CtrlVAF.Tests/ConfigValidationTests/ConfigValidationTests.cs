@@ -1,6 +1,6 @@
 ﻿
 using CtrlVAF.Core;
-using CtrlVAF.Validators;
+using CtrlVAF.Validation;
 
 using MFiles.VAF.Configuration;
 
@@ -22,13 +22,11 @@ namespace CtrlVAF.Tests.ConfigValidationTests
             var vault = new MFilesAPI.Vault();
             var config = new Configuration { Name = "", ID = 42 };
 
-            var va = new VaultApplication();
-            va.SetConfig(config);
-            va.StartOperations(vault);
+            var va = Helpers.InitializeTestVA(config);
 
             Dispatcher<IEnumerable<ValidationFinding>> dispatcher = va.ValidatorDispatcher;
 
-            var command = new ValidatorCommand { Vault = vault };
+            var command = new ValidationCommand { Vault = vault };
 
             var results = dispatcher.Dispatch(command);
 
@@ -43,13 +41,11 @@ namespace CtrlVAF.Tests.ConfigValidationTests
             var vault = new MFilesAPI.Vault();
             var config = new Configuration { Name = "Blabla", ID = 42, ChildConfig = new Child_Configuration {Name = "" } };
 
-            var va = new VaultApplication();
-            va.SetConfig(config);
-            va.StartOperations(vault);
+            var va = Helpers.InitializeTestVA(config);
 
             Dispatcher<IEnumerable<ValidationFinding>> dispatcher = va.ValidatorDispatcher;
 
-            var command = new ValidatorCommand { Vault = vault };
+            var command = new ValidationCommand { Vault = vault };
 
             var results = dispatcher.Dispatch(command);
 
@@ -65,13 +61,12 @@ namespace CtrlVAF.Tests.ConfigValidationTests
             var vault = new MFilesAPI.Vault();
             var config = new Configuration { Name = "", ID = 42 };
 
-            var va = new VaultApplication();
-            va.SetConfig(config);
+            var va = Helpers.InitializeTestVA(config);
 
             Dispatcher<IEnumerable<ValidationFinding>> dispatcher = new ValidatorDispatcher<Configuration>(va);
             dispatcher.IncludeAssemblies(typeof(Configuration));
 
-            var command = new ValidatorCommand { Vault = vault };
+            var command = new ValidationCommand { Vault = vault };
 
             dispatcher.Dispatch(command);
 

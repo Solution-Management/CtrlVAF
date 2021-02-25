@@ -1,8 +1,7 @@
 ﻿using CtrlVAF.BackgroundOperations;
 using CtrlVAF.Events;
-using CtrlVAF.Events.Commands;
 using CtrlVAF.Core.Attributes;
-using CtrlVAF.Validators;
+using CtrlVAF.Validation;
 
 using MFiles.VAF.Common;
 using MFiles.VAF.Configuration;
@@ -45,7 +44,7 @@ namespace CtrlVAF.Core
         {
             BackgroundDispatcher = new BackgroundDispatcher<TSecureConfiguration>(this);
 
-            EventDispatcher = new EventDispatcher();
+            EventDispatcher = new EventDispatcher<TSecureConfiguration>(this);
 
             ValidatorDispatcher = new ValidatorDispatcher<TSecureConfiguration>(this);
 
@@ -88,7 +87,7 @@ namespace CtrlVAF.Core
 
         protected override IEnumerable<ValidationFinding> CustomValidation(Vault vault, TSecureConfiguration config)
         {
-            var command = new ValidatorCommand { Vault = vault};
+            var command = new ValidationCommand { Vault = vault};
 
             var findings =  ValidatorDispatcher.Dispatch(command);
 

@@ -1,16 +1,19 @@
 ﻿using CtrlVAF.Models;
 
+using MFilesAPI;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CtrlVAF.Events.Handlers
+namespace CtrlVAF.Validation
 {
-    public interface IEventHandler<TCommand> where TCommand : class, ICtrlVAFCommand
+    public class ValidationCommand: ICtrlVAFCommand
     {
-        void Handle(TCommand command);
+        public Vault Vault { get; set; }
+
     }
 
 }

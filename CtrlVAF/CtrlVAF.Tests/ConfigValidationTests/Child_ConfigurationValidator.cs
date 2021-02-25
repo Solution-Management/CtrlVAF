@@ -1,4 +1,4 @@
-﻿using CtrlVAF.Validators;
+﻿using CtrlVAF.Validation;
 
 using MFiles.VAF.Configuration;
 
@@ -12,9 +12,9 @@ using System.Threading.Tasks;
 
 namespace CtrlVAF.Tests.ConfigValidationTests
 {
-    class Child_ConfigurationValidator : CustomValidator<Child_Configuration, ValidatorCommand>
+    class Child_ConfigurationValidator : CustomValidator<Child_Configuration, ValidationCommand>
     {
-        public override IEnumerable<ValidationFinding> Validate(ValidatorCommand command)
+        public override IEnumerable<ValidationFinding> Validate(ValidationCommand command)
         {
             if (Configuration == null)
                 yield break;

@@ -1,5 +1,5 @@
 ﻿using CtrlVAF.Core;
-using CtrlVAF.Validators;
+using CtrlVAF.Validation;
 
 using MFiles.VAF.Configuration;
 
@@ -20,13 +20,12 @@ namespace CtrlVAF.Tests.ConfigValidationTests
             var vault = new MFilesAPI.Vault();
             var config = new Configuration { Name = "", ID = 42 };
 
-            var va = new VaultApplication();
-            va.SetConfig(config);
+            var va = Helpers.InitializeTestVA(config);
 
-            Dispatcher<IEnumerable<ValidationFinding>> dispatcher = new ValidatorDispatcher<Configuration>(va);
+            Dispatcher<IEnumerable<ValidationFinding>> dispatcher = va.ValidatorDispatcher;
             dispatcher.IncludeAssemblies(typeof(Configuration));
 
-            var command = new ValidatorCommand {Vault = vault };
+            var command = new ValidationCommand {Vault = vault };
 
             for (int i = 0; i < 10000; i++)
             {
@@ -42,13 +41,12 @@ namespace CtrlVAF.Tests.ConfigValidationTests
             var vault = new MFilesAPI.Vault();
             var config = new Configuration { Name = "", ID = 42 };
 
-            var va = new VaultApplication();
-            va.SetConfig(config);
+            var va = Helpers.InitializeTestVA(config);
 
-            Dispatcher<IEnumerable<ValidationFinding>> dispatcher = new ValidatorDispatcher<Configuration>(va);
+            Dispatcher<IEnumerable<ValidationFinding>> dispatcher = va.ValidatorDispatcher;
             dispatcher.IncludeAssemblies(typeof(Configuration));
 
-            var command = new ValidatorCommand { Vault = vault };
+            var command = new ValidationCommand { Vault = vault };
 
             for (int i = 0; i < 50000; i++)
             {
@@ -64,13 +62,12 @@ namespace CtrlVAF.Tests.ConfigValidationTests
             var vault = new MFilesAPI.Vault();
             var config = new Configuration { Name = "", ID = 42 };
 
-            var va = new VaultApplication();
-            va.SetConfig(config);
+            var va = Helpers.InitializeTestVA(config);
 
-            Dispatcher<IEnumerable<ValidationFinding>> dispatcher = new ValidatorDispatcher<Configuration>(va);
+            Dispatcher<IEnumerable<ValidationFinding>> dispatcher = va.ValidatorDispatcher;
             dispatcher.IncludeAssemblies(typeof(Configuration));
 
-            var command = new ValidatorCommand { Vault = vault };
+            var command = new ValidationCommand { Vault = vault };
 
             for (int i = 0; i < 100000; i++)
             {

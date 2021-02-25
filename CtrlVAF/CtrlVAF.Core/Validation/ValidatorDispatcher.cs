@@ -9,7 +9,7 @@ using System.Reflection;
 using CtrlVAF.Models;
 using System.Runtime.ExceptionServices;
 
-namespace CtrlVAF.Validators
+namespace CtrlVAF.Validation
 {
     public class ValidatorDispatcher<TConfig> : Dispatcher<IEnumerable<ValidationFinding>>
                                                 where TConfig: class, new()
@@ -34,8 +34,8 @@ namespace CtrlVAF.Validators
         {
             var validatorCommand = commands.FirstOrDefault(
                 cmd => 
-                cmd.GetType() == typeof(ValidatorCommand) ||
-                cmd.GetType().BaseType == typeof(ValidatorCommand)
+                cmd.GetType() == typeof(ValidationCommand) ||
+                cmd.GetType().BaseType == typeof(ValidationCommand)
                 );
 
             if (validatorCommand == null)
@@ -75,8 +75,8 @@ namespace CtrlVAF.Validators
             //Get any validator command
             var validatorCommand = commands.FirstOrDefault(
                 cmd =>
-                cmd.GetType() == typeof(ValidatorCommand) ||
-                cmd.GetType().BaseType == typeof(ValidatorCommand)
+                cmd.GetType() == typeof(ValidationCommand) ||
+                cmd.GetType().BaseType == typeof(ValidationCommand)
                 );
 
             if (validatorCommand == null)
@@ -91,14 +91,17 @@ namespace CtrlVAF.Validators
                     var subConfigType = concreteValidatorType.BaseType.GenericTypeArguments[0];
 
                     //Set the configuration
-                    var configProperty = concreteValidatorType.GetProperty(nameof(ICustomValidator<object, ValidatorCommand>.Configuration));
+                    var configProperty = concreteValidatorType.GetProperty(nameof(ICustomValidator<object, ValidationCommand>.Configuration));
                     var subConfig = Dispatcher_Helpers.GetConfigPropertyOfType(vaultApplication.GetConfig(), subConfigType);
                     configProperty.SetValue(concreteHandler, subConfig);
 
-                    //Set the PermanentVault
+                    //Set the configuration independent variables
                     concreteHandler.PermanentVault = vaultApplication.PermanentVault;
+                    concreteHandler.OnDemandBackgroundOperations = vaultApplication.OnDemandBackgroundOperations;
+                    concreteHandler.RecurringBackgroundOperations = vaultApplication.RecurringBackgroundOperations;
+                    
 
-                    var validateMethod = concreteValidatorType.GetMethod(nameof(ICustomValidator<object, ValidatorCommand>.Validate));
+                    var validateMethod = concreteValidatorType.GetMethod(nameof(ICustomValidator<object, ValidationCommand>.Validate));
 
                     try
                     {

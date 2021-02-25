@@ -1,5 +1,9 @@
-﻿using CtrlVAF.Events.Commands;
+﻿using CtrlVAF.Core.Events.Attributes;
+using CtrlVAF.Events;
 using CtrlVAF.Events.Handlers;
+
+using MFilesAPI;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,9 +12,10 @@ using System.Threading.Tasks;
 
 namespace CtrlVAF.Tests.CommandTests
 {
-    public class AfterCheckInChangesFailureHandler : IEventHandler<AfterCheckInChangesCommand<Configuration>>
+    [EventCommandHandler(MFEventHandlerType.MFEventHandlerAfterCheckInChanges)]
+    public class AfterCheckInChangesFailureHandler : EventHandler<Configuration, EventCommand>
     {
-        public void Handle(AfterCheckInChangesCommand<Configuration> command)
+        public override void Handle(EventCommand command)
         {
             throw new NotImplementedException();
         }
