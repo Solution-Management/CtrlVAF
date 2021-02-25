@@ -18,11 +18,10 @@ namespace CtrlVAF.Tests.CommandTests
             var expected = 1234;
 
             var conf = new Configuration() { Name = "Tester", ID = 1234 };
-            var environment = new TestEventHandlerEnvironment() {EventType =  MFilesAPI.MFEventHandlerType.MFEventHandlerBeforeSetProperties};
-
-            var command = new EventCommand() { Env = environment };
-
             var va = Helpers.InitializeTestVA(conf);
+
+            var environment = va.GetEventHandlerEnvironment(MFilesAPI.MFEventHandlerType.MFEventHandlerBeforeSetProperties);
+            var command = new EventCommand() { Env = environment };
 
             Dispatcher dispatcher = va.EventDispatcher;
 

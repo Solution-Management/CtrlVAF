@@ -4,6 +4,7 @@ using CtrlVAF.Core.Attributes;
 using CtrlVAF.Events;
 using CtrlVAF.Validation;
 
+using MFiles.VAF;
 using MFiles.VAF.Common;
 
 using MFiles.VAF.Configuration;
@@ -55,6 +56,20 @@ namespace CtrlVAF.Tests
 
                 ValidatorDispatcher = new LicensedDispatcher<IEnumerable<ValidationFinding>>(ValidatorDispatcher, licenseContent);
             }
+        }
+
+        protected override EventHandlerEnvironment GetEventHandlerEnvironment(ScriptEnvironment scriptEnv)
+        {
+            return base.GetEventHandlerEnvironment(scriptEnv);
+        }
+
+        public EventHandlerEnvironment GetEventHandlerEnvironment(MFEventHandlerType eventHandlerType)
+        {
+            ScriptEnvironment script = new ScriptEnvironment();
+
+            script.Type = (int)eventHandlerType;
+
+            return GetEventHandlerEnvironment(script);
         }
 
 
