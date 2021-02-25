@@ -36,6 +36,7 @@ namespace CtrlVAF.Tests.Various
         {
             int expected = 10;
 
+            
             var conf = new Configuration() 
             { 
                 Name = "", 

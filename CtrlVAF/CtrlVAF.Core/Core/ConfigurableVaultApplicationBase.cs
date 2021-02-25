@@ -102,7 +102,5 @@ namespace CtrlVAF.Core
 
             base.OnConfigurationUpdated(context, clientOps, oldConfiguration);
         }
-
-        
     }
 }

@@ -30,6 +30,26 @@ namespace CtrlVAF.Validation
             return this;
         }
 
+        public bool HasErrors()
+        {
+            return validationFindings.Any(finding => finding.Type == ValidationFindingType.Error);
+        }
+
+        public IEnumerable<ValidationFinding> GetErrors()
+        {
+            return validationFindings.Where(finding => finding.Type == ValidationFindingType.Error);
+        }
+
+        public bool HasWarnings()
+        {
+            return validationFindings.Any(finding => finding.Type == ValidationFindingType.Warning);
+        }
+
+        public IEnumerable<ValidationFinding> GetWarnings()
+        {
+            return validationFindings.Where(finding => finding.Type == ValidationFindingType.Warning);
+        }
+
         public IEnumerator<ValidationFinding> GetEnumerator()
         {
             return validationFindings.GetEnumerator();
