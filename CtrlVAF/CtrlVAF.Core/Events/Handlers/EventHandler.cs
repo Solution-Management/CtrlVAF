@@ -1,6 +1,7 @@
 ﻿using CtrlVAF.BackgroundOperations;
 using CtrlVAF.Core;
 using CtrlVAF.Models;
+using CtrlVAF.Validation;
 
 using MFilesAPI;
 
@@ -23,6 +24,7 @@ namespace CtrlVAF.Events.Handlers
     public abstract class EventHandler : ICommandHandler
     {
         public Vault PermanentVault { get; internal set; }
+        public ValidationResults ValidationResults { get; internal set; } = new ValidationResults();
 
         public OnDemandBackgroundOperations OnDemandBackgroundOperations { get; internal set; }
 

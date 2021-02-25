@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CtrlVAF.Tests
 {
-    class Configuration
+    public class Configuration
     {
         public string Name { get; set; }
         public int ID { get; set; }
@@ -14,7 +14,13 @@ namespace CtrlVAF.Tests
         public Child_Configuration ChildConfig { get; set; }
     }
 
-    class Child_Configuration
+    public class Child_Configuration
+    {
+        public string Name { get; set; }
+        public GrandChild_Configuration GrandChildConfig { get; set; }
+    }
+
+    public class GrandChild_Configuration
     {
         public string Name { get; set; }
     }

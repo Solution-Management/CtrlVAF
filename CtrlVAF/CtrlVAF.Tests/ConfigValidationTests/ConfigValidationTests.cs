@@ -26,7 +26,7 @@ namespace CtrlVAF.Tests.ConfigValidationTests
 
             Dispatcher<IEnumerable<ValidationFinding>> dispatcher = va.ValidatorDispatcher;
 
-            var command = new ValidationCommand { Vault = vault };
+            var command = new ValidationCommand(vault);
 
             var results = dispatcher.Dispatch(command);
 
@@ -39,13 +39,13 @@ namespace CtrlVAF.Tests.ConfigValidationTests
             var expected = 1;
 
             var vault = new MFilesAPI.Vault();
-            var config = new Configuration { Name = "Blabla", ID = 42, ChildConfig = new Child_Configuration {Name = "" } };
+            var config = new Configuration { Name = "Blabla", ID = 42, ChildConfig = new Child_Configuration { Name = "" } };
 
             var va = Helpers.InitializeTestVA(config);
 
             Dispatcher<IEnumerable<ValidationFinding>> dispatcher = va.ValidatorDispatcher;
 
-            var command = new ValidationCommand { Vault = vault };
+            var command = new ValidationCommand(vault);
 
             var results = dispatcher.Dispatch(command);
 
@@ -66,7 +66,7 @@ namespace CtrlVAF.Tests.ConfigValidationTests
             Dispatcher<IEnumerable<ValidationFinding>> dispatcher = new ValidatorDispatcher<Configuration>(va);
             dispatcher.IncludeAssemblies(typeof(Configuration));
 
-            var command = new ValidationCommand { Vault = vault };
+            var command = new ValidationCommand(vault);
 
             dispatcher.Dispatch(command);
 

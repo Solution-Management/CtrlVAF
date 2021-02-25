@@ -6,12 +6,16 @@ using CtrlVAF.Additional;
 using MFiles.VAF.Common;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Diagnostics;
+using CtrlVAF.Validation;
+using MFilesAPI;
 
 namespace CtrlVAF.Tests.CommandTests
 {
     [TestClass]
     public class CommandTests
     {
+        
+
         [TestMethod]
         public void AssertThat_ChangesMadeInHandler_PropagateToEnvironment()
         {
@@ -21,7 +25,7 @@ namespace CtrlVAF.Tests.CommandTests
             var va = Helpers.InitializeTestVA(conf);
 
             var environment = va.CreateEventHandlerEnvironment(MFilesAPI.MFEventHandlerType.MFEventHandlerBeforeSetProperties);
-            var command = new EventCommand() { Env = environment };
+            var command = new EventCommand(environment);
 
             Dispatcher dispatcher = va.EventDispatcher;
 
@@ -41,7 +45,7 @@ namespace CtrlVAF.Tests.CommandTests
 
             var environment = va.CreateEventHandlerEnvironment(MFilesAPI.MFEventHandlerType.MFEventHandlerAfterSetProperties);
 
-            var command = new EventCommand() { Env = environment };
+            var command = new EventCommand(environment);
 
 
             Dispatcher dispatcher = va.EventDispatcher;
@@ -75,7 +79,7 @@ namespace CtrlVAF.Tests.CommandTests
 
             var environment = va.CreateEventHandlerEnvironment(MFilesAPI.MFEventHandlerType.MFEventHandlerAfterCheckInChanges);
 
-            var command = new EventCommand() { Env = environment };
+            var command = new EventCommand(environment);
 
             Dispatcher dispatcher = va.EventDispatcher;
 
@@ -93,7 +97,7 @@ namespace CtrlVAF.Tests.CommandTests
 
             var environment = va.CreateEventHandlerEnvironment(MFilesAPI.MFEventHandlerType.MFEventHandlerAfterCheckInChanges);
 
-            var command = new EventCommand() { Env = environment };
+            var command = new EventCommand(environment);
 
             Dispatcher dispatcher = va.EventDispatcher;
 
@@ -113,7 +117,7 @@ namespace CtrlVAF.Tests.CommandTests
             var conf = new Additional.TestConfiguration() { id = 1234 };
             var va = Helpers.InitializeTestVA(conf);
             var environment = va.CreateEventHandlerEnvironment(MFilesAPI.MFEventHandlerType.MFEventHandlerBeforeCreateNewObjectFinalize);
-            var command = new EventCommand() { Env = environment };
+            var command = new EventCommand(environment);
 
             Dispatcher dispatcher = va.EventDispatcher;
 
@@ -130,7 +134,7 @@ namespace CtrlVAF.Tests.CommandTests
             var conf = new Additional.TestConfiguration() { id = 1234 };
             var va = Helpers.InitializeTestVA(conf);
             var environment = va.CreateEventHandlerEnvironment(MFilesAPI.MFEventHandlerType.MFEventHandlerBeforeCreateNewObjectFinalize);
-            var command = new EventCommand() { Env = environment };
+            var command = new EventCommand(environment);
 
             Dispatcher dispatcher = va.EventDispatcher;
 
@@ -149,7 +153,7 @@ namespace CtrlVAF.Tests.CommandTests
             var conf = new Additional.TestConfiguration() { id = 1234 };
             var va = Helpers.InitializeTestVA(conf);
             var environment = va.CreateEventHandlerEnvironment(MFilesAPI.MFEventHandlerType.MFEventHandlerBeforeCreateNewObjectFinalize);
-            var command = new EventCommand() { Env = environment };
+            var command = new EventCommand(environment);
 
             Dispatcher dispatcher = va.EventDispatcher;
 
@@ -171,7 +175,7 @@ namespace CtrlVAF.Tests.CommandTests
 
             Dispatcher dispatcher = va.EventDispatcher;
 
-            var command_1 = new CustomCommand_1 { Env = Env, Name = expected };
+            var command_1 = new CustomCommand_1(Env) { Name = expected };
 
             dispatcher.Dispatch(command_1);
 
@@ -190,9 +194,9 @@ namespace CtrlVAF.Tests.CommandTests
 
             Dispatcher dispatcher = va.EventDispatcher;
 
-            var command_1 = new CustomCommand_1 {  Env = Env, Name = expectedName };
+            var command_1 = new CustomCommand_1(Env) { Name = expectedName };
 
-            var command_2 = new CustomCommand_2 { Env = Env, ID = expectedID };
+            var command_2 = new CustomCommand_2(Env) { ID = expectedID };
 
             dispatcher.Dispatch(command_1, command_2);
 
@@ -212,7 +216,7 @@ namespace CtrlVAF.Tests.CommandTests
 
             var Env_BeforeCheckout = va.CreateEventHandlerEnvironment(MFilesAPI.MFEventHandlerType.MFEventHandlerBeforeCheckOut);
 
-            var command_3_BeforeCheckOut = new CustomCommand_3 {  Env = Env_BeforeCheckout, AddValue = 10 };
+            var command_3_BeforeCheckOut = new CustomCommand_3(Env_BeforeCheckout) { AddValue = 10 };
 
             dispatcher.Dispatch(command_3_BeforeCheckOut);
 
@@ -220,7 +224,7 @@ namespace CtrlVAF.Tests.CommandTests
             var Env_AfterCheckOut = va.CreateEventHandlerEnvironment(MFilesAPI.MFEventHandlerType.MFEventHandlerAfterCheckOut);
             Env_AfterCheckOut.CurrentUserID = Env_BeforeCheckout.CurrentUserID;
 
-            var command_3_AfterCheckOut = new CustomCommand_3 { Env = Env_AfterCheckOut, AddValue = 5 };
+            var command_3_AfterCheckOut = new CustomCommand_3(Env_AfterCheckOut) { AddValue = 5 };
 
             dispatcher.Dispatch(command_3_AfterCheckOut);
 
@@ -239,12 +243,12 @@ namespace CtrlVAF.Tests.CommandTests
             Dispatcher dispatcher = va.EventDispatcher;
 
             var Env_BeforeCheckout = va.CreateEventHandlerEnvironment(MFilesAPI.MFEventHandlerType.MFEventHandlerBeforeCheckOut);
-            var command_3_BeforeCheckOut = new CustomCommand_3 { Env = Env_BeforeCheckout, AddValue = 10 };
+            var command_3_BeforeCheckOut = new CustomCommand_3(Env_BeforeCheckout) { AddValue = 10 };
 
             var Env_AfterCheckOut = va.CreateEventHandlerEnvironment(MFilesAPI.MFEventHandlerType.MFEventHandlerAfterCheckOut);
             Env_AfterCheckOut.CurrentUserID = Env_BeforeCheckout.CurrentUserID;
 
-            var command_3_AfterCheckOut = new CustomCommand_3 { Env = Env_AfterCheckOut, AddValue = 5 };
+            var command_3_AfterCheckOut = new CustomCommand_3(Env_AfterCheckOut) { AddValue = 5 };
 
             dispatcher.Dispatch(command_3_BeforeCheckOut, command_3_AfterCheckOut);
 

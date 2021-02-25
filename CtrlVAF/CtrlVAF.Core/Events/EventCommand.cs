@@ -12,6 +12,11 @@ namespace CtrlVAF.Events
 {
     public class EventCommand: ICtrlVAFCommand
     {
-        public EventHandlerEnvironment Env { get; set; }
+        public EventCommand(EventHandlerEnvironment env)
+        {
+            Env = env;
+        }
+
+        public EventHandlerEnvironment Env { get; }
     }
 }

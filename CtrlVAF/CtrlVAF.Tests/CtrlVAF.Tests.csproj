@@ -80,8 +80,8 @@
     <Compile Include="CommandTests\AfterSetPropertiesHandler2.cs" />
     <Compile Include="CommandTests\AfterSetPropertiesHandler1.cs" />
     <Compile Include="CommandTests\BeforeSetPropertiesHandler.cs" />
+    <Compile Include="Various\CheckEnvironmentHandlers.cs" />
     <Compile Include="CommandTests\CommandTests.cs" />
-    <Compile Include="CommandTests\Configuration.cs" />
     <Compile Include="CommandTests\CustomCommands.cs" />
     <Compile Include="CommandTests\CustomCommandHandlers.cs" />
     <Compile Include="CommandTests\SpeedTests.cs" />
@@ -92,8 +92,10 @@
     <Compile Include="ConfigValidationTests\SpeedTests.cs" />
     <Compile Include="Helpers.cs" />
     <Compile Include="LicensedVaultApplication.cs" />
+    <Compile Include="Various\HelperMethods.cs" />
+    <Compile Include="Various\EnvironmentTests.cs" />
+    <Compile Include="Various\TestEnvironmentCommand.cs" />
     <Compile Include="VaultApplication.cs" />
-    <Compile Include="LicensingTests\Configuration.cs" />
     <Compile Include="LicensingTests\LicensedCommandHandler_AllModules.cs" />
     <Compile Include="LicensingTests\LicensedCommandHandler_Module1.cs" />
     <Compile Include="LicensingTests\LicensedCommandHandler_Module2.cs" />

@@ -14,7 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-
+using System.Collections.Concurrent;
 
 namespace CtrlVAF.Core
 {
@@ -34,6 +34,8 @@ namespace CtrlVAF.Core
         public Dispatcher EventDispatcher { get; protected set; }
 
         public Dispatcher<IEnumerable<ValidationFinding>> ValidatorDispatcher { get; protected set; }
+
+        public ConcurrentDictionary<Type, ValidationResults> ValidationResults { get; internal set; } = new ConcurrentDictionary<Type, ValidationResults>();
 
         internal TSecureConfiguration GetConfig()
         {
@@ -87,7 +89,7 @@ namespace CtrlVAF.Core
 
         protected override IEnumerable<ValidationFinding> CustomValidation(Vault vault, TSecureConfiguration config)
         {
-            var command = new ValidationCommand { Vault = vault};
+            var command = new ValidationCommand(vault);
 
             var findings =  ValidatorDispatcher.Dispatch(command);
 

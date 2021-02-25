@@ -25,7 +25,7 @@ namespace CtrlVAF.Tests.ConfigValidationTests
             Dispatcher<IEnumerable<ValidationFinding>> dispatcher = va.ValidatorDispatcher;
             dispatcher.IncludeAssemblies(typeof(Configuration));
 
-            var command = new ValidationCommand {Vault = vault };
+            var command = new ValidationCommand(vault);
 
             for (int i = 0; i < 10000; i++)
             {
@@ -46,7 +46,7 @@ namespace CtrlVAF.Tests.ConfigValidationTests
             Dispatcher<IEnumerable<ValidationFinding>> dispatcher = va.ValidatorDispatcher;
             dispatcher.IncludeAssemblies(typeof(Configuration));
 
-            var command = new ValidationCommand { Vault = vault };
+            var command = new ValidationCommand(vault);
 
             for (int i = 0; i < 50000; i++)
             {
@@ -67,7 +67,7 @@ namespace CtrlVAF.Tests.ConfigValidationTests
             Dispatcher<IEnumerable<ValidationFinding>> dispatcher = va.ValidatorDispatcher;
             dispatcher.IncludeAssemblies(typeof(Configuration));
 
-            var command = new ValidationCommand { Vault = vault };
+            var command = new ValidationCommand(vault);
 
             for (int i = 0; i < 100000; i++)
             {

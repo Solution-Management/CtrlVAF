@@ -30,7 +30,7 @@ namespace CtrlVAF.Tests.CommandTests
 
     [EventCommandHandler(MFilesAPI.MFEventHandlerType.MFEventHandlerBeforeCheckOut)]
     [EventCommandHandler(MFilesAPI.MFEventHandlerType.MFEventHandlerAfterCheckOut)]
-    class CustomCommandHandler : EventHandler<Configuration, CustomCommand_3>
+    class CustomCommandHandler_3 : EventHandler<Configuration, CustomCommand_3>
     {
         public override void Handle(CustomCommand_3 command)
         {

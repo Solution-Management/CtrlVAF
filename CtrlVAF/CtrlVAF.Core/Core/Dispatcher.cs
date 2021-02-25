@@ -104,7 +104,9 @@ namespace CtrlVAF.Core
         /// <returns></returns>
         public TReturn GetCachedResults(Type keyType)
         {
-            return ResultsCache[keyType];
+            if (this.ResultsCache.TryGetValue(keyType, out TReturn results))
+                return results;
+            return default;
         }
 
         /// <summary>
@@ -114,7 +116,7 @@ namespace CtrlVAF.Core
         /// <returns></returns>
         public TReturn GetCachedResults(object keyObject)
         {
-            return ResultsCache[keyObject.GetType()];
+            return GetCachedResults(keyObject.GetType());
         }
     }
 }

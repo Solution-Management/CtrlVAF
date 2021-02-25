@@ -22,6 +22,7 @@ namespace CtrlVAF.Validation
     public abstract class CustomValidator: ICommandHandler
     {
         public Vault PermanentVault { get; internal set; }
+        public ValidationResults ValidationResults { get; internal set; }
 
         public OnDemandBackgroundOperations OnDemandBackgroundOperations { get; internal set; } 
 

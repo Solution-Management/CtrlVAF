@@ -12,7 +12,12 @@ namespace CtrlVAF.Validation
 {
     public class ValidationCommand: ICtrlVAFCommand
     {
-        public Vault Vault { get; set; }
+        public ValidationCommand(Vault vault)
+        {
+            Vault = vault;
+        }
+
+        public Vault Vault { get; }
 
     }
 

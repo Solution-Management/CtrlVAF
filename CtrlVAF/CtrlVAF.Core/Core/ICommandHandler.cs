@@ -1,4 +1,5 @@
 ﻿using CtrlVAF.BackgroundOperations;
+using CtrlVAF.Validation;
 
 using MFilesAPI;
 
@@ -13,6 +14,7 @@ namespace CtrlVAF.Core
     public interface ICommandHandler
     {
         Vault PermanentVault { get; }
+        ValidationResults ValidationResults { get; }
         OnDemandBackgroundOperations OnDemandBackgroundOperations { get; } 
         RecurringBackgroundOperations RecurringBackgroundOperations { get; }
     }

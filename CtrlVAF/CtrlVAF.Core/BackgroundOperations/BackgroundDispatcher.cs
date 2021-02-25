@@ -1,5 +1,6 @@
 ﻿using CtrlVAF.Core;
 using CtrlVAF.Models;
+using CtrlVAF.Validation;
 
 using MFiles.VAF.Common;
 using MFiles.VAF.Extensions.MultiServerMode;
@@ -62,25 +63,7 @@ namespace CtrlVAF.BackgroundOperations
 
             foreach (Type concreteType in concreteTypes)
             {
-                var backgroundTaskHandler = Activator.CreateInstance(concreteType);
-
-                //Get the right configuration subType and object
-                TConfig config = vaultApplication.GetConfig();
-
-                Type configSubType = concreteType.BaseType.GenericTypeArguments[0];
-
-                object subConfig = Dispatcher_Helpers.GetConfigPropertyOfType(config, configSubType);
-
-                //Set the configuration
-                var configProperty = backgroundTaskHandler.GetType().GetProperty(nameof(IBackgroundTaskHandler<object, EmptyTQD>.Configuration));
-                configProperty.SetValue(backgroundTaskHandler, subConfig);
-
-                //Get the Task Action
-                var taskMethod = backgroundTaskHandler.GetType().GetMethod(nameof(IBackgroundTaskHandler<object, EmptyTQD>.Task));
-
-                Action<TaskProcessorJob, TaskQueueDirective> task = 
-                    (Action<TaskProcessorJob, TaskQueueDirective>)
-                    Delegate.CreateDelegate(typeof(Action<TaskProcessorJob, TaskQueueDirective>), concreteType, taskMethod);
+                
 
                 BackgroundOperationAttribute operationInfo = concreteType.GetCustomAttribute<BackgroundOperationAttribute>();
 
@@ -93,7 +76,10 @@ namespace CtrlVAF.BackgroundOperations
                     TaskQueueBackgroundOperation operation = vaultApplication.TaskQueueBackgroundOperationManager.StartRecurringBackgroundOperation(
                         operationInfo.Name,
                         interval,
-                        task
+                        (job, directive) => 
+                        { 
+                            GetTask(concreteType)(job, directive); 
+                        }
                         );
 
                     vaultApplication.RecurringBackgroundOperations.AddBackgroundOperation(operationInfo.Name, operation, interval);
@@ -104,7 +90,10 @@ namespace CtrlVAF.BackgroundOperations
                 {
                     TaskQueueBackgroundOperation operation = vaultApplication.TaskQueueBackgroundOperationManager.CreateBackgroundOperation<TaskQueueDirective>(
                         operationInfo.Name,
-                        task
+                        (job, directive) => 
+                        {
+                            GetTask(concreteType)(job, directive);
+                        }
                         );
 
                     vaultApplication.OnDemandBackgroundOperations.AddBackgroundOperation(operationInfo.Name, operation);
@@ -129,6 +118,36 @@ namespace CtrlVAF.BackgroundOperations
                 );
 
             return;
+        }
+
+        private Action<TaskProcessorJob, TaskQueueDirective> GetTask(Type concreteType) {
+            var backgroundTaskHandler = Activator.CreateInstance(concreteType) as BackgroundTaskHandler;
+
+            //Get the right configuration subType and object
+            TConfig config = vaultApplication.GetConfig();
+
+            Type subConfigType = concreteType.BaseType.GenericTypeArguments[0];
+
+            object subConfig = Dispatcher_Helpers.GetConfigSubProperty(config, subConfigType);
+
+            //Set the configuration
+            var configProperty = backgroundTaskHandler.GetType().GetProperty(nameof(IBackgroundTaskHandler<object, EmptyTQD>.Configuration));
+            configProperty.SetValue(backgroundTaskHandler, subConfig);
+
+            //Set the configuration independent variables
+            backgroundTaskHandler.PermanentVault = vaultApplication.PermanentVault;
+            backgroundTaskHandler.OnDemandBackgroundOperations = vaultApplication.OnDemandBackgroundOperations;
+            backgroundTaskHandler.RecurringBackgroundOperations = vaultApplication.RecurringBackgroundOperations;
+            if (vaultApplication.ValidationResults.TryGetValue(subConfigType, out ValidationResults results))
+                backgroundTaskHandler.ValidationResults = results;
+
+            //Get the Task Action
+            var taskMethod = backgroundTaskHandler.GetType().GetMethod(nameof(IBackgroundTaskHandler<object, EmptyTQD>.Task));
+
+            return (Action<TaskProcessorJob, TaskQueueDirective>)Delegate.CreateDelegate(
+                typeof(Action<TaskProcessorJob, TaskQueueDirective>),
+                concreteType, taskMethod
+                );
         }
 
         private class EmptyTQD : TaskQueueDirective

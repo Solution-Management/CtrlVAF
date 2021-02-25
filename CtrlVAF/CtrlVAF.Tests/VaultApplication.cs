@@ -40,6 +40,11 @@ namespace CtrlVAF.Tests
             Configuration = config;
         }
 
+        public void SetPermanentVault(Vault vault)
+        {
+            PermanentVault = vault;
+        }
+
         public override void StartOperations(Vault vaultPersistent)
         {
             BackgroundDispatcher = new BackgroundDispatcher<TConfig>(this);
@@ -67,12 +72,16 @@ namespace CtrlVAF.Tests
 
         public EventHandlerEnvironment CreateEventHandlerEnvironment(MFEventHandlerType eventHandlerType)
         {
-            ScriptEnvironment script = new ScriptEnvironment();
-
-            script.Type = (int)eventHandlerType;
+            ScriptEnvironment script = new ScriptEnvironment
+            {
+                Type = (int)eventHandlerType
+            };
 
             return GetEventHandlerEnvironment(script);
         }
+
+
+        
 
 
     }

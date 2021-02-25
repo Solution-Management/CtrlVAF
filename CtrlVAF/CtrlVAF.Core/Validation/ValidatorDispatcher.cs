@@ -84,22 +84,22 @@ namespace CtrlVAF.Validation
 
             foreach (Type concreteValidatorType in concreteValidators)
             {
+                var subConfigType = concreteValidatorType.BaseType.GenericTypeArguments[0];
+
                 if (!ResultsCache.TryGetValue(concreteValidatorType, out IEnumerable<ValidationFinding> findings))
                 {
                     var concreteHandler = Activator.CreateInstance(concreteValidatorType) as CustomValidator;
 
-                    var subConfigType = concreteValidatorType.BaseType.GenericTypeArguments[0];
-
                     //Set the configuration
-                    var configProperty = concreteValidatorType.GetProperty(nameof(ICustomValidator<object, ValidationCommand>.Configuration));
-                    var subConfig = Dispatcher_Helpers.GetConfigPropertyOfType(vaultApplication.GetConfig(), subConfigType);
+                    var configProperty = concreteValidatorType
+                        .GetProperty(nameof(ICustomValidator<object, ValidationCommand>.Configuration));
+                    var subConfig = Dispatcher_Helpers.GetConfigSubProperty(vaultApplication.GetConfig(), subConfigType);
                     configProperty.SetValue(concreteHandler, subConfig);
 
                     //Set the configuration independent variables
                     concreteHandler.PermanentVault = vaultApplication.PermanentVault;
                     concreteHandler.OnDemandBackgroundOperations = vaultApplication.OnDemandBackgroundOperations;
                     concreteHandler.RecurringBackgroundOperations = vaultApplication.RecurringBackgroundOperations;
-                    
 
                     var validateMethod = concreteValidatorType.GetMethod(nameof(ICustomValidator<object, ValidationCommand>.Validate));
 
@@ -118,6 +118,11 @@ namespace CtrlVAF.Validation
                     }
 
                     ResultsCache.TryAdd(concreteValidatorType, findings.ToList());
+                }
+
+                if(!vaultApplication.ValidationResults.TryAdd(subConfigType, new ValidationResults(findings)))
+                {
+                    vaultApplication.ValidationResults[subConfigType].AddResults(findings);
                 }
 
                 foreach (var finding in findings)

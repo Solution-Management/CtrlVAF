@@ -21,6 +21,7 @@ namespace CtrlVAF.Tests
             vaultApplication.SetConfig(configuration);
             vaultApplication.licenseContent = licenseContent;
             vaultApplication.StartOperations(vault);
+            vaultApplication.SetPermanentVault(vault);
 
             return vaultApplication;
         }
@@ -34,6 +35,7 @@ namespace CtrlVAF.Tests
             vaultApplication.SetConfig(configuration);
             vaultApplication.licenseContent = licenseContent;
             vaultApplication.StartOperations(vault);
+            vaultApplication.SetPermanentVault(vault);
 
             return vaultApplication;
         }

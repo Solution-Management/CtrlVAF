@@ -12,6 +12,10 @@ namespace CtrlVAF.Tests.LicensingTests
 {
     class TestLicenseCommand: EventCommand
     {
+        public TestLicenseCommand(EventHandlerEnvironment env) : base(env)
+        {
+        }
+
         public int Result { get; set; } = 1;
     }
 }

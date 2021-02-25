@@ -9,6 +9,7 @@ using System.Reflection;
 using System.Runtime.ExceptionServices;
 using MFiles.VAF.Common;
 using CtrlVAF.Events.Attributes;
+using CtrlVAF.Validation;
 
 namespace CtrlVAF.Events
 {
@@ -22,7 +23,7 @@ namespace CtrlVAF.Events
     //    /// <param name="exceptionHandler">An exception handler to pass along or handle any ICommandHandler exceptions</param>
 
     public class EventDispatcher<TConfig> : Dispatcher
-        where TConfig: class, new()
+        where TConfig : class, new()
     {
         private ConfigurableVaultApplicationBase<TConfig> vaultApplication;
 
@@ -122,7 +123,7 @@ namespace CtrlVAF.Events
             {
                 var commandType = command.GetType();
 
-                if(TypeCache.TryGetValue(commandType, out IEnumerable<Type> concreteHandlerTypes))
+                if (TypeCache.TryGetValue(commandType, out IEnumerable<Type> concreteHandlerTypes))
                 {
                     foreach (Type concreteHandlerType in concreteHandlerTypes)
                     {
@@ -135,15 +136,26 @@ namespace CtrlVAF.Events
 
                         //Set the configuration
                         var configProperty = concreteHandlerType.GetProperty(nameof(ICommandHandler<object>.Configuration));
-                        var subConfig = Dispatcher_Helpers.GetConfigPropertyOfType(vaultApplication.GetConfig(), subConfigType);
+                        var subConfig = Dispatcher_Helpers.GetConfigSubProperty(vaultApplication.GetConfig(), subConfigType);
                         configProperty.SetValue(concreteHandler, subConfig);
+
 
                         //Set the configuration independent variables
                         concreteHandler.PermanentVault = vaultApplication.PermanentVault;
                         concreteHandler.OnDemandBackgroundOperations = vaultApplication.OnDemandBackgroundOperations;
                         concreteHandler.RecurringBackgroundOperations = vaultApplication.RecurringBackgroundOperations;
 
-                        var handleMethod = concreteHandlerType.GetMethod(nameof(EventHandler<object, EventCommand>.Handle), new Type[] { commandType });
+                        var keys = vaultApplication.ValidationResults.Keys.ToArray();
+                        var found = Dispatcher_Helpers.AreConfigSubProperties(subConfigType, keys);
+                        for (int i = 0; i < keys.Length; i++)
+                        {
+                            if (found[i])
+                                concreteHandler.ValidationResults.AddResults(vaultApplication.ValidationResults[keys[i]]);
+                        }
+
+
+                        var handleMethod = concreteHandlerType
+                            .GetMethod(nameof(EventHandler<object, EventCommand>.Handle), new Type[] { commandType });
 
                         try
                         {

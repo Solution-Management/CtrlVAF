@@ -16,7 +16,7 @@ namespace CtrlVAF.Tests.CommandTests
         {
             var conf = new Additional.TestConfiguration() { id = 1234 };
             var environment = new EventHandlerEnvironment();
-            var command = new EventCommand() { Env = environment };
+            var command = new EventCommand(environment);
 
             var va = Helpers.InitializeTestVA(conf);
 
@@ -38,7 +38,7 @@ namespace CtrlVAF.Tests.CommandTests
             var conf = new Configuration() { Name = "Tester", ID = 1234 };
             var environment = new EventHandlerEnvironment();
 
-            var command = new EventCommand() { Env = environment };
+            var command = new EventCommand(environment);
 
             var va = Helpers.InitializeTestVA(conf);
 
@@ -57,7 +57,7 @@ namespace CtrlVAF.Tests.CommandTests
         {
             var conf = new Configuration() { Name = "Tester", ID = 1234 };
             var environment = new EventHandlerEnvironment();
-            var command = new EventCommand() { Env = environment };
+            var command = new EventCommand(environment);
 
             var va = Helpers.InitializeTestVA(conf);
 

@@ -86,7 +86,7 @@
     <Compile Include="Events\Attributes\EventCommandHandlerAttribute.cs" />
     <Compile Include="Events\EventCommand.cs" />
     <Compile Include="Events\Handlers\EventHandler.cs" />
-    <Compile Include="Validation\ValidatorResults.cs" />
+    <Compile Include="Validation\ValidationResults.cs" />
     <Compile Include="Events\EventDispatcher.cs" />
     <Compile Include="Events\Handlers\IEventHandler.cs" />
     <Compile Include="Validation\Handlers\CustomValidator.cs" />

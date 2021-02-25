@@ -23,9 +23,8 @@ namespace CtrlVAF.Tests.LicensingTests
 
             var env = va.CreateEventHandlerEnvironment(MFilesAPI.MFEventHandlerType.MFEventHandlerBeforeLoginToVault);
 
-            TestLicenseCommand command = new TestLicenseCommand
+            TestLicenseCommand command = new TestLicenseCommand(env)
             {
-                Env = env,
                 Result = 1
             };
 
@@ -50,9 +49,8 @@ namespace CtrlVAF.Tests.LicensingTests
 
             var env = va.CreateEventHandlerEnvironment(MFilesAPI.MFEventHandlerType.MFEventHandlerBeforeLoginToVault);
 
-            TestLicenseCommand command = new TestLicenseCommand
+            TestLicenseCommand command = new TestLicenseCommand(env)
             {
-                Env = env,
                 Result = 1
             };
 
@@ -77,9 +75,8 @@ namespace CtrlVAF.Tests.LicensingTests
 
             var env = va.CreateEventHandlerEnvironment(MFilesAPI.MFEventHandlerType.MFEventHandlerBeforeLoginToVault);
 
-            TestLicenseCommand command = new TestLicenseCommand
+            TestLicenseCommand command = new TestLicenseCommand(env)
             {
-                Env = env,
                 Result = 1
             };
 
@@ -106,9 +103,8 @@ namespace CtrlVAF.Tests.LicensingTests
 
             var env = va.CreateEventHandlerEnvironment(MFilesAPI.MFEventHandlerType.MFEventHandlerBeforeLoginToVault);
 
-            TestLicenseCommand command = new TestLicenseCommand
+            TestLicenseCommand command = new TestLicenseCommand(env)
             {
-                Env = env,
                 Result = 1
             };
 
@@ -135,9 +131,8 @@ namespace CtrlVAF.Tests.LicensingTests
 
             var env = va.CreateEventHandlerEnvironment(MFilesAPI.MFEventHandlerType.MFEventHandlerBeforeLoginToVault);
 
-            TestLicenseCommand command = new TestLicenseCommand
+            TestLicenseCommand command = new TestLicenseCommand(env)
             {
-                Env = env,
                 Result = 1
             };
 
@@ -164,9 +159,8 @@ namespace CtrlVAF.Tests.LicensingTests
 
             var env = va.CreateEventHandlerEnvironment(MFilesAPI.MFEventHandlerType.MFEventHandlerBeforeLoginToVault);
 
-            TestLicenseCommand command = new TestLicenseCommand
+            TestLicenseCommand command = new TestLicenseCommand(env)
             {
-                Env = env,
                 Result = 1
             };
 

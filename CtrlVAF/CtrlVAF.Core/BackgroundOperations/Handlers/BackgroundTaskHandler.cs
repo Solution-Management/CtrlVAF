@@ -1,4 +1,5 @@
 ﻿using CtrlVAF.Core;
+using CtrlVAF.Validation;
 
 using MFiles.VAF.MultiserverMode;
 
@@ -24,6 +25,7 @@ namespace CtrlVAF.BackgroundOperations
     public abstract class BackgroundTaskHandler : ICommandHandler
     {
         public Vault PermanentVault { get; internal set; }
+        public ValidationResults ValidationResults { get; internal set; }
         public OnDemandBackgroundOperations OnDemandBackgroundOperations { get; internal set; }
         public RecurringBackgroundOperations RecurringBackgroundOperations { get; internal set; }
 
