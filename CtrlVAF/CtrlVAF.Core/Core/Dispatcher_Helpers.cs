@@ -1,4 +1,7 @@
-﻿using System;
+﻿using MFiles.VAF.Configuration;
+
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -16,14 +19,18 @@ namespace CtrlVAF.Core
 
             var configProperties = config.GetType().GetProperties();
 
-            foreach (var configProperty in configProperties)
+            foreach (var property in configProperties)
             {
-                if (!configProperty.PropertyType.IsClass)
+                if (!property.PropertyType.IsClass ||
+                    property.PropertyType == typeof(string) ||
+                    property.PropertyType == typeof(MFIdentifier) ||
+                    typeof(ICollection).IsAssignableFrom(property.PropertyType)
+                    )
                     continue;
 
-                var subConfig = configProperty.GetValue(config);
+                var subConfig = property.GetValue(config);
 
-                if (configProperty.PropertyType == configSubType)
+                if (property.PropertyType == configSubType)
                     return subConfig;
 
                 var subsubConfig = GetConfigSubProperty(subConfig, configSubType);
@@ -77,7 +84,10 @@ namespace CtrlVAF.Core
             foreach (PropertyInfo property in parent.GetProperties())
             {
                 if (!property.PropertyType.IsClass ||
-                    property.PropertyType == typeof(string))
+                    property.PropertyType == typeof(string) ||
+                    property.PropertyType == typeof(MFIdentifier) ||
+                    typeof(ICollection).IsAssignableFrom(property.PropertyType)
+                    )
                     continue;
 
                 if (children.Contains(property.PropertyType))
