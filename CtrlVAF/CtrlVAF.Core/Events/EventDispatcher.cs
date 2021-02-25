@@ -8,7 +8,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.ExceptionServices;
 using MFiles.VAF.Common;
-using CtrlVAF.Core.Events.Attributes;
+using CtrlVAF.Events.Attributes;
 
 namespace CtrlVAF.Events
 {

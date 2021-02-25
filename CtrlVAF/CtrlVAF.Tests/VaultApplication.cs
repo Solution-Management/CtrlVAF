@@ -56,6 +56,8 @@ namespace CtrlVAF.Tests
 
                 ValidatorDispatcher = new LicensedDispatcher<IEnumerable<ValidationFinding>>(ValidatorDispatcher, licenseContent);
             }
+
+            //Left out the call to base.StartOperations() for testing purposes.
         }
 
         protected override EventHandlerEnvironment GetEventHandlerEnvironment(ScriptEnvironment scriptEnv)
@@ -63,7 +65,7 @@ namespace CtrlVAF.Tests
             return base.GetEventHandlerEnvironment(scriptEnv);
         }
 
-        public EventHandlerEnvironment GetEventHandlerEnvironment(MFEventHandlerType eventHandlerType)
+        public EventHandlerEnvironment CreateEventHandlerEnvironment(MFEventHandlerType eventHandlerType)
         {
             ScriptEnvironment script = new ScriptEnvironment();
 

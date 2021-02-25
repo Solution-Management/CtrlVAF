@@ -33,7 +33,7 @@
   <ItemGroup>
     <Reference Include="Interop.MFilesAPI, Version=7.0.0.0, Culture=neutral, PublicKeyToken=f1b4733f444f7ad0, processorArchitecture=MSIL">
       <HintPath>..\packages\MFiles.VAF.2.2.0.10\lib\net45\Interop.MFilesAPI.dll</HintPath>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
     </Reference>
     <Reference Include="MFiles.Crypto, Version=2.2.0.10, Culture=neutral, PublicKeyToken=fa007b370d17fe5e, processorArchitecture=MSIL">
       <HintPath>..\packages\MFiles.VAF.2.2.0.10\lib\net45\MFiles.Crypto.dll</HintPath>

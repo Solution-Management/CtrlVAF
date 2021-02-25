@@ -1,4 +1,5 @@
-﻿using CtrlVAF.Events;
+﻿using CtrlVAF.Events.Attributes;
+using CtrlVAF.Events;
 using CtrlVAF.Events.Handlers;
 
 using System;
@@ -11,9 +12,10 @@ namespace CtrlVAF.Additional
 {
     public class TestConfiguration
     {
-        public int id = 0;
+        public int id = 50;
     }
 
+    [EventCommandHandler(MFilesAPI.MFEventHandlerType.MFEventHandlerBeforeCreateNewObjectFinalize)]
     public class TestHandler : EventHandler<TestConfiguration, EventCommand>
     {
         public override void Handle(EventCommand command)

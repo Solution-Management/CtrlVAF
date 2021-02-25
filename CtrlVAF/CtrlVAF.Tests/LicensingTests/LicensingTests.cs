@@ -19,13 +19,15 @@ namespace CtrlVAF.Tests.LicensingTests
             //Expects all classes to be handled
             int expextedResult = 2 * 3 * 5 * 7;
 
+            var va = Helpers.InitializeTestVA(new Configuration());
+
+            var env = va.CreateEventHandlerEnvironment(MFilesAPI.MFEventHandlerType.MFEventHandlerBeforeLoginToVault);
+
             TestLicenseCommand command = new TestLicenseCommand
             {
-                Env = new MFiles.VAF.Common.EventHandlerEnvironment(),
+                Env = env,
                 Result = 1
             };
-
-            var va = Helpers.InitializeTestVA(new Configuration());
 
             var dispatcher = va.EventDispatcher;
 
@@ -40,21 +42,23 @@ namespace CtrlVAF.Tests.LicensingTests
             //Expects only the unlicensed class to be handled
             int expextedResult = 2; //3, 5 and 7 are not handled
 
-            TestLicenseCommand command = new TestLicenseCommand
-            {
-                Env = new MFiles.VAF.Common.EventHandlerEnvironment(),
-                Result = 1
-            };
-
             TestLicenseContent licenseContent = new TestLicenseContent();
 
             licenseContent.SetValidity(false);
 
-            var va = Helpers.InitializeTestVA(new Configuration(), licenseContent);
+            var va = Helpers.InitializeLicensedTestVA(new Configuration(), licenseContent);
+
+            var env = va.CreateEventHandlerEnvironment(MFilesAPI.MFEventHandlerType.MFEventHandlerBeforeLoginToVault);
+
+            TestLicenseCommand command = new TestLicenseCommand
+            {
+                Env = env,
+                Result = 1
+            };
 
             Dispatcher dispatcher = va.EventDispatcher;
 
-            dispatcher.Dispatch(commands: command);
+            dispatcher.Dispatch(command);
 
             Assert.AreEqual(expextedResult, command.Result);
         }
@@ -65,17 +69,19 @@ namespace CtrlVAF.Tests.LicensingTests
             //Expects all classes to be handled
             int expextedResult = 2 * 3 * 5 * 7;
 
-            TestLicenseCommand command = new TestLicenseCommand
-            {
-                Env = new MFiles.VAF.Common.EventHandlerEnvironment(),
-                Result = 1
-            };
-
             TestLicenseContent licenseContent = new TestLicenseContent();
 
             licenseContent.SetValidity(true);
 
-            var va = Helpers.InitializeTestVA(new Configuration(), licenseContent);
+            var va = Helpers.InitializeLicensedTestVA(new Configuration(), licenseContent);
+
+            var env = va.CreateEventHandlerEnvironment(MFilesAPI.MFEventHandlerType.MFEventHandlerBeforeLoginToVault);
+
+            TestLicenseCommand command = new TestLicenseCommand
+            {
+                Env = env,
+                Result = 1
+            };
 
             Dispatcher dispatcher = va.EventDispatcher;
 
@@ -90,19 +96,21 @@ namespace CtrlVAF.Tests.LicensingTests
             //Expects all classes to be handled
             int expextedResult = 2 * 3 * 5;
 
-            TestLicenseCommand command = new TestLicenseCommand
-            {
-                Env = new MFiles.VAF.Common.EventHandlerEnvironment(),
-                Result = 1
-            };
-
             TestLicenseContent licenseContent = new TestLicenseContent();
 
             licenseContent.SetValidity(true);
 
             licenseContent.Modules = new List<string> { "Module1" };
 
-            var va = Helpers.InitializeTestVA(new Configuration(), licenseContent);
+            var va = Helpers.InitializeLicensedTestVA(new Configuration(), licenseContent);
+
+            var env = va.CreateEventHandlerEnvironment(MFilesAPI.MFEventHandlerType.MFEventHandlerBeforeLoginToVault);
+
+            TestLicenseCommand command = new TestLicenseCommand
+            {
+                Env = env,
+                Result = 1
+            };
 
             Dispatcher dispatcher = va.EventDispatcher;
 
@@ -117,19 +125,21 @@ namespace CtrlVAF.Tests.LicensingTests
             //Expects all classes to be handled
             int expextedResult = 2 * 3 * 7;
 
-            TestLicenseCommand command = new TestLicenseCommand
-            {
-                Env = new MFiles.VAF.Common.EventHandlerEnvironment(),
-                Result = 1
-            };
-
             TestLicenseContent licenseContent = new TestLicenseContent();
 
             licenseContent.SetValidity(true);
 
             licenseContent.Modules = new List<string> { "Module2" };
 
-            var va = Helpers.InitializeTestVA(new Configuration(), licenseContent);
+            var va = Helpers.InitializeLicensedTestVA(new Configuration(), licenseContent);
+
+            var env = va.CreateEventHandlerEnvironment(MFilesAPI.MFEventHandlerType.MFEventHandlerBeforeLoginToVault);
+
+            TestLicenseCommand command = new TestLicenseCommand
+            {
+                Env = env,
+                Result = 1
+            };
 
             Dispatcher dispatcher = va.EventDispatcher;
 
@@ -144,20 +154,21 @@ namespace CtrlVAF.Tests.LicensingTests
             //Expects all classes to be handled
             int expextedResult = 2 * 3 * 5 * 7;
 
-            TestLicenseCommand command = new TestLicenseCommand
-            {
-                Env = new MFiles.VAF.Common.EventHandlerEnvironment(),
-                Result = 1
-            };
-
-
             TestLicenseContent licenseContent = new TestLicenseContent();
 
             licenseContent.SetValidity(true);
 
-            licenseContent.Modules = new List<string> { "Module1","Module2" };
+            licenseContent.Modules = new List<string> { "Module1", "Module2" };
 
-            var va = Helpers.InitializeTestVA(new Configuration(), licenseContent);
+            var va = Helpers.InitializeLicensedTestVA(new Configuration(), licenseContent);
+
+            var env = va.CreateEventHandlerEnvironment(MFilesAPI.MFEventHandlerType.MFEventHandlerBeforeLoginToVault);
+
+            TestLicenseCommand command = new TestLicenseCommand
+            {
+                Env = env,
+                Result = 1
+            };
 
             Dispatcher dispatcher = va.EventDispatcher;
 

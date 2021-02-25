@@ -20,7 +20,7 @@ namespace CtrlVAF.Tests.CommandTests
             var conf = new Configuration() { Name = "Tester", ID = 1234 };
             var va = Helpers.InitializeTestVA(conf);
 
-            var environment = va.GetEventHandlerEnvironment(MFilesAPI.MFEventHandlerType.MFEventHandlerBeforeSetProperties);
+            var environment = va.CreateEventHandlerEnvironment(MFilesAPI.MFEventHandlerType.MFEventHandlerBeforeSetProperties);
             var command = new EventCommand() { Env = environment };
 
             Dispatcher dispatcher = va.EventDispatcher;
@@ -37,11 +37,12 @@ namespace CtrlVAF.Tests.CommandTests
             var expectedName = "Tester";
 
             var conf = new Configuration() { Name = "Tester", ID = 1234 };
-            var environment = new EventHandlerEnvironment();
+            var va = Helpers.InitializeTestVA(conf);
+
+            var environment = va.CreateEventHandlerEnvironment(MFilesAPI.MFEventHandlerType.MFEventHandlerAfterSetProperties);
 
             var command = new EventCommand() { Env = environment };
 
-            var va = Helpers.InitializeTestVA(conf);
 
             Dispatcher dispatcher = va.EventDispatcher;
 
@@ -70,11 +71,11 @@ namespace CtrlVAF.Tests.CommandTests
         {
 
             var conf = new Configuration() { };
-            var environment = new EventHandlerEnvironment();
+            var va = Helpers.InitializeTestVA(conf);
+
+            var environment = va.CreateEventHandlerEnvironment(MFilesAPI.MFEventHandlerType.MFEventHandlerAfterCheckInChanges);
 
             var command = new EventCommand() { Env = environment };
-
-            var va = Helpers.InitializeTestVA(conf);
 
             Dispatcher dispatcher = va.EventDispatcher;
 
@@ -88,10 +89,11 @@ namespace CtrlVAF.Tests.CommandTests
         public void AssertThat_FailuresInExceptionThrowingDispatcher_ThrowsException()
         {
             var conf = new Configuration() { };
-            var environment = new EventHandlerEnvironment();
+            var va = Helpers.InitializeTestVA(conf);
+
+            var environment = va.CreateEventHandlerEnvironment(MFilesAPI.MFEventHandlerType.MFEventHandlerAfterCheckInChanges);
 
             var command = new EventCommand() { Env = environment };
-            var va = Helpers.InitializeTestVA(conf);
 
             Dispatcher dispatcher = va.EventDispatcher;
 
@@ -109,10 +111,9 @@ namespace CtrlVAF.Tests.CommandTests
             var expected = 0;
 
             var conf = new Additional.TestConfiguration() { id = 1234 };
-            var environment = new EventHandlerEnvironment();
-            var command = new EventCommand() { Env = environment };
-
             var va = Helpers.InitializeTestVA(conf);
+            var environment = va.CreateEventHandlerEnvironment(MFilesAPI.MFEventHandlerType.MFEventHandlerBeforeCreateNewObjectFinalize);
+            var command = new EventCommand() { Env = environment };
 
             Dispatcher dispatcher = va.EventDispatcher;
 
@@ -127,10 +128,9 @@ namespace CtrlVAF.Tests.CommandTests
             var expected = 1234;
 
             var conf = new Additional.TestConfiguration() { id = 1234 };
-            var environment = new EventHandlerEnvironment();
-            var command = new EventCommand() { Env = environment };
-
             var va = Helpers.InitializeTestVA(conf);
+            var environment = va.CreateEventHandlerEnvironment(MFilesAPI.MFEventHandlerType.MFEventHandlerBeforeCreateNewObjectFinalize);
+            var command = new EventCommand() { Env = environment };
 
             Dispatcher dispatcher = va.EventDispatcher;
 
@@ -147,16 +147,13 @@ namespace CtrlVAF.Tests.CommandTests
             var expected = 1234;
 
             var conf = new Additional.TestConfiguration() { id = 1234 };
-            var environment = new EventHandlerEnvironment();
-
-
-            var command = new EventCommand() { Env = environment };
-
             var va = Helpers.InitializeTestVA(conf);
+            var environment = va.CreateEventHandlerEnvironment(MFilesAPI.MFEventHandlerType.MFEventHandlerBeforeCreateNewObjectFinalize);
+            var command = new EventCommand() { Env = environment };
 
             Dispatcher dispatcher = va.EventDispatcher;
 
-            dispatcher.IncludeAssemblies(typeof(Additional.TestConfiguration).Assembly);
+            dispatcher.IncludeAssemblies(typeof(Additional.TestConfiguration));
 
             dispatcher.Dispatch(command);
 
@@ -164,65 +161,95 @@ namespace CtrlVAF.Tests.CommandTests
         }
 
         [TestMethod]
-        public void AssertThat_MultipleCommandsWereCalled()
+        public void AssertThat_CustomCommandWasHandled()
         {
-            int expected = 11;
+            string expected = "Tester";
 
             var Conf = new Configuration();
-
-            EventHandlerEnvironment Env = new EventHandlerEnvironment { CurrentUserID = 0 };
-
             var va = Helpers.InitializeTestVA(Conf);
+            var Env = va.CreateEventHandlerEnvironment(MFilesAPI.MFEventHandlerType.MFEventHandlerBeforeCreateView);
 
             Dispatcher dispatcher = va.EventDispatcher;
 
-            var command_1 = new CustomCommand_1 {  Env = Env };
+            var command_1 = new CustomCommand_1 { Env = Env, Name = expected };
 
-            var command_2 = new CustomCommand_1 { Env = Env };
+            dispatcher.Dispatch(command_1);
+
+            Assert.AreEqual(expected, Env.Input);
+        }
+
+        [TestMethod]
+        public void AssertThat_MultipleCommandsWereCalled()
+        {
+            int expectedID = 1234;
+            string expectedName = "Tester";
+
+            var Conf = new Configuration();
+            var va = Helpers.InitializeTestVA(Conf);
+            var Env = va.CreateEventHandlerEnvironment(MFilesAPI.MFEventHandlerType.MFEventHandlerBeforeCreateView);
+
+            Dispatcher dispatcher = va.EventDispatcher;
+
+            var command_1 = new CustomCommand_1 {  Env = Env, Name = expectedName };
+
+            var command_2 = new CustomCommand_2 { Env = Env, ID = expectedID };
 
             dispatcher.Dispatch(command_1, command_2);
 
-            Assert.AreEqual(expected, Env.CurrentUserID);
+            Assert.AreEqual(expectedID, Env.CurrentUserID);
+            Assert.AreEqual(expectedName, Env.Input);
         }
 
         [TestMethod]
-        public void AssertThat_HandlerWasCalledTwice_WithDifferentCommands()
+        public void AssertThat_HandlerWasCalledTwice_DifferentEvent_TwoCalls()
         {
-            int expected = 20;
+            //The same handler can be called from two different events
+            int expected = 15;
 
-            var config = new Configuration();
-            var env = new EventHandlerEnvironment { CurrentUserID = 0 };
-
-            var command_3 = new CustomCommand_3 {  Env = env };
-
-            var va = Helpers.InitializeTestVA(config);
-
+            var Conf = new Configuration();
+            var va = Helpers.InitializeTestVA(Conf);
             Dispatcher dispatcher = va.EventDispatcher;
 
-            //The same handler is called twice, but in a different dispatch call, so it is executed twice
-            dispatcher.Dispatch(command_3);
+            var Env_BeforeCheckout = va.CreateEventHandlerEnvironment(MFilesAPI.MFEventHandlerType.MFEventHandlerBeforeCheckOut);
 
-            Assert.AreEqual(expected, env.CurrentUserID);
+            var command_3_BeforeCheckOut = new CustomCommand_3 {  Env = Env_BeforeCheckout, AddValue = 10 };
+
+            dispatcher.Dispatch(command_3_BeforeCheckOut);
+
+            //Execute the same call with a different EventType
+            var Env_AfterCheckOut = va.CreateEventHandlerEnvironment(MFilesAPI.MFEventHandlerType.MFEventHandlerAfterCheckOut);
+            Env_AfterCheckOut.CurrentUserID = Env_BeforeCheckout.CurrentUserID;
+
+            var command_3_AfterCheckOut = new CustomCommand_3 { Env = Env_AfterCheckOut, AddValue = 5 };
+
+            dispatcher.Dispatch(command_3_AfterCheckOut);
+
+            Assert.AreEqual(expected, Env_AfterCheckOut.CurrentUserID);
         }
 
         [TestMethod]
-        public void AssertThat_HandlerWasCalledOnce_WithDifferentCommands()
+        public void AssertThat_HandlerWasCalledOnce_DifferentEvent_OneCall()
         {
-            int expected = 10;
+            //Because this combination of command and event type leads to the same event handler, the event handler is only handled once
+            int expectedChanged = 10;
+            int expectedUnchanged = 0;
 
-            var config = new Configuration();
-            var env = new EventHandlerEnvironment { CurrentUserID = 0 };
-
-            var command_3 = new CustomCommand_3 { Env = env };
-
-            var va = Helpers.InitializeTestVA(config);
-
+            var Conf = new Configuration();
+            var va = Helpers.InitializeTestVA(Conf);
             Dispatcher dispatcher = va.EventDispatcher;
 
-            //These commands call the same handler so the handler is only executed for the first command
-            dispatcher.Dispatch(command_3);
+            var Env_BeforeCheckout = va.CreateEventHandlerEnvironment(MFilesAPI.MFEventHandlerType.MFEventHandlerBeforeCheckOut);
+            var command_3_BeforeCheckOut = new CustomCommand_3 { Env = Env_BeforeCheckout, AddValue = 10 };
 
-            Assert.AreEqual(expected, env.CurrentUserID);
+            var Env_AfterCheckOut = va.CreateEventHandlerEnvironment(MFilesAPI.MFEventHandlerType.MFEventHandlerAfterCheckOut);
+            Env_AfterCheckOut.CurrentUserID = Env_BeforeCheckout.CurrentUserID;
+
+            var command_3_AfterCheckOut = new CustomCommand_3 { Env = Env_AfterCheckOut, AddValue = 5 };
+
+            dispatcher.Dispatch(command_3_BeforeCheckOut, command_3_AfterCheckOut);
+
+            Assert.AreEqual(expectedChanged, Env_BeforeCheckout.CurrentUserID);
+            Assert.AreEqual(expectedUnchanged, Env_AfterCheckOut.CurrentUserID);
         }
 
 

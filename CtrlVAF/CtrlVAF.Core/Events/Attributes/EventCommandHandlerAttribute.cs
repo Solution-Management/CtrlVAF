@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CtrlVAF.Core.Events.Attributes
+namespace CtrlVAF.Events.Attributes
 {
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = false)]
     public class EventCommandHandlerAttribute: Attribute

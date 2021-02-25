@@ -91,7 +91,7 @@
     <Compile Include="ConfigValidationTests\ConfigValidationTests.cs" />
     <Compile Include="ConfigValidationTests\SpeedTests.cs" />
     <Compile Include="Helpers.cs" />
-    <Compile Include="TestEventHandlerEnvironment.cs" />
+    <Compile Include="LicensedVaultApplication.cs" />
     <Compile Include="VaultApplication.cs" />
     <Compile Include="LicensingTests\Configuration.cs" />
     <Compile Include="LicensingTests\LicensedCommandHandler_AllModules.cs" />

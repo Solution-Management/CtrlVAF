@@ -1,4 +1,4 @@
-﻿using CtrlVAF.Core.Events.Attributes;
+﻿using CtrlVAF.Events.Attributes;
 using CtrlVAF.Events;
 using CtrlVAF.Events.Handlers;
 
