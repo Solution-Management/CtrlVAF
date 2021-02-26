@@ -100,6 +100,9 @@ namespace CtrlVAF.Core
 
             var findings =  ValidatorDispatcher.Dispatch(command, customCommand);
 
+            if (findings == null)
+                return base.CustomValidation(vault, config);
+
             return findings.Concat(base.CustomValidation(vault, config));
         }
 
