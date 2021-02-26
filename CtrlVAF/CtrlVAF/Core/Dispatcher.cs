@@ -38,12 +38,6 @@ namespace CtrlVAF.Core
         /// <param name="types">a list of types which can be instantiated and will behave as expected</param>
         /// <returns>The result or <see cref="default"/> for no result.</returns>
         protected internal abstract void HandleConcreteTypes(IEnumerable<Type> types, params ICtrlVAFCommand[] commands);
-
-        public virtual Dispatcher ClearCache()
-        {
-            TypeCache = new ConcurrentDictionary<Type, IEnumerable<Type>>();
-            return this;
-        }
     }
 
     /// <summary>
@@ -52,9 +46,6 @@ namespace CtrlVAF.Core
     /// <typeparam name="TReturn">The return type of the Dispatch method. If no return is expected this should be type object.</typeparam>
     public abstract class Dispatcher<TReturn> : Dispatcher_Common, IDispatcher<TReturn>
     {
-        protected ConcurrentDictionary<Type, TReturn> ResultsCache
-            = new ConcurrentDictionary<Type, TReturn>();
-
         /// <inheritdoc/>
         public abstract TReturn Dispatch(params ICtrlVAFCommand[] commands);
 
@@ -89,34 +80,5 @@ namespace CtrlVAF.Core
         /// <param name="types">a list of types which can be instantiated and will behave as expected</param>
         /// <returns>The result or <see cref="default"/> for no result.</returns>
         protected internal abstract TReturn HandleConcreteTypes(IEnumerable<Type> types, params ICtrlVAFCommand[] commands);
-
-        public virtual Dispatcher<TReturn> ClearCache()
-        {
-            TypeCache = new ConcurrentDictionary<Type, IEnumerable<Type>>();
-            ResultsCache = new ConcurrentDictionary<Type, TReturn>();
-            return this;
-        }
-
-        /// <summary>
-        /// Gets the cached results for the key type.
-        /// </summary>
-        /// <param name="keyType"></param>
-        /// <returns></returns>
-        public TReturn GetCachedResults(Type keyType)
-        {
-            if (this.ResultsCache.TryGetValue(keyType, out TReturn results))
-                return results;
-            return default;
-        }
-
-        /// <summary>
-        /// Gets the cached results for the type of keyObject
-        /// </summary>
-        /// <param name="keyObject"></param>
-        /// <returns></returns>
-        public TReturn GetCachedResults(object keyObject)
-        {
-            return GetCachedResults(keyObject.GetType());
-        }
     }
 }

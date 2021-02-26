@@ -54,12 +54,6 @@ namespace CtrlVAF.Core
         {
             return dispatcher.HandleConcreteTypes(types, commands);
         }
-
-        public override Dispatcher<TReturn> ClearCache()
-        {
-            dispatcher.ClearCache();
-            return this;
-        }
     }
 
     public class LicensedDispatcher : Dispatcher
@@ -95,13 +89,6 @@ namespace CtrlVAF.Core
                 return;
             dispatcher.HandleConcreteTypes(types, commands);
         }
-
-        public override Dispatcher ClearCache()
-        {
-            dispatcher.ClearCache();
-            return this;
-        }
-
     }
 
     internal static class LicenseFilterHelper

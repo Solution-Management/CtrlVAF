@@ -90,40 +90,40 @@ namespace CtrlVAF.Validation
             {
                 var subConfigType = concreteValidatorType.BaseType.GenericTypeArguments[0];
 
-                if (!ResultsCache.TryGetValue(concreteValidatorType, out IEnumerable<ValidationFinding> findings))
+
+                var concreteHandler = Activator.CreateInstance(concreteValidatorType) as CustomValidator;
+
+                //Set the configuration
+                var configProperty = concreteValidatorType
+                    .GetProperty(nameof(ICustomValidator<object, ValidationCommand>.Configuration));
+                var subConfig = Dispatcher_Helpers.GetConfigSubProperty(vaultApplication.GetConfig(), subConfigType);
+                configProperty.SetValue(concreteHandler, subConfig);
+
+                //Set the configuration independent variables
+                concreteHandler.PermanentVault = vaultApplication.PermanentVault;
+                concreteHandler.OnDemandBackgroundOperations = vaultApplication.OnDemandBackgroundOperations;
+                concreteHandler.RecurringBackgroundOperations = vaultApplication.RecurringBackgroundOperations;
+
+                var validateMethod = concreteValidatorType.GetMethod(nameof(ICustomValidator<object, ValidationCommand>.Validate));
+
+                IEnumerable<ValidationFinding> findings = new ValidationFinding[0];
+
+                try
                 {
-                    var concreteHandler = Activator.CreateInstance(concreteValidatorType) as CustomValidator;
-
-                    //Set the configuration
-                    var configProperty = concreteValidatorType
-                        .GetProperty(nameof(ICustomValidator<object, ValidationCommand>.Configuration));
-                    var subConfig = Dispatcher_Helpers.GetConfigSubProperty(vaultApplication.GetConfig(), subConfigType);
-                    configProperty.SetValue(concreteHandler, subConfig);
-
-                    //Set the configuration independent variables
-                    concreteHandler.PermanentVault = vaultApplication.PermanentVault;
-                    concreteHandler.OnDemandBackgroundOperations = vaultApplication.OnDemandBackgroundOperations;
-                    concreteHandler.RecurringBackgroundOperations = vaultApplication.RecurringBackgroundOperations;
-
-                    var validateMethod = concreteValidatorType.GetMethod(nameof(ICustomValidator<object, ValidationCommand>.Validate));
-
-                    try
-                    {
-                        var validatorCommand = validatorCommands.FirstOrDefault(cmd => cmd.GetType() == concreteValidatorType.BaseType.GenericTypeArguments[1]);
-                        findings = validateMethod.Invoke(concreteHandler, new object[] { validatorCommand })
-                                        as IEnumerable<ValidationFinding>;
-                    }
-                    catch (TargetInvocationException te)
-                    {
-                        ExceptionDispatchInfo.Capture(te.InnerException).Throw();
-                    }
-                    catch (Exception e)
-                    {
-                        throw e;
-                    }
-
-                    ResultsCache.TryAdd(concreteValidatorType, findings.ToList());
+                    var validatorCommand = validatorCommands.FirstOrDefault(cmd => cmd.GetType() == concreteValidatorType.BaseType.GenericTypeArguments[1]);
+                    findings = validateMethod.Invoke(concreteHandler, new object[] { validatorCommand })
+                                    as IEnumerable<ValidationFinding>;
                 }
+                catch (TargetInvocationException te)
+                {
+                    ExceptionDispatchInfo.Capture(te.InnerException).Throw();
+                }
+                catch (Exception e)
+                {
+                    throw e;
+                }
+
+
 
                 if (!vaultApplication.ValidationResults.TryAdd(subConfigType, new ValidationResults(findings)))
                 {

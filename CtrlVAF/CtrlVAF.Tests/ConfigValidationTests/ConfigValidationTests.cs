@@ -53,28 +53,5 @@ namespace CtrlVAF.Tests.ConfigValidationTests
 
         }
 
-        [TestMethod]
-        public void Assert_ResultsAreCached()
-        {
-            var expected = 1;
-
-            var vault = new MFilesAPI.Vault();
-            var config = new Configuration { Name = "", ID = 42 };
-
-            var va = Helpers.InitializeTestVA(config);
-
-            Dispatcher<IEnumerable<ValidationFinding>> dispatcher = new ValidatorDispatcher<Configuration>(va);
-            dispatcher.IncludeAssemblies(typeof(Configuration));
-
-            var command = new ValidationCommand(vault);
-
-            dispatcher.Dispatch(command);
-
-            var results = dispatcher.GetCachedResults(typeof(ConfigurationValidator));
-
-            Assert.AreEqual(expected, results.Count());
-        }
-
-
     }
 }
