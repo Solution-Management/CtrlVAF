@@ -2,7 +2,7 @@
 
 ## Motivation
 
-Adding a separate property to the **VaultApplication** class for every background operation seemed hard to manage. So inspired by [**CtrlVAF.Commands**](https://github.com/Solution-Management/CtrlVAF/tree/main/CtrlVAF/CtrlVAF.Commands), this project uses reflection to track down suitable classes where it can extract a method to be called as a background operation.
+Adding a separate property to the **VaultApplication** class for every background operation seemed hard to manage. So inspired by [**CtrlVAF.Events**](https://github.com/Solution-Management/CtrlVAF/tree/main/CtrlVAF/CtrlVAF.Core/EventHandlers), this project uses reflection to track down suitable classes where it can extract a method to be called as a background operation.
 
 This project depends on MFiles.VAF but also MFiles.VAF.Extensions for task queue background operation management.
 

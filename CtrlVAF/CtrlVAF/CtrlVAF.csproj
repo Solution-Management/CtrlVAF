@@ -68,21 +68,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Attributes\LicenseRequiredAttribute.cs" />
-    <Compile Include="Attributes\UseLicensingAttribute.cs" />
     <Compile Include="BackgroundOperations\Attributes\BackgroundOperationAttribute.cs" />
     <Compile Include="BackgroundOperations\Attributes\RecurringAttribute.cs" />
     <Compile Include="BackgroundOperations\BackgroundDispatcher.cs" />
     <Compile Include="BackgroundOperations\Handlers\BackgroundTaskHandler.cs" />
     <Compile Include="BackgroundOperations\Handlers\IBackgroundTaskHandler.cs" />
+    <Compile Include="Core\Attributes\LicenseRequiredAttribute.cs" />
+    <Compile Include="Core\Attributes\UseLicensingAttribute.cs" />
     <Compile Include="Core\Dispatcher_Common.cs" />
     <Compile Include="Core\ConfigurableVaultApplicationBase.cs" />
     <Compile Include="BackgroundOperations\OnDemandBackgroundOperations.cs" />
     <Compile Include="BackgroundOperations\RecurringBackgroundOperations.cs" />
     <Compile Include="Core\Dispatcher_Helpers.cs" />
     <Compile Include="Core\ICommandHandler.cs" />
-    <Compile Include="Core\LicensedDispatcher.cs" />
     <Compile Include="Core\Dispatcher.cs" />
+    <Compile Include="Core\Licensing\LicensedDispatcher.cs" />
     <Compile Include="Events\Attributes\EventCommandHandlerAttribute.cs" />
     <Compile Include="Events\EventCommand.cs" />
     <Compile Include="Events\Handlers\EventHandler.cs" />
@@ -96,6 +96,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Core\Licensing\README.md" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

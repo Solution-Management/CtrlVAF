@@ -109,6 +109,7 @@ namespace CtrlVAF.Core
         protected override void OnConfigurationUpdated(IConfigurationRequestContext context, ClientOperations clientOps, TSecureConfiguration oldConfiguration)
         {
             ValidatorDispatcher.ClearCache();
+            ValidationResults = new ConcurrentDictionary<Type, ValidationResults>();
 
             base.OnConfigurationUpdated(context, clientOps, oldConfiguration);
         }

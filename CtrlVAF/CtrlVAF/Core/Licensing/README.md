@@ -1,4 +1,4 @@
-# Core
+# Licensing
 
 ## Licensed Dispatcher
 
@@ -14,7 +14,9 @@ dispatcher = new LicensedDispatcher<IEnumerable<ValidationFinding>>(dispatcher, 
 dispatcher.Dispatch();
 ```
 
-This works in tandem with the **[LicenseRequired]** attribute. When using a licensed dispatcher, the dispatcher checks for a valid license. When the license is invalid, every type with the [LicenseRequired] attribute is skipped.
+Note that this is done for you when inheriting from our `ConfigurableVaultApplicationBase` class and using the [UseLicensing] attribute on your VaultApplication
+
+The LicensedDispatcher class works in tandem with the **[LicenseRequired]** attribute. When using a licensed dispatcher, the dispatcher checks for a valid license. When the license is invalid, every type with the [LicenseRequired] attribute is skipped.
 
 Furthermore, you can specify modules in the attribute that may be present on the license. For example:
 
