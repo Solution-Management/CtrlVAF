@@ -87,11 +87,18 @@ namespace CtrlVAF.Core
             base.StartApplication();
         }
 
+        public virtual ValidationCommand AddCustomValidationCommand(Vault vault)
+        {
+            return null;
+        }
+
         protected override IEnumerable<ValidationFinding> CustomValidation(Vault vault, TSecureConfiguration config)
         {
             var command = new ValidationCommand(vault);
 
-            var findings =  ValidatorDispatcher.Dispatch(command);
+            var customCommand = AddCustomValidationCommand(vault);
+
+            var findings =  ValidatorDispatcher.Dispatch(command, customCommand);
 
             return findings.Concat(base.CustomValidation(vault, config));
         }

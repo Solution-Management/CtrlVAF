@@ -12,13 +12,13 @@ using System.Runtime.ExceptionServices;
 namespace CtrlVAF.Validation
 {
     public class ValidatorDispatcher<TConfig> : Dispatcher<IEnumerable<ValidationFinding>>
-                                                where TConfig: class, new()
+                                                where TConfig : class, new()
     {
         private ConfigurableVaultApplicationBase<TConfig> vaultApplication;
 
         public ValidatorDispatcher(ConfigurableVaultApplicationBase<TConfig> vaultApplication)
         {
-            this.vaultApplication = vaultApplication; 
+            this.vaultApplication = vaultApplication;
         }
 
         public override IEnumerable<ValidationFinding> Dispatch(params ICtrlVAFCommand[] commands)
@@ -32,17 +32,20 @@ namespace CtrlVAF.Validation
 
         protected internal override IEnumerable<Type> GetTypes(params ICtrlVAFCommand[] commands)
         {
-            var validatorCommand = commands.FirstOrDefault(
-                cmd => 
-                cmd.GetType() == typeof(ValidationCommand) ||
-                cmd.GetType().BaseType == typeof(ValidationCommand)
+            var validatorCommands = commands.Where(
+                cmd =>
+                cmd?.GetType() == typeof(ValidationCommand) ||
+                cmd?.GetType().BaseType == typeof(ValidationCommand)
                 );
 
-            if (validatorCommand == null)
+            if (!validatorCommands.Any())
                 return new List<Type>();
+
+            var validatorCommandTypes = validatorCommands.Select(cmd => cmd.GetType());
 
             var configType = typeof(TConfig);
 
+            //At least include assembly for the main Configuration class
             IncludeAssemblies(configType);
 
             // Attempt to get types from the cache
@@ -58,7 +61,8 @@ namespace CtrlVAF.Validation
                 .Where(t =>
                     t.IsClass &&
                     t.BaseType.IsGenericType &&
-                    t.BaseType.GetGenericTypeDefinition() == typeof(CustomValidator<,>)
+                    t.BaseType.GetGenericTypeDefinition() == typeof(CustomValidator<,>) &&
+                    t.BaseType.GenericTypeArguments.Intersect(validatorCommandTypes).Any()
                     );
             });
 
@@ -73,13 +77,13 @@ namespace CtrlVAF.Validation
                 yield break;
 
             //Get any validator command
-            var validatorCommand = commands.FirstOrDefault(
+            var validatorCommands = commands.Where(
                 cmd =>
-                cmd.GetType() == typeof(ValidationCommand) ||
-                cmd.GetType().BaseType == typeof(ValidationCommand)
+                cmd?.GetType() == typeof(ValidationCommand) ||
+                cmd?.GetType().BaseType == typeof(ValidationCommand)
                 );
 
-            if (validatorCommand == null)
+            if (!validatorCommands.Any())
                 yield break;
 
             foreach (Type concreteValidatorType in concreteValidators)
@@ -105,6 +109,7 @@ namespace CtrlVAF.Validation
 
                     try
                     {
+                        var validatorCommand = validatorCommands.FirstOrDefault(cmd => cmd.GetType() == concreteValidatorType.BaseType.GenericTypeArguments[1]);
                         findings = validateMethod.Invoke(concreteHandler, new object[] { validatorCommand })
                                         as IEnumerable<ValidationFinding>;
                     }
@@ -120,7 +125,7 @@ namespace CtrlVAF.Validation
                     ResultsCache.TryAdd(concreteValidatorType, findings.ToList());
                 }
 
-                if(!vaultApplication.ValidationResults.TryAdd(subConfigType, new ValidationResults(findings)))
+                if (!vaultApplication.ValidationResults.TryAdd(subConfigType, new ValidationResults(findings)))
                 {
                     vaultApplication.ValidationResults[subConfigType].AddResults(findings);
                 }
