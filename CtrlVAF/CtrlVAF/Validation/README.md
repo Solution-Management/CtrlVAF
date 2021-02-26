@@ -2,32 +2,34 @@
 
 ## How to
 
-To use this module in you VaultApplication, you need to override the **CustomValidation()** method of the VaultApplication class. Here you can create an instance of the **ValidatorDispatcher** class and call its **Dispatch()** method.
+To use this module in you VaultApplication, you need to override the **CustomValidation()** method of the VaultApplication class. Here you can use the **ValidationDispatcher** to dispatch a **ValidationCommand**.
 
 ```c#
 protected override IEnumerable<ValidationFinding> CustomValidation(Vault vault, Configuration config)
 {
-    Dispatcher<IEnumerable<ValidationFinding>> dispatcher = new ValidatorDispatcher(vault, config);
+    var command = new ValidationCommand(vault);
     
     IEnumerable<ValidationFinding> findings = dispatcher.Dispatch();
     
-    //The Dispatch() method returns default in case no suitable types were found.
+    //The Dispatch method can return null and this causes warnings in the admin tools.
     if (findings == null)
-    	return new ValidationFinding[0];
+    	return base.CustomValidation(vault, config);
 	return results;
 }
 ```
 
-This will find all types that have inherited from **CustomValidator\<TConfig>** and use them to validate the configuration.
+This will find all types that have inherited from **CustomValidator\<TConfig, TCommand>** and use them to validate the configuration.
 
 You can declare your custom validator as such:
 
 ```c#
-class MyConfigurationValidator : CustomValidator<Configuration>
+class MyConfigurationValidator : CustomValidator<Configuration, ValidationCommand>
 {
-	protected override IEnumerable<ValidationFinding> Validate(Vault vault, Configuration configuration)
+	protected override IEnumerable<ValidationFinding> Validate(ValidationCommand command)
     {
-        yield return new ValidationFinding(...);
+        yield return new ValidationFinding(
+        	//
+        );
         
         //...
     }
@@ -36,7 +38,7 @@ class MyConfigurationValidator : CustomValidator<Configuration>
 
 ### Child Configurations
 
-The custom validator class can also be initialized with any class that can be found somewhere in the configuration tree. For example:
+The CustomValidator class's TConfig argument can also be any class that can be found somewhere in the configuration tree. For example:
 
 ```c#
 [DataContract]
@@ -79,5 +81,39 @@ class MyChildConfigurationValidator : CustomValidator<ChildConfiguration>
 
 
 
- 
+## Validation Results
 
+The results of the ValidatorDispatcher's Dispatch() calls are stored in a property '**ValidationResults**' exposed by the VaultApplication class in the form of a Dictionary\<Type, ValidationResults>. The keys for this dictionary are the configuration types that were validated. The ValidationResults class itself is a collection of enumerable ValidationFindings, but exposes some useful methods for common Linq queries. 
+
+```c#
+//Checks if any erorrs occured
+ValidationResults.HasErrors();
+    
+//Gets all erorrs
+ValidationResults.GetErrors();
+    
+//Checks if any warnings occured
+ValidationResults.HasWarnings();
+    
+//Gets all warnings
+ValidationResults.GetWarnings();
+```
+
+These ValidationResults are also exposed as a property on the **EventHandler** and **BackgroundTaskHandler** classes. 
+
+```c#
+[EventCommandHandler(MFEventHandlerType.MFEventBeforeCheckInChanges)]
+public class BeforeCheckInChangesHandler : EventHandler<Configuration, EventCommand>
+{
+    public override void Handle(EventCommand command)
+    {
+        if(ValidationResults.HasErrors())
+        {
+            //
+            //return;?
+        }
+    }
+}
+```
+
+Furthermore the ValidationResults exposed here only contains the results for the keys which are either the TConfig argument itself (Configuration in this case) or any of it's member types. So for this example we would get the results for any validators of Configuration but also those of ChildConfiguration.

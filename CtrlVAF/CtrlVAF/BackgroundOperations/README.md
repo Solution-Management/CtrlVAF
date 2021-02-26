@@ -1,11 +1,5 @@
 # Background Operations
 
-## Motivation
-
-Adding a separate property to the **VaultApplication** class for every background operation seemed hard to manage. So inspired by [**CtrlVAF.Events**](https://github.com/Solution-Management/CtrlVAF/tree/main/CtrlVAF/CtrlVAF.Core/EventHandlers), this project uses reflection to track down suitable classes where it can extract a method to be called as a background operation.
-
-This project depends on MFiles.VAF but also MFiles.VAF.Extensions for task queue background operation management.
-
 ## How To
 
 To mark a class as a background task it needs to 
@@ -15,7 +9,7 @@ To mark a class as a background task it needs to
 
 ```c#
 [BackgroundOperation(Name: "CustomBackgroundOperation")]
-class CustomBackgroundTask : BackgroundTask<CustomConfiguration, CustomTaskQueueDirective>
+class CustomBackgroundTask : BackgroundTask<Configuration, CustomTaskQueueDirective>
 {
     public override void Task(TaskProcessorJob job, CustomTaskQueueDirective directive)
     {
@@ -31,7 +25,7 @@ class CustomTaskQueueDirective : TaskQueueDirective
 
 ### Passing Configuration to the task
 
-The `BackgroundTask` will expose a **Configuration** property of the type CustomConfiguration. This can be the `TSecureConfiguration` used in the `VaultApplication` declaration or the type of any member of it. For example:
+The `BackgroundTask` will expose a **Configuration** property of the type Configuration (in this example). This can be the `TSecureConfiguration` used in the `VaultApplication` declaration or the type of any member of it. For example:
 
 ```c#
 public  class VaultApplication
@@ -56,7 +50,7 @@ public class CustomConfiguration
 }
 ```
 
-If you specify `CustomConfiguration` the member **CustomConfig** will be accessible through **BackgroundTask.Configuration**.
+If you specify `CustomConfiguration` as the generic arguement for the BackgroundTaskHandler, the member **CustomConfig** will be accessible through **BackgroundTask.Configuration**.
 
 ### Registering to the VaultApplication
 
@@ -125,4 +119,4 @@ All recurring background tasks are stored in the **RecurringBackgroundOperations
 
 The **BackgroundOperations** properties also implement `IEnumerable<string>` and iterate over the task names specified in the attribute.
 
-At the time of writing all background tasks need to be implemented in the same assembly as the **VaultApplication** class.
+There is no option for custom commands for this dispatcher type. Instead, pass custom data through the TaskQueueDirective.

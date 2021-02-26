@@ -5,16 +5,16 @@
 Licensing can also be integrated easily into any dispatcher. Simply wrap an existing dispatcher into a **LicensedDispatcher** like so:
 
 ```c#
-Dispatcher<IEnumerable<ValidationFinding>> dispatcher = new ValidatorDispatcher(vault, config);
+Dispatcher dispatcher = new EventDispatcher<Configuration>(this);
 
 LicenseContentBase licenseContent = License?.Content<LicenseContentBase>();
 
-dispatcher = new LicensedDispatcher<IEnumerable<ValidationFinding>>(dispatcher, licenseContent);
+dispatcher = new LicensedDispatcher(dispatcher, licenseContent);
 
-dispatcher.Dispatch();
+dispatcher.Dispatch(command);
 ```
 
-Note that this is done for you when inheriting from our `ConfigurableVaultApplicationBase` class and using the [UseLicensing] attribute on your VaultApplication
+Note that this is done for you when inheriting from our `ConfigurableVaultApplicationBase` class and using the [UseLicensing] attribute on your VaultApplication.
 
 The LicensedDispatcher class works in tandem with the **[LicenseRequired]** attribute. When using a licensed dispatcher, the dispatcher checks for a valid license. When the license is invalid, every type with the [LicenseRequired] attribute is skipped.
 
@@ -22,7 +22,7 @@ Furthermore, you can specify modules in the attribute that may be present on the
 
 ```c#
 [LicenseRequired(Modules = new string[] { "Basic" })]
-class MyConfigurationValidator : CustomValidator<Configuration>
+class MyConfigurationValidator : CustomValidator<Configuration, ValidationCommand>
 {
     //    
 }
