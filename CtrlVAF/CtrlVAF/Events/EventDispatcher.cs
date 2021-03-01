@@ -45,15 +45,7 @@ namespace CtrlVAF.Events
             var wrongCommands = commands.ToList().RemoveAll(cmd =>
                cmd.GetType() != typeof(EventCommand) ||
                cmd.GetType().BaseType == typeof(EventCommand));
-            if (wrongCommands > 0)
-            {
-                SysUtils.ReportWarningToEventLog(
-                    "Event Dispatcher",
-                    "",
-                    new InvalidOperationException("Skipping commands that were not EventCommands")
-                    );
-            }
-
+            
             IncludeAssemblies(Assembly.GetCallingAssembly());
 
             var concreteTypes = GetTypes(commands);
