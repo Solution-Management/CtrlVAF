@@ -55,6 +55,7 @@
     <Reference Include="MFiles.VAF.Configuration.Interfaces, Version=1.0.0.0, Culture=neutral, PublicKeyToken=fa007b370d17fe5e, processorArchitecture=MSIL">
       <HintPath>..\packages\MFiles.VAF.2.2.0.10\lib\net45\MFiles.VAF.Configuration.Interfaces.dll</HintPath>
     </Reference>
+    <Reference Include="MFiles.VAF.Extensions, Version=1.1.9.0, Culture=neutral, PublicKeyToken=null" />
     <Reference Include="Microsoft.VisualStudio.TestPlatform.TestFramework, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\MSTest.TestFramework.2.1.1\lib\net45\Microsoft.VisualStudio.TestPlatform.TestFramework.dll</HintPath>
     </Reference>
@@ -79,17 +80,22 @@
     <Compile Include="CommandTests\AfterSetPropertiesHandler2.cs" />
     <Compile Include="CommandTests\AfterSetPropertiesHandler1.cs" />
     <Compile Include="CommandTests\BeforeSetPropertiesHandler.cs" />
+    <Compile Include="Various\CheckEnvironmentHandlers.cs" />
     <Compile Include="CommandTests\CommandTests.cs" />
-    <Compile Include="CommandTests\Configuration.cs" />
     <Compile Include="CommandTests\CustomCommands.cs" />
     <Compile Include="CommandTests\CustomCommandHandlers.cs" />
     <Compile Include="CommandTests\SpeedTests.cs" />
     <Compile Include="ConfigValidationTests\Child_ConfigurationValidator.cs" />
-    <Compile Include="ConfigValidationTests\Configuration.cs" />
+    <Compile Include="Configuration.cs" />
     <Compile Include="ConfigValidationTests\ConfigurationValidator.cs" />
     <Compile Include="ConfigValidationTests\ConfigValidationTests.cs" />
     <Compile Include="ConfigValidationTests\SpeedTests.cs" />
-    <Compile Include="LicensingTests\Configuration.cs" />
+    <Compile Include="Helpers.cs" />
+    <Compile Include="LicensedVaultApplication.cs" />
+    <Compile Include="Various\HelperMethods.cs" />
+    <Compile Include="Various\EnvironmentTests.cs" />
+    <Compile Include="Various\TestEnvironmentCommand.cs" />
+    <Compile Include="VaultApplication.cs" />
     <Compile Include="LicensingTests\LicensedCommandHandler_AllModules.cs" />
     <Compile Include="LicensingTests\LicensedCommandHandler_Module1.cs" />
     <Compile Include="LicensingTests\LicensedCommandHandler_Module2.cs" />
@@ -107,13 +113,13 @@
       <Project>{6ccb9743-0cc3-4f1c-8bbb-4df2897ddb88}</Project>
       <Name>CtrlVAF.AdditionalAssembly</Name>
     </ProjectReference>
-    <ProjectReference Include="..\CtrlVAF.Core\CtrlVAF.Core.csproj">
-      <Project>{cc724d5e-1339-477a-b608-f738fdf0c7f6}</Project>
-      <Name>CtrlVAF.Core</Name>
-    </ProjectReference>
     <ProjectReference Include="..\CtrlVAF.Models\CtrlVAF.Models.csproj">
       <Project>{54188975-1d5e-49e1-a854-5fe4987e83f4}</Project>
       <Name>CtrlVAF.Models</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CtrlVAF\CtrlVAF.csproj">
+      <Project>{cc724d5e-1339-477a-b608-f738fdf0c7f6}</Project>
+      <Name>CtrlVAF</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />

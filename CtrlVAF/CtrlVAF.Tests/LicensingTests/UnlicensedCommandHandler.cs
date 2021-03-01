@@ -1,5 +1,7 @@
-﻿using CtrlVAF.Events.Handlers;
-using CtrlVAF.Events.Commands;
+﻿using CtrlVAF.Events.Attributes;
+using CtrlVAF.Events.Handlers;
+
+using MFilesAPI;
 
 using System;
 using System.Collections.Generic;
@@ -9,9 +11,10 @@ using System.Threading.Tasks;
 
 namespace CtrlVAF.Tests.LicensingTests
 {
-    class UnlicensedCommandHandler: IEventHandler<TestLicenseCommand>
+    [EventCommandHandler(MFEventHandlerType.MFEventHandlerBeforeLoginToVault)]
+    class UnlicensedCommandHandler: EventHandler<Configuration, TestLicenseCommand>
     {
-        public void Handle(TestLicenseCommand command)
+        public override void Handle(TestLicenseCommand command)
         {
             command.Result *= 2; 
         }

@@ -1,4 +1,4 @@
-﻿using CtrlVAF.Events.Commands;
+﻿using CtrlVAF.Events;
 
 using MFiles.VAF.Common;
 
@@ -10,30 +10,32 @@ using System.Threading.Tasks;
 
 namespace CtrlVAF.Tests.CommandTests
 {
-    class CustomCommand_1: IEventCommand<Configuration>
+    class CustomCommand_1 : EventCommand
     {
-        public EventHandlerEnvironment Env { get; set; }
+        public CustomCommand_1(EventHandlerEnvironment env) : base(env)
+        {
+        }
 
-        public Configuration Configuration { get; set; }
+        public string Name {get; set;}
     }
 
-    class CustomCommand_2 : IEventCommand<Configuration>
+    class CustomCommand_2 : EventCommand
     {
-        public EventHandlerEnvironment Env { get; set; }
+        public CustomCommand_2(EventHandlerEnvironment env) : base(env)
+        {
+        }
 
-        public Configuration Configuration { get; set; }
-    }
-    class CustomCommand_3 : IEventCommand<Configuration>
-    {
-        public EventHandlerEnvironment Env { get; set; }
-
-        public Configuration Configuration { get; set; }
+        public int ID { get; set; }
     }
 
-    class CustomCommand_4 : IEventCommand<Configuration>
+    class CustomCommand_3 : EventCommand
     {
-        public EventHandlerEnvironment Env { get; set; }
+        public CustomCommand_3(EventHandlerEnvironment env) : base(env)
+        {
+        }
 
-        public Configuration Configuration { get; set; }
+        public int AddValue { get; set; }
     }
+
+    
 }

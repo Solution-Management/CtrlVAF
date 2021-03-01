@@ -1,4 +1,5 @@
-﻿using CtrlVAF.Events.Commands;
+﻿using CtrlVAF.Events.Attributes;
+using CtrlVAF.Events;
 using CtrlVAF.Events.Handlers;
 
 using System;
@@ -11,14 +12,15 @@ namespace CtrlVAF.Additional
 {
     public class TestConfiguration
     {
-        public int id = 0;
+        public int id = 50;
     }
 
-    public class TestHandler : IEventHandler<BeforeCheckInChangesCommand<TestConfiguration>>
+    [EventCommandHandler(MFilesAPI.MFEventHandlerType.MFEventHandlerBeforeCreateNewObjectFinalize)]
+    public class TestHandler : EventHandler<TestConfiguration, EventCommand>
     {
-        public void Handle(BeforeCheckInChangesCommand<TestConfiguration> command)
+        public override void Handle(EventCommand command)
         {
-            command.Env.CurrentUserID = command.Configuration.id;
+            command.Env.CurrentUserID = Configuration.id;
         }
     }
 }

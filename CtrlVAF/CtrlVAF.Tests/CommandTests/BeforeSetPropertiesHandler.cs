@@ -1,4 +1,5 @@
-﻿using CtrlVAF.Events.Commands;
+﻿using CtrlVAF.Events.Attributes;
+using CtrlVAF.Events;
 using CtrlVAF.Events.Handlers;
 using System;
 using System.Collections.Generic;
@@ -8,12 +9,12 @@ using System.Threading.Tasks;
 
 namespace CtrlVAF.Tests.CommandTests
 {
-
-    public class BeforeSetPropertiesHandler : IEventHandler<BeforeSetPropertiesCommand<Configuration>>
+    [EventCommandHandler(MFilesAPI.MFEventHandlerType.MFEventHandlerBeforeSetProperties)]
+    public class BeforeSetPropertiesHandler : EventHandler<Configuration, EventCommand>
     {
-        public void Handle(BeforeSetPropertiesCommand<Configuration> command)
+        public override void Handle(EventCommand command)
         {
-            command.Env.CurrentUserID = command.Configuration.ID;
+            command.Env.CurrentUserID = Configuration.ID;
         }
        
     }

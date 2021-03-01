@@ -1,4 +1,5 @@
-﻿using CtrlVAF.Events.Handlers;
+﻿using CtrlVAF.Events.Attributes;
+using CtrlVAF.Events.Handlers;
 
 using System;
 using System.Collections.Generic;
@@ -9,38 +10,31 @@ using System.Threading.Tasks;
 
 namespace CtrlVAF.Tests.CommandTests
 {
-    class CustomCommandHandler_1 : IEventHandler<CustomCommand_1>
+    [EventCommandHandler(MFilesAPI.MFEventHandlerType.MFEventHandlerBeforeCreateView)]
+    class CustomCommandHandler_1 : EventHandler<Configuration, CustomCommand_1>
     {
-        public void Handle(CustomCommand_1 command)
+        public override void Handle(CustomCommand_1 command)
         {
-            command.Env.CurrentUserID += 1;
+            command.Env.Input = command.Name;
         }
     }
 
-    class CustomCommandHandler_2 : IEventHandler<CustomCommand_2>
+    [EventCommandHandler(MFilesAPI.MFEventHandlerType.MFEventHandlerBeforeCreateView)]
+    class CustomCommandHandler_2 : EventHandler<Configuration, CustomCommand_2>
     {
-        public void Handle(CustomCommand_2 command)
+        public override void Handle(CustomCommand_2 command)
         {
-            command.Env.CurrentUserID += 10;
+            command.Env.CurrentUserID = command.ID;
         }
     }
 
-    class CustomCommandHandler : IEventHandler<CustomCommand_3>, IEventHandler<CustomCommand_4>
+    [EventCommandHandler(MFilesAPI.MFEventHandlerType.MFEventHandlerBeforeCheckOut)]
+    [EventCommandHandler(MFilesAPI.MFEventHandlerType.MFEventHandlerAfterCheckOut)]
+    class CustomCommandHandler_3 : EventHandler<Configuration, CustomCommand_3>
     {
-        public void Handle(CustomCommand_3 command)
+        public override void Handle(CustomCommand_3 command)
         {
-            command.Env.CurrentUserID += 10;
-        }
-
-        public void Handle(CustomCommand_4 command)
-        {
-            CustomCommand_3 cmd = new CustomCommand_3
-            {
-                Env = command.Env,
-                Configuration = command.Configuration
-            };
-
-            Handle(cmd);
+            command.Env.CurrentUserID += command.AddValue;
         }
     }
 }

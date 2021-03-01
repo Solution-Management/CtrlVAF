@@ -1,6 +1,6 @@
 ﻿
 using CtrlVAF.Core;
-using CtrlVAF.Validators;
+using CtrlVAF.Validation;
 
 using MFiles.VAF.Configuration;
 
@@ -22,10 +22,11 @@ namespace CtrlVAF.Tests.ConfigValidationTests
             var vault = new MFilesAPI.Vault();
             var config = new Configuration { Name = "", ID = 42 };
 
-            Dispatcher<IEnumerable<ValidationFinding>> dispatcher = new ValidatorDispatcher();
-            dispatcher.IncludeAssemblies(typeof(Configuration));
+            var va = Helpers.InitializeTestVA(config);
 
-            var command = new ValidatorCommand<Configuration> { Configuration = config, Vault = vault };
+            Dispatcher<IEnumerable<ValidationFinding>> dispatcher = va.ValidatorDispatcher;
+
+            var command = new ValidationCommand(vault);
 
             var results = dispatcher.Dispatch(command);
 
@@ -33,25 +34,24 @@ namespace CtrlVAF.Tests.ConfigValidationTests
         }
 
         [TestMethod]
-        public void Assert_ResultsAreCached()
+        public void Assert_ChildConfiguration()
         {
             var expected = 1;
 
             var vault = new MFilesAPI.Vault();
-            var config = new Configuration { Name = "", ID = 42 };
+            var config = new Configuration { Name = "Blabla", ID = 42, ChildConfig = new Child_Configuration { Name = "" } };
 
-            Dispatcher<IEnumerable<ValidationFinding>> dispatcher = new ValidatorDispatcher();
-            dispatcher.IncludeAssemblies(typeof(Configuration));
+            var va = Helpers.InitializeTestVA(config);
 
-            var command = new ValidatorCommand<Configuration> { Configuration = config, Vault = vault };
+            Dispatcher<IEnumerable<ValidationFinding>> dispatcher = va.ValidatorDispatcher;
 
-            dispatcher.Dispatch(command);
+            var command = new ValidationCommand(vault);
 
-            var results = dispatcher.GetCachedResults(typeof(ConfigurationValidator));
+            var results = dispatcher.Dispatch(command);
 
             Assert.AreEqual(expected, results.Count());
-        }
 
+        }
 
     }
 }

@@ -1,5 +1,4 @@
 ﻿using CtrlVAF.Events;
-using CtrlVAF.Events.Commands;
 
 using MFiles.VAF.Common;
 
@@ -17,9 +16,11 @@ namespace CtrlVAF.Tests.CommandTests
         {
             var conf = new Additional.TestConfiguration() { id = 1234 };
             var environment = new EventHandlerEnvironment();
-            var command = new BeforeCheckInChangesCommand<Additional.TestConfiguration>() { Env = environment, Configuration = conf };
+            var command = new EventCommand(environment);
 
-            var dispatcher = new EventDispatcher();
+            var va = Helpers.InitializeTestVA(conf);
+
+            var dispatcher = va.EventDispatcher;
 
             dispatcher.IncludeAssemblies(typeof(Additional.TestConfiguration).Assembly);
 
@@ -37,9 +38,11 @@ namespace CtrlVAF.Tests.CommandTests
             var conf = new Configuration() { Name = "Tester", ID = 1234 };
             var environment = new EventHandlerEnvironment();
 
-            var command = new BeforeSetPropertiesCommand<Configuration>() { Env = environment, Configuration = conf };
+            var command = new EventCommand(environment);
 
-            var dispatcher = new EventDispatcher();
+            var va = Helpers.InitializeTestVA(conf);
+
+            var dispatcher = va.EventDispatcher;
 
             for (int i = 0; i < 50000; i++)
             {
@@ -54,9 +57,11 @@ namespace CtrlVAF.Tests.CommandTests
         {
             var conf = new Configuration() { Name = "Tester", ID = 1234 };
             var environment = new EventHandlerEnvironment();
-            var command = new BeforeSetPropertiesCommand<Configuration>() { Env = environment, Configuration = conf };
+            var command = new EventCommand(environment);
 
-            var dispatcher = new EventDispatcher();
+            var va = Helpers.InitializeTestVA(conf);
+
+            var dispatcher = va.EventDispatcher;
 
             for (int i = 0; i < 100000; i++)
             {
