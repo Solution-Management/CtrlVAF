@@ -42,6 +42,11 @@ namespace CtrlVAF.Core
             return Configuration;
         }
 
+        public virtual Assembly[] IncludeAssemblies()
+        {
+            return new Assembly[0];
+        }
+
         public override void StartOperations(Vault vaultPersistent)
         {
             BackgroundDispatcher = new BackgroundDispatcher<TSecureConfiguration>(this);
@@ -60,6 +65,10 @@ namespace CtrlVAF.Core
 
                 ValidatorDispatcher = new LicensedDispatcher<IEnumerable<ValidationFinding>>(ValidatorDispatcher, content);
             }
+
+            BackgroundDispatcher.IncludeAssemblies(IncludeAssemblies());
+            EventDispatcher.IncludeAssemblies(IncludeAssemblies());
+            ValidatorDispatcher.IncludeAssemblies(IncludeAssemblies());
 
             base.StartOperations(vaultPersistent);
         }
