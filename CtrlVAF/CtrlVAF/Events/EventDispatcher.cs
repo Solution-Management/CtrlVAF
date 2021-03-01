@@ -42,9 +42,11 @@ namespace CtrlVAF.Events
         /// <inheritdoc/>
         public override void Dispatch(params ICtrlVAFCommand[] commands)
         {
-            var wrongCommands = commands.ToList().RemoveAll(cmd =>
-               cmd.GetType() != typeof(EventCommand) ||
-               cmd.GetType().BaseType == typeof(EventCommand));
+            commands = commands.Where(cmd => 
+                cmd.GetType() == typeof(EventCommand) ||
+                cmd.GetType().BaseType == typeof(EventCommand)
+                )
+                .ToArray();
             
             IncludeAssemblies(Assembly.GetCallingAssembly());
 

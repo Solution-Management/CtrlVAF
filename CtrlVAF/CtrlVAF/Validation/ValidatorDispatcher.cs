@@ -23,6 +23,12 @@ namespace CtrlVAF.Validation
 
         public override IEnumerable<ValidationFinding> Dispatch(params ICtrlVAFCommand[] commands)
         {
+            commands = commands.Where(cmd =>
+                cmd.GetType() == typeof(ValidationCommand) ||
+                cmd.GetType().BaseType == typeof(ValidationCommand)
+                )
+                .ToArray();
+
             IncludeAssemblies(Assembly.GetCallingAssembly());
 
             var types = GetTypes(commands);
@@ -32,16 +38,10 @@ namespace CtrlVAF.Validation
 
         protected internal override IEnumerable<Type> GetTypes(params ICtrlVAFCommand[] commands)
         {
-            var validatorCommands = commands.Where(
-                cmd =>
-                cmd?.GetType() == typeof(ValidationCommand) ||
-                cmd?.GetType().BaseType == typeof(ValidationCommand)
-                );
-
-            if (!validatorCommands.Any())
+            if (!commands.Any())
                 return new List<Type>();
 
-            var validatorCommandTypes = validatorCommands.Select(cmd => cmd.GetType());
+            var validatorCommandTypes = commands.Select(cmd => cmd.GetType());
 
             var configType = typeof(TConfig);
 
@@ -76,14 +76,7 @@ namespace CtrlVAF.Validation
             if (!concreteValidators.Any())
                 yield break;
 
-            //Get any validator command
-            var validatorCommands = commands.Where(
-                cmd =>
-                cmd?.GetType() == typeof(ValidationCommand) ||
-                cmd?.GetType().BaseType == typeof(ValidationCommand)
-                );
-
-            if (!validatorCommands.Any())
+            if (!commands.Any())
                 yield break;
 
             foreach (Type concreteValidatorType in concreteValidators)
@@ -110,7 +103,7 @@ namespace CtrlVAF.Validation
 
                 try
                 {
-                    var validatorCommand = validatorCommands.FirstOrDefault(cmd => cmd.GetType() == concreteValidatorType.BaseType.GenericTypeArguments[1]);
+                    var validatorCommand = commands.FirstOrDefault(cmd => cmd.GetType() == concreteValidatorType.BaseType.GenericTypeArguments[1]);
                     findings = validateMethod.Invoke(concreteHandler, new object[] { validatorCommand })
                                     as IEnumerable<ValidationFinding>;
                 }
