@@ -97,7 +97,7 @@ namespace CtrlVAF.Events
                 }
 
                 //Was there a reason for this Distinct? The same assembly is not included twice.
-                TypeCache.TryAdd(commandType, allCommandHandlerTypes.Distinct());
+                TypeCache.TryAdd(commandType, allCommandHandlerTypes);
 
                 var eventHandlerTypes = allCommandHandlerTypes.Where(t =>
                         t.GetCustomAttributes<EventCommandHandlerAttribute>().Any(a =>
