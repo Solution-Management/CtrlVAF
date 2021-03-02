@@ -116,11 +116,9 @@ namespace CtrlVAF.Validation
                     throw e;
                 }
 
-
-
                 if (!vaultApplication.ValidationResults.TryAdd(subConfigType, new ValidationResults(findings)))
                 {
-                    vaultApplication.ValidationResults[subConfigType].AddResults(findings);
+                    vaultApplication.ValidationResults[subConfigType].AddResults(findings.ToArray());
                 }
 
                 foreach (var finding in findings)
