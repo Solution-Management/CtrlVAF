@@ -100,6 +100,17 @@ namespace CtrlVAF.Core
                 return;
             dispatcher.HandleConcreteTypes(types, commands);
         }
+
+        public override IDispatcher_Common IncludeAssemblies(params Assembly[] assemblies)
+        {
+            dispatcher.IncludeAssemblies(assemblies);
+            return this;
+        }
+
+        public override IDispatcher_Common IncludeAssemblies(params Type[] types)
+        {
+            return IncludeAssemblies(types.Select(t => t.Assembly).ToArray());
+        }
     }
 
     internal static class LicenseFilterHelper
