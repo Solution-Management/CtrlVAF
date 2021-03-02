@@ -27,8 +27,8 @@ namespace CtrlVAF.Core
         /// Method to include additional assemblies in which to look for ICommandHandlers. The calling assembly is always included.
         /// </summary>
         /// <param name="assemblies">The assemblies in which to look for</param>
-        /// <returns>The same CommandDispatcher</returns>
-        public IDispatcher_Common IncludeAssemblies(params Assembly[] assemblies)
+        /// <returns>The same Dispatcher for chaining</returns>
+        public virtual IDispatcher_Common IncludeAssemblies(params Assembly[] assemblies)
         {
             Assemblies.AddRange(assemblies);
             //Never search CtrlVAF.Core
@@ -41,8 +41,8 @@ namespace CtrlVAF.Core
         /// Overload method to IncludeAssemblies to allow for adding types directly and converting the Assmblies from these.
         /// </summary>
         /// <param name="types">The types of which to get the assemblies from</param>
-        /// <returns>The same CommandDispatcher</returns>
-        public IDispatcher_Common IncludeAssemblies(params Type[] types)
+        /// <returns>The same Dispatcher for chaining</returns>
+        public virtual IDispatcher_Common IncludeAssemblies(params Type[] types)
         {
             var assemblies = types.Select(t => { return t.Assembly; }).ToArray();
             return IncludeAssemblies(assemblies);
