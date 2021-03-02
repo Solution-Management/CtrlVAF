@@ -73,12 +73,18 @@ namespace CtrlVAF.Events
                 //If the concrete types have already been retrieved and cached before, simply handle those
                 if (TypeCache.TryGetValue(commandType, out var cachedTypes))
                 {
-                    dispatchableHandlerTypes.AddRange(cachedTypes);
+                    var handlerTypes = cachedTypes.Where(t =>
+                        t.GetCustomAttributes<EventCommandHandlerAttribute>().Any(a =>
+                            a.EventHandlerTypeMatches(command.Env.EventType)
+                            )
+                        );
+
+                    dispatchableHandlerTypes.AddRange(handlerTypes);
                     continue;
                 }
 
                 //get the event handlers that can handle this command type and are designated to handle the event described in the commands Env
-                List<Type> handlerTypes = new List<Type>();
+                List<Type> allCommandHandlerTypes = new List<Type>();
                 foreach (Assembly assembly in Assemblies)
                 {
                     var commandHandlerTypes = assembly.GetTypes().Where(t =>
@@ -87,18 +93,19 @@ namespace CtrlVAF.Events
                         t.BaseType.GetGenericTypeDefinition() == abstractHandlerType &&
                         t.BaseType.GenericTypeArguments[1] == commandType); ;
 
-                    var eventHanderTypes = commandHandlerTypes.Where(t =>
+                    allCommandHandlerTypes.AddRange(commandHandlerTypes);
+                }
+
+                //Was there a reason for this Distinct? The same assembly is not included twice.
+                TypeCache.TryAdd(commandType, allCommandHandlerTypes.Distinct());
+
+                var eventHandlerTypes = allCommandHandlerTypes.Where(t =>
                         t.GetCustomAttributes<EventCommandHandlerAttribute>().Any(a =>
                             a.EventHandlerTypeMatches(command.Env.EventType)
                             )
                         );
 
-                    handlerTypes.AddRange(eventHanderTypes);
-                }
-
-                TypeCache.TryAdd(commandType, handlerTypes.Distinct());
-
-                dispatchableHandlerTypes.AddRange(handlerTypes);
+                dispatchableHandlerTypes.AddRange(eventHandlerTypes);
 
                 parsedCommands.Add(commandType);
             }
