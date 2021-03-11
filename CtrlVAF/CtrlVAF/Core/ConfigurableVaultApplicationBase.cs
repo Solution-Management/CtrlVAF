@@ -103,6 +103,8 @@ namespace CtrlVAF.Core
 
         protected override IEnumerable<ValidationFinding> CustomValidation(Vault vault, TSecureConfiguration config)
         {
+            ValidationResults = new ConcurrentDictionary<Type, ValidationResults>();
+
             var command = new ValidationCommand(vault);
 
             var customCommand = AddCustomValidationCommand(vault);
@@ -113,13 +115,6 @@ namespace CtrlVAF.Core
                 return base.CustomValidation(vault, config);
 
             return findings.Concat(base.CustomValidation(vault, config));
-        }
-
-        protected override void OnConfigurationUpdated(IConfigurationRequestContext context, ClientOperations clientOps, TSecureConfiguration oldConfiguration)
-        {
-            ValidationResults = new ConcurrentDictionary<Type, ValidationResults>();
-
-            base.OnConfigurationUpdated(context, clientOps, oldConfiguration);
         }
     }
 }
