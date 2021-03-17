@@ -19,7 +19,7 @@ namespace CtrlVAF.BackgroundOperations
     {
         public TConfig Configuration { get; internal set; }
 
-        public abstract void Task(TaskProcessorJob job, TDirective directive);
+        public abstract void Task(TaskProcessorJob job, TDirective directive, Action<string, MFTaskState> progressCallback);
     }
 
     public abstract class BackgroundTaskHandler : ICommandHandler

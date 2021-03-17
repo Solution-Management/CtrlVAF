@@ -1,11 +1,12 @@
 ﻿using CtrlVAF.Core;
+using CtrlVAF.Core.Models;
 using CtrlVAF.Models;
 using CtrlVAF.Validation;
 
 using MFiles.VAF.Common;
 using MFiles.VAF.Extensions.MultiServerMode;
 using MFiles.VAF.MultiserverMode;
-
+using MFilesAPI;
 using Newtonsoft.Json;
 
 using System;
@@ -37,8 +38,6 @@ namespace CtrlVAF.BackgroundOperations
             HandleConcreteTypes(concreteTypes);
         }
 
-        
-
         protected internal override IEnumerable<Type> GetTypes(params ICtrlVAFCommand[] commands)
         {
             IncludeAssemblies(typeof(TConfig));
@@ -59,96 +58,53 @@ namespace CtrlVAF.BackgroundOperations
 
         protected internal override void HandleConcreteTypes(IEnumerable<Type> concreteTypes, params ICtrlVAFCommand[] commands)
         {
-            List<string> PermanentBackgroundOperationNames = new List<string>();
-            List<string> OnDemandBackgroundOperationNames = new List<string>();
+            var permanentBackgroundOperationNames = new List<string>();
+            var onDemandBackgroundOperationNames = new List<string>();
 
             foreach (Type concreteType in concreteTypes)
             {
-                
-
-                BackgroundOperationAttribute operationInfo = concreteType.GetCustomAttribute<BackgroundOperationAttribute>();
+                var operationInfo = concreteType.GetCustomAttribute<BackgroundOperationAttribute>();
 
                 if (concreteType.IsDefined(typeof(RecurringAttribute)))
                 {
                     var attr = concreteType.GetCustomAttribute<RecurringAttribute>();
+                    var interval = TimeSpan.FromMinutes(attr.IntervalInMinutes);
 
-                    TimeSpan interval = TimeSpan.FromMinutes(attr.IntervalInMinutes);
-
-                    TaskQueueBackgroundOperation operation = vaultApplication.TaskQueueBackgroundOperationManager.StartRecurringBackgroundOperation(
+                    var operation = vaultApplication.TaskQueueBackgroundOperationManager.StartRecurringBackgroundOperation(
                         operationInfo.Name,
                         interval,
-                        (job, directive) => 
-                        {
-                            var backgroundTaskHandler = GetTaskHandler(concreteType);
-
-                            var taskMethod = backgroundTaskHandler.GetType().GetMethod(nameof(IBackgroundTaskHandler<object, EmptyTQD>.Task));
-
-                            try
-                            {
-                                taskMethod.Invoke(backgroundTaskHandler, new object[] { job, directive });
-                            }
-                            catch (TargetInvocationException te)
-                            {
-                                ExceptionDispatchInfo.Capture(te.InnerException).Throw();
-                            }
-                            catch (Exception e)
-                            {
-                                throw e;
-                            }
-                        }
+                        GetBackgroundOperationFunction(concreteType)
                         );
 
                     vaultApplication.RecurringBackgroundOperations.AddBackgroundOperation(operationInfo.Name, operation, interval);
-
-                    PermanentBackgroundOperationNames.Add(concreteType.FullName);
+                    permanentBackgroundOperationNames.Add(concreteType.FullName);
                 }
                 else
                 {
-                    TaskQueueBackgroundOperation operation = vaultApplication.TaskQueueBackgroundOperationManager.CreateBackgroundOperation<TaskQueueDirective>(
+                    var operation = vaultApplication.TaskQueueBackgroundOperationManager.CreateBackgroundOperation<TaskQueueDirective>(
                         operationInfo.Name,
-                        (job, directive) => 
-                        {
-                            var backgroundTaskHandler = GetTaskHandler(concreteType);
-
-                            var taskMethod = backgroundTaskHandler.GetType().GetMethod(nameof(IBackgroundTaskHandler<object, EmptyTQD>.Task));
-
-                            try
-                            {
-                                taskMethod.Invoke(backgroundTaskHandler, new object[] { job, directive });
-                            }
-                            catch (TargetInvocationException te)
-                            {
-                                ExceptionDispatchInfo.Capture(te.InnerException).Throw();
-                            }
-                            catch (Exception e)
-                            {
-                                throw e;
-                            }
-                        }
+                        GetBackgroundOperationFunction(concreteType)
                         );
 
                     vaultApplication.OnDemandBackgroundOperations.AddBackgroundOperation(operationInfo.Name, operation);
-
-                    OnDemandBackgroundOperationNames.Add(concreteType.FullName);
+                    onDemandBackgroundOperationNames.Add(concreteType.FullName);
                 }
             }
 
             string message = "";
 
-            if (PermanentBackgroundOperationNames.Any())
+            if (permanentBackgroundOperationNames.Any())
                 message += $"Permanent background operation classes: " + Environment.NewLine +
-                    JsonConvert.SerializeObject(PermanentBackgroundOperationNames, Formatting.Indented) + Environment.NewLine;
+                    JsonConvert.SerializeObject(permanentBackgroundOperationNames, Formatting.Indented) + Environment.NewLine;
 
-            if (OnDemandBackgroundOperationNames.Any())
+            if (onDemandBackgroundOperationNames.Any())
                 message += $"On demand background operation classes: " + Environment.NewLine +
-                    JsonConvert.SerializeObject(OnDemandBackgroundOperationNames, Formatting.Indented) + Environment.NewLine;
+                    JsonConvert.SerializeObject(onDemandBackgroundOperationNames, Formatting.Indented) + Environment.NewLine;
 
             SysUtils.ReportInfoToEventLog(
                 $"{vaultApplication.GetType().Name} - BackgroundOperations",
                 message
                 );
-
-            return;
         }
 
         private BackgroundTaskHandler GetTaskHandler(Type concreteType)
@@ -163,7 +119,7 @@ namespace CtrlVAF.BackgroundOperations
             object subConfig = Dispatcher_Helpers.GetConfigSubProperty(config, subConfigType);
 
             //Set the configuration
-            var configProperty = backgroundTaskHandler.GetType().GetProperty(nameof(IBackgroundTaskHandler<object, EmptyTQD>.Configuration));
+            var configProperty = backgroundTaskHandler.GetType().GetProperty(nameof(IBackgroundTaskHandler<object, EmptyTaskQueueDirective>.Configuration));
             configProperty.SetValue(backgroundTaskHandler, subConfig);
 
             //Set the configuration independent variables
@@ -178,10 +134,39 @@ namespace CtrlVAF.BackgroundOperations
             return backgroundTaskHandler;
         }
 
-        private class EmptyTQD : TaskQueueDirective
+        private Action<TaskProcessorJob, TaskQueueDirective> GetBackgroundOperationFunction(Type concreteType)
         {
+            return (job, directive) =>
+            {
+                var backgroundTaskHandler = GetTaskHandler(concreteType);
+                var taskMethod = backgroundTaskHandler.GetType().GetMethod(nameof(IBackgroundTaskHandler<object, EmptyTaskQueueDirective>.Task));
 
+                try
+                {
+                    taskMethod.Invoke(backgroundTaskHandler, new object[] { job, directive, GetProgressFunction(job) });
+                }
+                catch (TargetInvocationException te)
+                {
+                    ExceptionDispatchInfo.Capture(te.InnerException).Throw();
+                }
+                catch (Exception e)
+                {
+                    throw e;
+                }
+            };
         }
 
+        private Action<string, MFTaskState> GetProgressFunction(TaskProcessorJob job) {
+            return (progress, taskState) =>
+            {
+                vaultApplication.TaskQueueBackgroundOperationManager.TaskProcessor.UpdateTaskInfo
+                (
+                    job,
+                    taskState,
+                    progress,
+                    false
+                );
+            };
+        }
     }
 }

@@ -86,6 +86,11 @@
     <Compile Include="Events\Attributes\EventCommandHandlerAttribute.cs" />
     <Compile Include="Events\EventCommand.cs" />
     <Compile Include="Events\Handlers\EventHandler.cs" />
+    <Compile Include="Models\EmptyTaskQueueDirective.cs" />
+    <Compile Include="Models\IntervalKind.cs" />
+    <Compile Include="Models\ICtrlVAFCommand.cs" />
+    <Compile Include="Models\IDispatcher.cs" />
+    <Compile Include="Models\IDispatcher_Common.cs" />
     <Compile Include="Validation\ValidationResults.cs" />
     <Compile Include="Events\EventDispatcher.cs" />
     <Compile Include="Events\Handlers\IEventHandler.cs" />
@@ -98,12 +103,6 @@
   <ItemGroup>
     <None Include="Core\Licensing\README.md" />
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\CtrlVAF.Models\CtrlVAF.Models.csproj">
-      <Project>{54188975-1d5e-49e1-a854-5fe4987e83f4}</Project>
-      <Name>CtrlVAF.Models</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

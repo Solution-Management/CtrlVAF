@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>$id$</id>
-    <version>$version$</version>
+    <version>1.21.3.2</version>
     <title>$title$</title>
     <authors>CtrlDocs Aps</authors>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
