@@ -33,7 +33,7 @@ namespace CtrlVAF.Validation
 
             var types = GetTypes(commands);
 
-            return HandleConcreteTypes(types, commands).ToArray();
+            return HandleConcreteTypes(types, commands);
         }
 
         protected internal override IEnumerable<Type> GetTypes(params ICtrlVAFCommand[] commands)
@@ -74,10 +74,12 @@ namespace CtrlVAF.Validation
         protected internal override IEnumerable<ValidationFinding> HandleConcreteTypes(IEnumerable<Type> concreteValidators, params ICtrlVAFCommand[] commands)
         {
             if (!concreteValidators.Any())
-                yield break;
+                return new ValidationFinding[0];
 
             if (!commands.Any())
-                yield break;
+                return new ValidationFinding[0];
+
+            List<ValidationFinding> findings = new List<ValidationFinding>();
 
             foreach (Type concreteValidatorType in concreteValidators)
             {
@@ -99,13 +101,15 @@ namespace CtrlVAF.Validation
 
                 var validateMethod = concreteValidatorType.GetMethod(nameof(ICustomValidator<object, ValidationCommand>.Validate));
 
-                IEnumerable<ValidationFinding> findings = new ValidationFinding[0];
+                ValidationFinding[] results = new ValidationFinding[0];
 
                 try
                 {
                     var validatorCommand = commands.FirstOrDefault(cmd => cmd.GetType() == concreteValidatorType.BaseType.GenericTypeArguments[1]);
-                    findings = validateMethod.Invoke(concreteHandler, new object[] { validatorCommand })
-                                    as IEnumerable<ValidationFinding>;
+
+                    results = (validateMethod.Invoke(concreteHandler, new object[] { validatorCommand })
+                                    as IEnumerable<ValidationFinding>).ToArray();
+                    findings.AddRange(results);
                 }
                 catch (TargetInvocationException te)
                 {
@@ -116,18 +120,13 @@ namespace CtrlVAF.Validation
                     throw e;
                 }
 
-
-
-                if (!vaultApplication.ValidationResults.TryAdd(subConfigType, new ValidationResults(findings)))
+                if (!vaultApplication.ValidationResults.TryAdd(subConfigType, new ValidationResults(results)))
                 {
-                    vaultApplication.ValidationResults[subConfigType].AddResults(findings);
-                }
-
-                foreach (var finding in findings)
-                {
-                    yield return finding;
+                    vaultApplication.ValidationResults[subConfigType].AddResults(results);
                 }
             }
+
+            return findings;
         }
     }
 }
