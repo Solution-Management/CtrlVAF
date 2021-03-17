@@ -10,6 +10,7 @@ namespace CtrlVAF.Core.Models
     {
         Minutes,
         Hours,
-        Days
+        Days,
+        Seconds
     }
 }

@@ -68,7 +68,7 @@ namespace CtrlVAF.BackgroundOperations
                 if (concreteType.IsDefined(typeof(RecurringAttribute)))
                 {
                     var attr = concreteType.GetCustomAttribute<RecurringAttribute>();
-                    var interval = TimeSpan.FromMinutes(attr.IntervalInMinutes);
+                    var interval = TimeSpan.FromSeconds(attr.IntervalInSeconds);
 
                     var operation = vaultApplication.TaskQueueBackgroundOperationManager.StartRecurringBackgroundOperation(
                         operationInfo.Name,

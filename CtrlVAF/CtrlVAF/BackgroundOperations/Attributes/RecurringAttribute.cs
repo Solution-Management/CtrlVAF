@@ -1,4 +1,5 @@
 ﻿using CtrlVAF.Core.Models;
+using MFiles.VAF.Common;
 using MFiles.VAF.MultiserverMode;
 
 using System;
@@ -12,43 +13,74 @@ namespace CtrlVAF.BackgroundOperations
     [AttributeUsage(AttributeTargets.Class)]
     public class RecurringAttribute : Attribute
     {
+        /// <summary>
+        /// Sets the interval of the background operation using the interval and interval kind.
+        /// Setting it to 1.5 days for instance will set the interval to 129600 seconds (Equal to the seconds in 1.5 days)
+        /// NOTE: There is a minimum interval currently set to 30 seconds. Any intervals below this will default to a 10 minute interval.
+        /// </summary>
+        /// <param name="interval">The interval number</param>
+        /// <param name="intervalKind">The kind of interval (seconds, minutes, hours, days)</param>
         public RecurringAttribute(double interval, IntervalKind intervalKind)
         {
-            IntervalInMinutes = IntervalToMinutes(interval, intervalKind);
+            IntervalInSeconds = IntervalToSeconds(interval, intervalKind);
         }
 
-        public RecurringAttribute(int IntervalInMinutes)
+        /// <summary>
+        /// Sets the interval of the background operation in minutes.
+        /// </summary>
+        /// <param name="minutesInterval">The interval in minutes</param>
+        public RecurringAttribute(double minutesInterval)
         {
-            this.IntervalInMinutes = IntervalInMinutes;
+            IntervalInSeconds = IntervalToSeconds(minutesInterval, IntervalKind.Minutes);
         }
 
         /// <summary>
         /// Interval for the permanent background operation
         /// </summary>
-        public int IntervalInMinutes { get; private set; } = 10;
+        public int IntervalInSeconds { get; private set; } = 600;
+        public bool debug = false;
 
-        public int IntervalToMinutes(double interval, IntervalKind intervalKind)
+        public int IntervalToSeconds(double interval, IntervalKind intervalKind)
         {
-            var minutes = 0;
+            if (interval <= 0)
+            {
+                if (!debug)
+                {
+                    SysUtils.ReportErrorToEventLog($"Invalid interval of {interval} {intervalKind} used for background job. Using 10 Minute interval instead.");
+                }
+                return 600;
+            }
+            int seconds;
 
             switch (intervalKind)
             {
+                case IntervalKind.Seconds:
+                    seconds = (int)TimeSpan.FromSeconds(interval).TotalSeconds;
+                    break;
                 case IntervalKind.Minutes:
-                    minutes = (int)TimeSpan.FromMinutes(interval).TotalMinutes;
+                    seconds = (int)TimeSpan.FromMinutes(interval).TotalSeconds;
                     break;
                 case IntervalKind.Hours:
-                    minutes = (int)TimeSpan.FromHours(interval).TotalMinutes;
+                    seconds = (int)TimeSpan.FromHours(interval).TotalSeconds;
                     break;
                 case IntervalKind.Days:
-                    minutes = (int)TimeSpan.FromDays(interval).TotalMinutes;
+                    seconds = (int)TimeSpan.FromDays(interval).TotalSeconds;
                     break;
                 default:
                     // Default to minutes
-                    minutes = (int)TimeSpan.FromMinutes(interval).TotalMinutes;
+                    seconds = (int)TimeSpan.FromMinutes(interval).TotalSeconds;
                     break;
             }
 
-            return minutes;
+            if (seconds < 30.0)
+            {
+                if (!debug)
+                {
+                    SysUtils.ReportErrorToEventLog($"Too low interval seconds of {seconds} calculated from interval of {interval} {intervalKind} for background job. Using 10 Minute interval instead.");
+                }
+                return 600;
+            }
+            return seconds;
         }
     }
 }
