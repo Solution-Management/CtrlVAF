@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package >
+  <metadata>
+    <id>$id$</id>
+    <version>$version$</version>
+    <title>$title$</title>
+    <authors>CtrlDocs Aps</authors>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <license type="expression">MIT</license>
+    <projectUrl>https://github.com/Solution-Management/CtrlVAF</projectUrl>
+    <description>An extensive framework, made to make your life as an M-Files VAF engineer much more simple, powerful and S.O.L.I.D</description>
+    <releaseNotes>Summary of changes made in this release of the package.</releaseNotes>
+    <copyright>$copyright$</copyright>
+    <tags>M-Files VAF Reflection Vault-Application-Framework</tags>
+  </metadata>
+</package>

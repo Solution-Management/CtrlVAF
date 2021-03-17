@@ -1,15 +1,15 @@
-﻿using System.Reflection;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("CtrlVAF.Core")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("CtrlVAF")]
+[assembly: AssemblyDescription("An extensive framework, made to make your life as an M-Files VAF engineer much more simple, powerful and S.O.L.I.D")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("CtrlVAF.Core")]
+[assembly: AssemblyCompany("CtrlDocs Aps")]
+[assembly: AssemblyProduct("CtrlVAF")]
 [assembly: AssemblyCopyright("Copyright ©  2021")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
