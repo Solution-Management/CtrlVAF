@@ -64,10 +64,6 @@
     <Compile Include="TestHandler.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CtrlVAF.Models\CtrlVAF.Models.csproj">
-      <Project>{54188975-1d5e-49e1-a854-5fe4987e83f4}</Project>
-      <Name>CtrlVAF.Models</Name>
-    </ProjectReference>
     <ProjectReference Include="..\CtrlVAF\CtrlVAF.csproj">
       <Project>{cc724d5e-1339-477a-b608-f738fdf0c7f6}</Project>
       <Name>CtrlVAF</Name>
