@@ -52,7 +52,5 @@ namespace CtrlVAF.BackgroundOperations
             public TaskQueueBackgroundOperation Operation { get; set; }
             public TimeSpan Interval { get; set; }
         }
-
-
     }
 }

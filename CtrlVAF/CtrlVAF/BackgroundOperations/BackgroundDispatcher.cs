@@ -5,7 +5,7 @@ using CtrlVAF.Validation;
 using MFiles.VAF.Common;
 using MFiles.VAF.Extensions.MultiServerMode;
 using MFiles.VAF.MultiserverMode;
-
+using MFilesAPI;
 using Newtonsoft.Json;
 
 using System;
@@ -37,7 +37,7 @@ namespace CtrlVAF.BackgroundOperations
             HandleConcreteTypes(concreteTypes);
         }
 
-        
+
 
         protected internal override IEnumerable<Type> GetTypes(params ICtrlVAFCommand[] commands)
         {
@@ -64,7 +64,34 @@ namespace CtrlVAF.BackgroundOperations
 
             foreach (Type concreteType in concreteTypes)
             {
-                
+                Action<TaskProcessorJob, TaskQueueDirective> operationFunc = (job, directive) =>
+                {
+                    var backgroundTaskHandler = GetTaskHandler(concreteType);
+                    Action<string, MFTaskState> progressFunction = (progress, taskState) =>
+                    {
+                        vaultApplication.TaskQueueBackgroundOperationManager.TaskProcessor.UpdateTaskInfo
+                        (
+                            job,
+                            taskState,
+                            progress,
+                            false
+                        );
+                    };
+                    var taskMethod = backgroundTaskHandler.GetType().GetMethod(nameof(IBackgroundTaskHandler<object, EmptyTQD>.Task));
+
+                    try
+                    {
+                        taskMethod.Invoke(backgroundTaskHandler, new object[] { job, directive, progressFunction });
+                    }
+                    catch (TargetInvocationException te)
+                    {
+                        ExceptionDispatchInfo.Capture(te.InnerException).Throw();
+                    }
+                    catch (Exception e)
+                    {
+                        throw e;
+                    }
+                };
 
                 BackgroundOperationAttribute operationInfo = concreteType.GetCustomAttribute<BackgroundOperationAttribute>();
 
@@ -77,25 +104,7 @@ namespace CtrlVAF.BackgroundOperations
                     TaskQueueBackgroundOperation operation = vaultApplication.TaskQueueBackgroundOperationManager.StartRecurringBackgroundOperation(
                         operationInfo.Name,
                         interval,
-                        (job, directive) => 
-                        {
-                            var backgroundTaskHandler = GetTaskHandler(concreteType);
-
-                            var taskMethod = backgroundTaskHandler.GetType().GetMethod(nameof(IBackgroundTaskHandler<object, EmptyTQD>.Task));
-
-                            try
-                            {
-                                taskMethod.Invoke(backgroundTaskHandler, new object[] { job, directive });
-                            }
-                            catch (TargetInvocationException te)
-                            {
-                                ExceptionDispatchInfo.Capture(te.InnerException).Throw();
-                            }
-                            catch (Exception e)
-                            {
-                                throw e;
-                            }
-                        }
+                        operationFunc
                         );
 
                     vaultApplication.RecurringBackgroundOperations.AddBackgroundOperation(operationInfo.Name, operation, interval);
@@ -106,25 +115,7 @@ namespace CtrlVAF.BackgroundOperations
                 {
                     TaskQueueBackgroundOperation operation = vaultApplication.TaskQueueBackgroundOperationManager.CreateBackgroundOperation<TaskQueueDirective>(
                         operationInfo.Name,
-                        (job, directive) => 
-                        {
-                            var backgroundTaskHandler = GetTaskHandler(concreteType);
-
-                            var taskMethod = backgroundTaskHandler.GetType().GetMethod(nameof(IBackgroundTaskHandler<object, EmptyTQD>.Task));
-
-                            try
-                            {
-                                taskMethod.Invoke(backgroundTaskHandler, new object[] { job, directive });
-                            }
-                            catch (TargetInvocationException te)
-                            {
-                                ExceptionDispatchInfo.Capture(te.InnerException).Throw();
-                            }
-                            catch (Exception e)
-                            {
-                                throw e;
-                            }
-                        }
+                        operationFunc
                         );
 
                     vaultApplication.OnDemandBackgroundOperations.AddBackgroundOperation(operationInfo.Name, operation);

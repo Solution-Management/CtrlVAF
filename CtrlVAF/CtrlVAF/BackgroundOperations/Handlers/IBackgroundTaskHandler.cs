@@ -17,7 +17,7 @@ namespace CtrlVAF.BackgroundOperations
                                                                 where TDirective : TaskQueueDirective, new()
                                                                 where TConfig : class, new()
     {
-        void Task(TaskProcessorJob job, TDirective directive);
+        void Task(TaskProcessorJob job, TDirective directive, Action<string, MFTaskState> progressCallback);
     }
 
     
