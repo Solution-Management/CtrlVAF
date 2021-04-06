@@ -75,6 +75,7 @@
     <Compile Include="BackgroundOperations\Handlers\IBackgroundTaskHandler.cs" />
     <Compile Include="Core\Attributes\LicenseRequiredAttribute.cs" />
     <Compile Include="Core\Attributes\UseLicensingAttribute.cs" />
+    <Compile Include="Core\ConfigurableVaultApplicationBase.AutomaticEventDispatching.cs" />
     <Compile Include="Core\Dispatcher_Common.cs" />
     <Compile Include="Core\ConfigurableVaultApplicationBase.cs" />
     <Compile Include="BackgroundOperations\OnDemandBackgroundOperations.cs" />
