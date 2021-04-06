@@ -1,5 +1,5 @@
 ﻿using CtrlVAF.Models;
-
+using MFiles.VAF;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -38,6 +38,12 @@ namespace CtrlVAF.Core
         /// <param name="types">a list of types which can be instantiated and will behave as expected</param>
         /// <returns>The result or <see cref="default"/> for no result.</returns>
         protected internal abstract void HandleConcreteTypes(IEnumerable<Type> types, params ICtrlVAFCommand[] commands);
+
+        /// <summary>
+        /// Creates an implementation of <see cref="IEventHandlerMethodInfo"/> for routing the event.
+        /// </summary>
+        /// <returns></returns>
+        public IEventHandlerMethodInfo CreateEventHandlerMethodInfo() => new CtrlVAF.Core.Events.EventHandlerMethodInfo(this);
     }
 
     /// <summary>

@@ -1,4 +1,5 @@
-﻿using CtrlVAF.Events.Attributes;
+﻿using CtrlVAF.Events;
+using CtrlVAF.Events.Attributes;
 using MFiles.VAF;
 using MFiles.VAF.Common;
 using MFilesAPI;
@@ -48,7 +49,7 @@ namespace CtrlVAF.Core
 			attributes = attributes ?? new List<EventCommandHandlerAttribute>();
 
 			// Find the unique types and add event handler method info for each.
-			var eventHandlerInfo = this.CreateEventHandlerMethodInfo();
+			var eventHandlerInfo = EventDispatcher.CreateEventHandlerMethodInfo();
 			foreach (var eventType in attributes.Select(a => a.MFEvent).Distinct())
 			{
 				// Check if the event type already has a collection.
@@ -93,42 +94,5 @@ namespace CtrlVAF.Core
 			// Return our classes.
 			return dict;
 		}
-
-		/// <summary>
-		/// Creates an implementation of <see cref="IEventHandlerMethodInfo"/> for routing the event.
-		/// </summary>
-		/// <returns></returns>
-		internal IEventHandlerMethodInfo CreateEventHandlerMethodInfo() => new EventHandlerMethodInfo(this.EventDispatcher);
-
-		internal class EventHandlerMethodInfo : IEventHandlerMethodInfo
-		{
-			public readonly Dispatcher EventDispatcher;
-			public EventHandlerMethodInfo(Dispatcher eventDispatcher)
-			{
-				this.EventDispatcher = eventDispatcher
-					?? throw new ArgumentNullException(nameof(eventDispatcher));
-			}
-
-			#region Implementation of IEventHandlerMethodInfo
-
-			/// <inheritdoc />
-			void IEventHandlerMethodInfo.Execute(MFiles.VAF.Common.EventHandlerEnvironment environment, IExecutionTrace trace)
-			{
-				// Create and dispatch the command.
-				var command = new Events.EventCommand(environment);
-				this.EventDispatcher.Dispatch(command);
-			}
-
-			/// <inheritdoc />
-			// TODO: Implement!
-			string IMethodInfoBase.LogString => "";
-
-			/// <inheritdoc />
-			// TODO: Implement!
-			int IMethodInfoBase.Priority => 0;
-
-			#endregion
-		}
-
 	}
 }
