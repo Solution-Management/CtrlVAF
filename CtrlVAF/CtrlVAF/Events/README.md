@@ -1,6 +1,35 @@
 # Events
 
-## How to
+## Automatic Dispatching
+Since version 1.21.4.1, **automatic dispatching** of events is now included. 
+This means that **all you need to do** is to create an event handler class such as the below example, and the vault application base class will take care of the rest.
+
+````c#
+[EventCommandHandler(MFEventHandlerType.MFEventHandlerBeforeCheckInChanges)]
+public class BeforeCheckInChanges: EventHandler<Configuration, EventCommand>
+{
+    public override void Handle(EventCommand command)
+    {
+        // Event handling code
+    }
+}
+````
+
+The selected configuration class (in the above example *Configuration* is selected) is available through the EventHandler interface as the *Configuration* field.
+It is possible to select a sub-class of the Configuration by changing the EventHandler from `EventHandler<Configuration, EventCommand>` to for instance `EventHandler<SubConfiguration, EventCommand>`.
+
+The vault application class will need to inherit from CtrlVAF.Core.ConfigurableVaultApplicationBase.
+
+````c#
+public partial class VaultApplication: CtrlVAF.Core.ConfigurableVaultApplicationBase<Configuration>
+{
+    // No need to add event handlers manually anymore
+}
+````
+
+For manual event dispatching in versions prior to 1.21.4.1, please see the *Manual Event Dispatching* section below.
+
+## Manual Event Dispatching
 
 To use the dispatcher, simply create a single event handler method in the VaultApplication class that 'handles' all events you wish to react to. Inside this EventHandler we create an **EventCommand** containing the **EventHandlerEnvironment** and dispatch that command with the **ConfigurableVaultApplicationBase.EventDispatcher**.
 
@@ -31,6 +60,8 @@ public class BeforeCheckInChanges: EventHandler<Configuration, EventCommand>
     }
 }
 ````
+
+## EventHandler Class
 
 The command exposes the EventHandlerEnvironment used to initialize it as **command.Env**.
 

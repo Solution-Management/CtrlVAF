@@ -44,17 +44,24 @@ namespace CtrlVAF.Core
 
         public virtual Assembly[] IncludeAssemblies()
         {
-            return new Assembly[0];
+            return new Assembly[]
+            {
+                this.GetType().Assembly
+            };
         }
 
-        public override void StartOperations(Vault vaultPersistent)
+
+        public ConfigurableVaultApplicationBase()
         {
             BackgroundDispatcher = new BackgroundDispatcher<TSecureConfiguration>(this);
 
             EventDispatcher = new EventDispatcher<TSecureConfiguration>(this);
 
             ValidatorDispatcher = new ValidatorDispatcher<TSecureConfiguration>(this);
+        }
 
+        public override void StartOperations(Vault vaultPersistent)
+        {
             if (this.GetType().IsDefined(typeof(UseLicensingAttribute)))
             {
                 var content = License?.Content<LicenseContentBase>();

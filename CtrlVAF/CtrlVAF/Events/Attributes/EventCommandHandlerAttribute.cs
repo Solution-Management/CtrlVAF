@@ -13,7 +13,7 @@ namespace CtrlVAF.Events.Attributes
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = false)]
     public class EventCommandHandlerAttribute: Attribute
     {
-        private readonly MFEventHandlerType MFEvent = MFEventHandlerType.MFEventHandlerTypeUndefined;
+        internal readonly MFEventHandlerType MFEvent = MFEventHandlerType.MFEventHandlerTypeUndefined;
 
         public EventCommandHandlerAttribute(MFEventHandlerType MFEvent)
         {

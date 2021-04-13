@@ -75,6 +75,7 @@
     <Compile Include="BackgroundOperations\Handlers\IBackgroundTaskHandler.cs" />
     <Compile Include="Core\Attributes\LicenseRequiredAttribute.cs" />
     <Compile Include="Core\Attributes\UseLicensingAttribute.cs" />
+    <Compile Include="Core\ConfigurableVaultApplicationBase.AutomaticEventDispatching.cs" />
     <Compile Include="Core\Dispatcher_Common.cs" />
     <Compile Include="Core\ConfigurableVaultApplicationBase.cs" />
     <Compile Include="BackgroundOperations\OnDemandBackgroundOperations.cs" />
@@ -85,6 +86,7 @@
     <Compile Include="Core\Licensing\LicensedDispatcher.cs" />
     <Compile Include="Events\Attributes\EventCommandHandlerAttribute.cs" />
     <Compile Include="Events\EventCommand.cs" />
+    <Compile Include="Events\EventHandlerMethodInfo.cs" />
     <Compile Include="Events\Handlers\EventHandler.cs" />
     <Compile Include="Models\EmptyTaskQueueDirective.cs" />
     <Compile Include="Models\IntervalKind.cs" />

@@ -10,6 +10,7 @@ using System.Runtime.ExceptionServices;
 using MFiles.VAF.Common;
 using CtrlVAF.Events.Attributes;
 using CtrlVAF.Validation;
+using MFiles.VAF;
 
 namespace CtrlVAF.Events
 {
