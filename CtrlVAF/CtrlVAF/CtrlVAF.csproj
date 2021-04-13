@@ -86,6 +86,7 @@
     <Compile Include="Core\Licensing\LicensedDispatcher.cs" />
     <Compile Include="Events\Attributes\EventCommandHandlerAttribute.cs" />
     <Compile Include="Events\EventCommand.cs" />
+    <Compile Include="Events\EventHandlerMethodInfo.cs" />
     <Compile Include="Events\Handlers\EventHandler.cs" />
     <Compile Include="Models\EmptyTaskQueueDirective.cs" />
     <Compile Include="Models\IntervalKind.cs" />

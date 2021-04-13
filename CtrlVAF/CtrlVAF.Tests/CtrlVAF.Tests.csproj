@@ -80,6 +80,7 @@
     <Compile Include="CommandTests\AfterSetPropertiesHandler2.cs" />
     <Compile Include="CommandTests\AfterSetPropertiesHandler1.cs" />
     <Compile Include="CommandTests\BeforeSetPropertiesHandler.cs" />
+    <Compile Include="CommandTests\Subfolder\BeforeCheckinChangesHandler.cs" />
     <Compile Include="Various\AttributeTests.cs" />
     <Compile Include="Various\CheckEnvironmentHandlers.cs" />
     <Compile Include="CommandTests\CommandTests.cs" />

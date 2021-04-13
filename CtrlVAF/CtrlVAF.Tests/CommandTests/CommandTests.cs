@@ -35,6 +35,24 @@ namespace CtrlVAF.Tests.CommandTests
         }
 
         [TestMethod]
+        public void AssertThat_ChangesMadeInHandlerInSubFolder_PropagateToEnvironment()
+        {
+            var expected = "BEFORECHECKINCHANGESHANDLER";
+
+            var conf = new Configuration() { Name = "Tester", ID = 1234 };
+            var va = Helpers.InitializeTestVA(conf);
+
+            var environment = va.CreateEventHandlerEnvironment(MFilesAPI.MFEventHandlerType.MFEventHandlerBeforeCheckInChanges);
+            var command = new EventCommand(environment);
+
+            Dispatcher dispatcher = va.EventDispatcher;
+
+            dispatcher.Dispatch(command);
+
+            Assert.AreEqual(expected, environment.Input);
+        }
+
+        [TestMethod]
         public void AssertThat_ChangesMadeInMultipleHandlers_PropagateToEnvironment()
         {
             var expectedID = 1234;
