@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -84,15 +84,20 @@
     <Compile Include="Core\ICommandHandler.cs" />
     <Compile Include="Core\Dispatcher.cs" />
     <Compile Include="Core\Licensing\LicensedDispatcher.cs" />
+    <Compile Include="Events\Attributes\ConfigurationChangedHandlerAttribute.cs" />
     <Compile Include="Events\Attributes\EventCommandHandlerAttribute.cs" />
+    <Compile Include="Events\ConfigurationChangedCommand.cs" />
     <Compile Include="Events\EventCommand.cs" />
+    <Compile Include="Events\ConfigurationDispatcher.cs" />
     <Compile Include="Events\EventHandlerMethodInfo.cs" />
+    <Compile Include="Events\Handlers\ConfigurationChangedHandler.cs" />
     <Compile Include="Events\Handlers\EventHandler.cs" />
     <Compile Include="Models\EmptyTaskQueueDirective.cs" />
     <Compile Include="Models\IntervalKind.cs" />
     <Compile Include="Models\ICtrlVAFCommand.cs" />
     <Compile Include="Models\IDispatcher.cs" />
     <Compile Include="Models\IDispatcher_Common.cs" />
+    <Compile Include="Utilities\ObjectUtilities.cs" />
     <Compile Include="Validation\ValidationResults.cs" />
     <Compile Include="Events\EventDispatcher.cs" />
     <Compile Include="Events\Handlers\IEventHandler.cs" />

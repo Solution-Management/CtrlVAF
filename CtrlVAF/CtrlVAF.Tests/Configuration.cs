@@ -11,12 +11,16 @@ namespace CtrlVAF.Tests
         public string Name { get; set; }
         public int ID { get; set; }
 
+        public bool Test = false;
+
         public Child_Configuration ChildConfig { get; set; }
     }
 
     public class Child_Configuration
     {
         public string Name { get; set; }
+
+        public bool Test = false;
         public GrandChild_Configuration GrandChildConfig { get; set; }
     }
 

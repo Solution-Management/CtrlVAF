@@ -1,4 +1,4 @@
-﻿using CtrlVAF.BackgroundOperations;
+using CtrlVAF.BackgroundOperations;
 using CtrlVAF.Events;
 using CtrlVAF.Core.Attributes;
 using CtrlVAF.Validation;
@@ -33,6 +33,8 @@ namespace CtrlVAF.Core
 
         public Dispatcher EventDispatcher { get; protected set; }
 
+        public Dispatcher ConfigurationDistpacher { get; protected set; }
+
         public Dispatcher<IEnumerable<ValidationFinding>> ValidatorDispatcher { get; protected set; }
 
         public ConcurrentDictionary<Type, ValidationResults> ValidationResults { get; internal set; } = new ConcurrentDictionary<Type, ValidationResults>();
@@ -57,6 +59,8 @@ namespace CtrlVAF.Core
 
             EventDispatcher = new EventDispatcher<TSecureConfiguration>(this);
 
+            ConfigurationDistpacher = new ConfigurationDispatcher<TSecureConfiguration>(this);
+
             ValidatorDispatcher = new ValidatorDispatcher<TSecureConfiguration>(this);
         }
 
@@ -75,6 +79,7 @@ namespace CtrlVAF.Core
 
             BackgroundDispatcher.IncludeAssemblies(IncludeAssemblies());
             EventDispatcher.IncludeAssemblies(IncludeAssemblies());
+            ConfigurationDistpacher.IncludeAssemblies(IncludeAssemblies());
             ValidatorDispatcher.IncludeAssemblies(IncludeAssemblies());
 
             base.StartOperations(vaultPersistent);
@@ -122,6 +127,13 @@ namespace CtrlVAF.Core
                 return base.CustomValidation(vault, config);
 
             return findings.Concat(base.CustomValidation(vault, config));
+        }
+
+        protected override void OnConfigurationUpdated(IConfigurationRequestContext context, ClientOperations clientOps, TSecureConfiguration oldConfiguration)
+        {
+            var command = new ConfigurationChangedCommand(context, clientOps, oldConfiguration);
+            BackgroundDispatcher.Dispatch(command);
+            base.OnConfigurationUpdated(context, clientOps, oldConfiguration);
         }
     }
 }
