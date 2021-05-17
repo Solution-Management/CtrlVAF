@@ -1,4 +1,4 @@
-using CtrlVAF.BackgroundOperations;
+﻿using CtrlVAF.BackgroundOperations;
 using CtrlVAF.Events;
 using CtrlVAF.Core.Attributes;
 using CtrlVAF.Validation;
@@ -6,7 +6,6 @@ using CtrlVAF.Validation;
 using MFiles.VAF.Common;
 using MFiles.VAF.Configuration;
 using MFiles.VAF.Configuration.AdminConfigurations;
-using MFiles.VAF.Extensions.MultiServerMode;
 
 using MFilesAPI;
 
@@ -15,11 +14,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Collections.Concurrent;
+using MFiles.VAF.Extensions;
 
 namespace CtrlVAF.Core
 {
     public abstract partial class ConfigurableVaultApplicationBase<TSecureConfiguration> :
-        MFiles.VAF.Extensions.MultiServerMode.ConfigurableVaultApplicationBase<TSecureConfiguration> where TSecureConfiguration : class, new()
+        MFiles.VAF.Extensions.ConfigurableVaultApplicationBase<TSecureConfiguration> where TSecureConfiguration : class, new()
     {
         public TaskQueueBackgroundOperationManager TaskQueueBackgroundOperationManager { get; set; }
 
@@ -104,7 +104,7 @@ namespace CtrlVAF.Core
                 SysUtils.ReportErrorMessageToEventLog("Could not dispatch the background operations.", e);
                 return;
             }
-
+            
             base.StartApplication();
         }
 

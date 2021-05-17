@@ -4,7 +4,7 @@ using CtrlVAF.Models;
 using CtrlVAF.Validation;
 
 using MFiles.VAF.Common;
-using MFiles.VAF.Extensions.MultiServerMode;
+using MFiles.VAF.Extensions;
 using MFiles.VAF.MultiserverMode;
 using MFilesAPI;
 using Newtonsoft.Json;
@@ -134,7 +134,7 @@ namespace CtrlVAF.BackgroundOperations
             return backgroundTaskHandler;
         }
 
-        private Action<TaskProcessorJob, TaskQueueDirective> GetBackgroundOperationFunction(Type concreteType)
+        private Action<TaskProcessorJobEx, TaskQueueDirective> GetBackgroundOperationFunction(Type concreteType)
         {
             return (job, directive) =>
             {

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -47,9 +47,8 @@
     <Reference Include="MFiles.VAF.Configuration.Interfaces, Version=1.0.0.0, Culture=neutral, PublicKeyToken=fa007b370d17fe5e, processorArchitecture=MSIL">
       <HintPath>..\packages\MFiles.VAF.2.2.0.10\lib\net45\MFiles.VAF.Configuration.Interfaces.dll</HintPath>
     </Reference>
-    <Reference Include="MFiles.VAF.Extensions, Version=1.1.9.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\MFiles.VAF.Extensions.1.1.9\lib\net45\MFiles.VAF.Extensions.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="MFiles.VAF.Extensions, Version=1.2.10.2, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MFiles.VAF.Extensions.1.2.10.2\lib\net45\MFiles.VAF.Extensions.dll</HintPath>
     </Reference>
     <Reference Include="MFilesAPI.Extensions, Version=1.0.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\MFilesAPI.Extensions.1.0.2\lib\net45\MFilesAPI.Extensions.dll</HintPath>
