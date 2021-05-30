@@ -1,6 +1,6 @@
 ﻿using CtrlVAF.Core;
 using CtrlVAF.Validation;
-
+using MFiles.VAF.Extensions;
 using MFiles.VAF.MultiserverMode;
 
 using MFilesAPI;
@@ -19,7 +19,7 @@ namespace CtrlVAF.BackgroundOperations
     {
         public TConfig Configuration { get; internal set; }
 
-        public abstract void Task(TaskProcessorJob job, TDirective directive, Action<string, MFTaskState> progressCallback);
+        public abstract void Task(TaskProcessorJobEx job, TDirective directive, Action<string, MFTaskState> progressCallback);
     }
 
     public abstract class BackgroundTaskHandler : ICommandHandler

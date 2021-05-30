@@ -1,6 +1,7 @@
 ﻿using CtrlVAF.Core;
 
 using MFiles.VAF.Common;
+using MFiles.VAF.Extensions;
 using MFiles.VAF.MultiserverMode;
 
 using MFilesAPI;
@@ -17,7 +18,7 @@ namespace CtrlVAF.BackgroundOperations
                                                                 where TDirective : TaskQueueDirective, new()
                                                                 where TConfig : class, new()
     {
-        void Task(TaskProcessorJob job, TDirective directive, Action<string, MFTaskState> progressCallback);
+        void Task(TaskProcessorJobEx job, TDirective directive, Action<string, MFTaskState> progressCallback);
     }
 
     

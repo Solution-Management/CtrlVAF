@@ -132,7 +132,7 @@ namespace CtrlVAF.Core
         protected override void OnConfigurationUpdated(IConfigurationRequestContext context, ClientOperations clientOps, TSecureConfiguration oldConfiguration)
         {
             var command = new ConfigurationChangedCommand(context, clientOps, oldConfiguration);
-            BackgroundDispatcher.Dispatch(command);
+            ConfigurationDistpacher.Dispatch(command);
             base.OnConfigurationUpdated(context, clientOps, oldConfiguration);
         }
     }
