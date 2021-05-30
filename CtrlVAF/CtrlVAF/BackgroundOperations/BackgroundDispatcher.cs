@@ -69,13 +69,15 @@ namespace CtrlVAF.BackgroundOperations
                 {
                     var attr = concreteType.GetCustomAttribute<RecurringAttribute>();
                     var interval = TimeSpan.FromSeconds(attr.IntervalInSeconds);
-
+                    
                     var operation = vaultApplication.TaskQueueBackgroundOperationManager.StartRecurringBackgroundOperation(
                         operationInfo.Name,
                         interval,
                         GetBackgroundOperationFunction(concreteType)
                         );
-
+                    operation.ShowRunCommandInDashboard = operationInfo.ShowRunCommandInDashboard;
+                    operation.ShowBackgroundOperationInDashboard = operationInfo.ShowBackgroundOperationInDashboard;
+                    
                     vaultApplication.RecurringBackgroundOperations.AddBackgroundOperation(operationInfo.Name, operation, interval);
                     permanentBackgroundOperationNames.Add(concreteType.FullName);
                 }
@@ -85,7 +87,8 @@ namespace CtrlVAF.BackgroundOperations
                         operationInfo.Name,
                         GetBackgroundOperationFunction(concreteType)
                         );
-
+                    operation.ShowRunCommandInDashboard = operationInfo.ShowRunCommandInDashboard;
+                    operation.ShowBackgroundOperationInDashboard = operationInfo.ShowBackgroundOperationInDashboard;
                     vaultApplication.OnDemandBackgroundOperations.AddBackgroundOperation(operationInfo.Name, operation);
                     onDemandBackgroundOperationNames.Add(concreteType.FullName);
                 }
