@@ -59,14 +59,13 @@ namespace CtrlVAF.Events
         protected internal override IEnumerable<Type> GetTypes(params ICtrlVAFCommand[] commands)
         {
             // Instantiate a handlerType according to the TCommand type provided
-            Type abstractHandlerType = typeof(EventHandler<,>);
-            List<Type> dispatchableHandlerTypes = new List<Type>();
-
-            List<Type> parsedCommands = new List<Type>();
+            var abstractHandlerType = typeof(EventHandler<,>);
+            var dispatchableHandlerTypes = new List<Type>();
+            var parsedCommands = new List<Type>();
 
             foreach (EventCommand command in commands)
             {
-                Type commandType = command.GetType();
+                var commandType = command.GetType();
 
                 if (parsedCommands.Contains(commandType))
                     continue;
@@ -85,8 +84,8 @@ namespace CtrlVAF.Events
                 }
 
                 //get the event handlers that can handle this command type and are designated to handle the event described in the commands Env
-                List<Type> allCommandHandlerTypes = new List<Type>();
-                foreach (Assembly assembly in Assemblies)
+                var allCommandHandlerTypes = new List<Type>();
+                foreach (var assembly in Assemblies)
                 {
                     var commandHandlerTypes = assembly.GetTypes().Where(t =>
                         t.IsClass &&
@@ -97,7 +96,6 @@ namespace CtrlVAF.Events
                     allCommandHandlerTypes.AddRange(commandHandlerTypes);
                 }
 
-                //Was there a reason for this Distinct? The same assembly is not included twice.
                 TypeCache.TryAdd(commandType, allCommandHandlerTypes);
 
                 var eventHandlerTypes = allCommandHandlerTypes.Where(t =>
@@ -116,12 +114,11 @@ namespace CtrlVAF.Events
 
         protected internal override void HandleConcreteTypes(IEnumerable<Type> types, params ICtrlVAFCommand[] commands)
         {
-            // If none, return
             if (!types.Any()) return;
 
-            List<Type> handledTypes = new List<Type>();
+            var handledTypes = new List<Type>();
 
-            foreach (ICtrlVAFCommand command in commands)
+            foreach (var command in commands)
             {
                 var commandType = command.GetType();
 
@@ -133,19 +130,14 @@ namespace CtrlVAF.Events
                             continue;
 
                         var concreteHandler = Activator.CreateInstance(concreteHandlerType) as Handlers.EventHandler;
-
-                        var subConfigType = concreteHandlerType.BaseType.GenericTypeArguments[0];
-
-                        //Set the configuration
-                        var configProperty = concreteHandlerType.GetProperty(nameof(ICommandHandler<object>.Configuration));
-                        var subConfig = Dispatcher_Helpers.GetConfigSubProperty(vaultApplication.GetConfig(), subConfigType);
-                        configProperty.SetValue(concreteHandler, subConfig);
-
-
-                        //Set the configuration independent variables
                         concreteHandler.PermanentVault = vaultApplication.PermanentVault;
                         concreteHandler.OnDemandBackgroundOperations = vaultApplication.OnDemandBackgroundOperations;
                         concreteHandler.RecurringBackgroundOperations = vaultApplication.RecurringBackgroundOperations;
+
+                        var subConfigType = concreteHandlerType.BaseType.GenericTypeArguments[0];
+                        var configProperty = concreteHandlerType.GetProperty(nameof(ICommandHandler<object>.Configuration));
+                        var subConfig = Dispatcher_Helpers.GetConfigSubProperty(vaultApplication.GetConfig(), subConfigType);
+                        configProperty.SetValue(concreteHandler, subConfig);
 
                         var keys = vaultApplication.ValidationResults.Keys.ToArray();
                         var found = Dispatcher_Helpers.AreConfigSubProperties(subConfigType, keys);
@@ -154,7 +146,6 @@ namespace CtrlVAF.Events
                             if (found[i])
                                 concreteHandler.ValidationResults.AddResults(vaultApplication.ValidationResults[keys[i]]);
                         }
-
 
                         var handleMethod = concreteHandlerType
                             .GetMethod(nameof(EventHandler<object, EventCommand>.Handle), new Type[] { commandType });

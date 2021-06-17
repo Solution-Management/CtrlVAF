@@ -23,6 +23,8 @@ namespace CtrlVAF.Validation
 
         public override IEnumerable<ValidationFinding> Dispatch(params ICtrlVAFCommand[] commands)
         {
+            if (commands == null) return Enumerable.Empty<ValidationFinding>();
+
             commands = commands.Where(cmd =>
                 cmd.GetType() == typeof(ValidationCommand) ||
                 cmd.GetType().BaseType == typeof(ValidationCommand)
@@ -38,22 +40,17 @@ namespace CtrlVAF.Validation
 
         protected internal override IEnumerable<Type> GetTypes(params ICtrlVAFCommand[] commands)
         {
-            if (!commands.Any())
-                return new List<Type>();
+            if (!commands.Any()) return Enumerable.Empty<Type>();
 
             var validatorCommandTypes = commands.Select(cmd => cmd.GetType());
-
             var configType = typeof(TConfig);
 
-            //At least include assembly for the main Configuration class
-            IncludeAssemblies(configType);
-
-            // Attempt to get types from the cache
             if (TypeCache.TryGetValue(configType, out var cachedTypes))
             {
                 return cachedTypes.Distinct();
             }
 
+            IncludeAssemblies(configType);
             var concreteTypes = Assemblies.SelectMany(a =>
             {
                 return a
@@ -73,35 +70,25 @@ namespace CtrlVAF.Validation
 
         protected internal override IEnumerable<ValidationFinding> HandleConcreteTypes(IEnumerable<Type> concreteValidators, params ICtrlVAFCommand[] commands)
         {
-            if (!concreteValidators.Any())
-                return new ValidationFinding[0];
+            if (!concreteValidators.Any() || !commands.Any()) return Enumerable.Empty<ValidationFinding>();
 
-            if (!commands.Any())
-                return new ValidationFinding[0];
-
-            List<ValidationFinding> findings = new List<ValidationFinding>();
+            var findings = new List<ValidationFinding>();
 
             foreach (Type concreteValidatorType in concreteValidators)
             {
+                var results = Enumerable.Empty<ValidationFinding>();
+                var validateMethod = concreteValidatorType.GetMethod(nameof(ICustomValidator<object, ValidationCommand>.Validate));
                 var subConfigType = concreteValidatorType.BaseType.GenericTypeArguments[0];
-
-
                 var concreteHandler = Activator.CreateInstance(concreteValidatorType) as CustomValidator;
+                concreteHandler.PermanentVault = vaultApplication.PermanentVault;
+                concreteHandler.OnDemandBackgroundOperations = vaultApplication.OnDemandBackgroundOperations;
+                concreteHandler.RecurringBackgroundOperations = vaultApplication.RecurringBackgroundOperations;
 
                 //Set the configuration
                 var configProperty = concreteValidatorType
                     .GetProperty(nameof(ICustomValidator<object, ValidationCommand>.Configuration));
                 var subConfig = Dispatcher_Helpers.GetConfigSubProperty(vaultApplication.GetConfig(), subConfigType);
                 configProperty.SetValue(concreteHandler, subConfig);
-
-                //Set the configuration independent variables
-                concreteHandler.PermanentVault = vaultApplication.PermanentVault;
-                concreteHandler.OnDemandBackgroundOperations = vaultApplication.OnDemandBackgroundOperations;
-                concreteHandler.RecurringBackgroundOperations = vaultApplication.RecurringBackgroundOperations;
-
-                var validateMethod = concreteValidatorType.GetMethod(nameof(ICustomValidator<object, ValidationCommand>.Validate));
-
-                ValidationFinding[] results = new ValidationFinding[0];
 
                 try
                 {

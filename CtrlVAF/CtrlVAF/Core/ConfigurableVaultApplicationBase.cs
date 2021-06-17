@@ -56,11 +56,8 @@ namespace CtrlVAF.Core
         public ConfigurableVaultApplicationBase()
         {
             BackgroundDispatcher = new BackgroundDispatcher<TSecureConfiguration>(this);
-
             EventDispatcher = new EventDispatcher<TSecureConfiguration>(this);
-
             ConfigurationDistpacher = new ConfigurationDispatcher<TSecureConfiguration>(this);
-
             ValidatorDispatcher = new ValidatorDispatcher<TSecureConfiguration>(this);
         }
 
@@ -69,11 +66,8 @@ namespace CtrlVAF.Core
             if (this.GetType().IsDefined(typeof(UseLicensingAttribute)))
             {
                 var content = License?.Content<LicenseContentBase>();
-
                 BackgroundDispatcher = new LicensedDispatcher(BackgroundDispatcher, content);
-
                 EventDispatcher = new LicensedDispatcher(EventDispatcher, content);
-
                 ValidatorDispatcher = new LicensedDispatcher<IEnumerable<ValidationFinding>>(ValidatorDispatcher, content);
             }
 

@@ -94,7 +94,7 @@ namespace CtrlVAF.BackgroundOperations
                 }
             }
 
-            string message = "";
+            var message = "";
 
             if (permanentBackgroundOperationNames.Any())
                 message += $"Permanent background operation classes: " + Environment.NewLine +
@@ -113,22 +113,17 @@ namespace CtrlVAF.BackgroundOperations
         private BackgroundTaskHandler GetTaskHandler(Type concreteType)
         {
             var backgroundTaskHandler = Activator.CreateInstance(concreteType) as BackgroundTaskHandler;
-
-            //Get the right configuration subType and object
-            TConfig config = vaultApplication.GetConfig();
-
-            Type subConfigType = concreteType.BaseType.GenericTypeArguments[0];
-
-            object subConfig = Dispatcher_Helpers.GetConfigSubProperty(config, subConfigType);
-
-            //Set the configuration
-            var configProperty = backgroundTaskHandler.GetType().GetProperty(nameof(IBackgroundTaskHandler<object, EmptyTaskQueueDirective>.Configuration));
-            configProperty.SetValue(backgroundTaskHandler, subConfig);
-
-            //Set the configuration independent variables
             backgroundTaskHandler.PermanentVault = vaultApplication.PermanentVault;
             backgroundTaskHandler.OnDemandBackgroundOperations = vaultApplication.OnDemandBackgroundOperations;
             backgroundTaskHandler.RecurringBackgroundOperations = vaultApplication.RecurringBackgroundOperations;
+
+            var config = vaultApplication.GetConfig();
+            var subConfigType = concreteType.BaseType.GenericTypeArguments[0];
+            object subConfig = Dispatcher_Helpers.GetConfigSubProperty(config, subConfigType);
+
+            var configProperty = backgroundTaskHandler.GetType().GetProperty(nameof(IBackgroundTaskHandler<object, EmptyTaskQueueDirective>.Configuration));
+            configProperty.SetValue(backgroundTaskHandler, subConfig);
+
             if (vaultApplication.ValidationResults.TryGetValue(subConfigType, out ValidationResults results))
                 backgroundTaskHandler.ValidationResults = results;
             else
