@@ -129,7 +129,7 @@ namespace CtrlVAF.Core
                 return filteredTypes;
             }
 
-            //If the license is valid, and the license has modules, 
+            //If the license is valid, and the license has modules,
             //remove classes which required licensing AND are in modules not contained in the licensed modules
             if (licenseContent?.Modules?.Any() == true)
             {
@@ -156,6 +156,5 @@ namespace CtrlVAF.Core
 
             return types;
         }
-
     }
 }

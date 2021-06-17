@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CtrlVAF.Utilities
 {
@@ -52,7 +48,7 @@ namespace CtrlVAF.Utilities
         {
             var oldValue = GetPropertySafe(PropertyGetterOld);
             var newValue = GetPropertySafe(PropertyGetterNew);
-            return !Object.Equals(oldValue, newValue);
+            return !Equals(oldValue, newValue);
         }
     }
 }

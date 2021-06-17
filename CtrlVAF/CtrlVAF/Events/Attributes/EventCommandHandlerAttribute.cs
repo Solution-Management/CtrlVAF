@@ -1,17 +1,11 @@
-﻿using MFiles.VAF.Common;
-
-using MFilesAPI;
+﻿using MFilesAPI;
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CtrlVAF.Events.Attributes
 {
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = false)]
-    public class EventCommandHandlerAttribute: Attribute
+    public class EventCommandHandlerAttribute : Attribute
     {
         internal readonly MFEventHandlerType MFEvent = MFEventHandlerType.MFEventHandlerTypeUndefined;
 
@@ -24,6 +18,5 @@ namespace CtrlVAF.Events.Attributes
         {
             return MFEvent == eventHandlerType;
         }
-
     }
 }

@@ -1,12 +1,7 @@
 ﻿using CtrlVAF.Core.Models;
 using MFiles.VAF.Common;
-using MFiles.VAF.MultiserverMode;
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CtrlVAF.BackgroundOperations
 {
@@ -38,6 +33,7 @@ namespace CtrlVAF.BackgroundOperations
         /// Interval for the permanent background operation
         /// </summary>
         public int IntervalInSeconds { get; private set; } = 600;
+
         public bool debug = false;
 
         public int IntervalToSeconds(double interval, IntervalKind intervalKind)
@@ -57,15 +53,19 @@ namespace CtrlVAF.BackgroundOperations
                 case IntervalKind.Seconds:
                     seconds = (int)TimeSpan.FromSeconds(interval).TotalSeconds;
                     break;
+
                 case IntervalKind.Minutes:
                     seconds = (int)TimeSpan.FromMinutes(interval).TotalSeconds;
                     break;
+
                 case IntervalKind.Hours:
                     seconds = (int)TimeSpan.FromHours(interval).TotalSeconds;
                     break;
+
                 case IntervalKind.Days:
                     seconds = (int)TimeSpan.FromDays(interval).TotalSeconds;
                     break;
+
                 default:
                     // Default to minutes
                     seconds = (int)TimeSpan.FromMinutes(interval).TotalSeconds;

@@ -4,12 +4,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CtrlVAF.BackgroundOperations
 {
-    public class OnDemandBackgroundOperations: IEnumerable<string>
+    public class OnDemandBackgroundOperations : IEnumerable<string>
     {
         private Dictionary<string, OperationInfo> BackgroundOperations { get; set; }
             = new Dictionary<string, OperationInfo>();

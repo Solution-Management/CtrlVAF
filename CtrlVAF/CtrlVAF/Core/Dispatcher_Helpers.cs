@@ -5,8 +5,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CtrlVAF.Core
 {
@@ -65,7 +63,6 @@ namespace CtrlVAF.Core
 
         public static bool[] AreConfigSubProperties(Type parent, params Type[] children)
         {
-
             if (children.Count() != children.Distinct().Count())
                 throw new InvalidOperationException("Found duplicate types in parameters for " + nameof(AreConfigSubProperties));
 
@@ -76,7 +73,7 @@ namespace CtrlVAF.Core
                 foundChildren.Add(child, false);
             }
 
-            if(children.Contains(parent))
+            if (children.Contains(parent))
             {
                 foundChildren[parent] = true;
             }
@@ -94,7 +91,7 @@ namespace CtrlVAF.Core
                 {
                     foundChildren[property.PropertyType] = true;
                 }
-                
+
                 if (foundChildren.Values.Contains(false))
                 {
                     Type[] unfoundChildren = foundChildren.Where(kv => !kv.Value).Select(kv => kv.Key).ToArray();

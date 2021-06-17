@@ -6,10 +6,6 @@ using MFiles.VAF.MultiserverMode;
 using MFilesAPI;
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CtrlVAF.BackgroundOperations
 {
@@ -28,6 +24,5 @@ namespace CtrlVAF.BackgroundOperations
         public ValidationResults ValidationResults { get; internal set; }
         public OnDemandBackgroundOperations OnDemandBackgroundOperations { get; internal set; }
         public RecurringBackgroundOperations RecurringBackgroundOperations { get; internal set; }
-
     }
 }

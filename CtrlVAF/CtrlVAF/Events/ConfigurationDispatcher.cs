@@ -1,16 +1,12 @@
-using CtrlVAF.Events.Handlers;
 using CtrlVAF.Core;
+using CtrlVAF.Events.Handlers;
 using CtrlVAF.Models;
-
+using MFiles.VAF.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.ExceptionServices;
-using MFiles.VAF.Common;
-using CtrlVAF.Events.Attributes;
-using CtrlVAF.Validation;
-using MFiles.VAF;
 
 namespace CtrlVAF.Events
 {
@@ -43,12 +39,12 @@ namespace CtrlVAF.Events
         /// <inheritdoc/>
         public override void Dispatch(params ICtrlVAFCommand[] commands)
         {
-            commands = commands.Where(cmd => 
+            commands = commands.Where(cmd =>
                 cmd.GetType() == typeof(ConfigurationChangedCommand) ||
                 cmd.GetType().BaseType == typeof(ConfigurationChangedCommand)
                 )
                 .ToArray();
-            
+
             IncludeAssemblies(Assembly.GetCallingAssembly());
 
             var concreteTypes = GetTypes(commands);
@@ -139,7 +135,6 @@ namespace CtrlVAF.Events
                             if (found[i])
                                 concreteHandler.ValidationResults.AddResults(vaultApplication.ValidationResults[keys[i]]);
                         }
-
 
                         var handleMethod = concreteHandlerType
                             .GetMethod(nameof(ConfigurationChangedHandler<object, ConfigurationChangedCommand>.Handle), new Type[] { commandType });

@@ -5,8 +5,8 @@ using MFilesAPI;
 
 namespace CtrlVAF.Core
 {
-    public interface ICommandHandler<TConfiguration>: ICommandHandler
-        where TConfiguration: class, new()
+    public interface ICommandHandler<TConfiguration> : ICommandHandler
+        where TConfiguration : class, new()
     {
         TConfiguration Configuration { get; }
     }
@@ -15,7 +15,7 @@ namespace CtrlVAF.Core
     {
         Vault PermanentVault { get; }
         ValidationResults ValidationResults { get; }
-        OnDemandBackgroundOperations OnDemandBackgroundOperations { get; } 
+        OnDemandBackgroundOperations OnDemandBackgroundOperations { get; }
         RecurringBackgroundOperations RecurringBackgroundOperations { get; }
     }
 }

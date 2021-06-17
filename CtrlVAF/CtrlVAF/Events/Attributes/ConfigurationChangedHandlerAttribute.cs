@@ -1,12 +1,4 @@
-﻿using MFiles.VAF.Common;
-
-using MFilesAPI;
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
 
 namespace CtrlVAF.Events.Attributes
 {
@@ -15,7 +7,6 @@ namespace CtrlVAF.Events.Attributes
     {
         public ConfigurationChangedHandlerAttribute()
         {
-            
         }
     }
 }

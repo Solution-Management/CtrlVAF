@@ -1,12 +1,10 @@
-﻿using MFiles.VAF.Configuration;
-
-using CtrlVAF.Core;
-
+﻿using CtrlVAF.Core;
+using CtrlVAF.Models;
+using MFiles.VAF.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using CtrlVAF.Models;
 using System.Runtime.ExceptionServices;
 
 namespace CtrlVAF.Validation

@@ -33,7 +33,6 @@ namespace CtrlVAF.BackgroundOperations
                 Operation = operation,
                 Interval = interval
             });
-
         }
 
         public IEnumerator<string> GetEnumerator()

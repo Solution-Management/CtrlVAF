@@ -1,16 +1,11 @@
 ﻿using MFiles.VAF.Configuration;
-
-using System;
 using System.Collections;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CtrlVAF.Validation
 {
-    public class ValidationResults: IEnumerable<ValidationFinding>
+    public class ValidationResults : IEnumerable<ValidationFinding>
     {
         private IEnumerable<ValidationFinding> validationFindings;
 

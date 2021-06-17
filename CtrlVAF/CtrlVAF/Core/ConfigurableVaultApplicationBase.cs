@@ -1,20 +1,17 @@
 ﻿using CtrlVAF.BackgroundOperations;
-using CtrlVAF.Events;
 using CtrlVAF.Core.Attributes;
+using CtrlVAF.Events;
 using CtrlVAF.Validation;
-
 using MFiles.VAF.Common;
 using MFiles.VAF.Configuration;
 using MFiles.VAF.Configuration.AdminConfigurations;
-
+using MFiles.VAF.Extensions;
 using MFilesAPI;
-
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Collections.Concurrent;
-using MFiles.VAF.Extensions;
 
 namespace CtrlVAF.Core
 {
@@ -51,7 +48,6 @@ namespace CtrlVAF.Core
                 this.GetType().Assembly
             };
         }
-
 
         public ConfigurableVaultApplicationBase()
         {
@@ -93,12 +89,12 @@ namespace CtrlVAF.Core
             {
                 BackgroundDispatcher.Dispatch();
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 SysUtils.ReportErrorMessageToEventLog("Could not dispatch the background operations.", e);
                 return;
             }
-            
+
             base.StartApplication();
         }
 
@@ -115,7 +111,7 @@ namespace CtrlVAF.Core
 
             var customCommand = AddCustomValidationCommand(vault);
 
-            var findings =  ValidatorDispatcher.Dispatch(command, customCommand);
+            var findings = ValidatorDispatcher.Dispatch(command, customCommand);
 
             if (findings == null)
                 return base.CustomValidation(vault, config);
