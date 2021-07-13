@@ -40,23 +40,23 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Interop.MFilesAPI, Version=7.0.0.0, Culture=neutral, PublicKeyToken=f1b4733f444f7ad0, processorArchitecture=MSIL">
-      <HintPath>..\packages\MFiles.VAF.2.2.0.10\lib\net45\Interop.MFilesAPI.dll</HintPath>
-      <EmbedInteropTypes>False</EmbedInteropTypes>
+      <HintPath>..\packages\MFiles.VAF.2.2.0.11\lib\net45\Interop.MFilesAPI.dll</HintPath>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
-    <Reference Include="MFiles.Crypto, Version=2.2.0.10, Culture=neutral, PublicKeyToken=fa007b370d17fe5e, processorArchitecture=MSIL">
-      <HintPath>..\packages\MFiles.VAF.2.2.0.10\lib\net45\MFiles.Crypto.dll</HintPath>
+    <Reference Include="MFiles.Crypto, Version=2.2.0.11, Culture=neutral, PublicKeyToken=fa007b370d17fe5e, processorArchitecture=MSIL">
+      <HintPath>..\packages\MFiles.VAF.2.2.0.11\lib\net45\MFiles.Crypto.dll</HintPath>
     </Reference>
-    <Reference Include="MFiles.VAF, Version=2.2.0.10, Culture=neutral, PublicKeyToken=fa007b370d17fe5e, processorArchitecture=MSIL">
-      <HintPath>..\packages\MFiles.VAF.2.2.0.10\lib\net45\MFiles.VAF.dll</HintPath>
+    <Reference Include="MFiles.VAF, Version=2.2.0.11, Culture=neutral, PublicKeyToken=fa007b370d17fe5e, processorArchitecture=MSIL">
+      <HintPath>..\packages\MFiles.VAF.2.2.0.11\lib\net45\MFiles.VAF.dll</HintPath>
     </Reference>
-    <Reference Include="MFiles.VAF.Configuration, Version=2.2.0.10, Culture=neutral, PublicKeyToken=fa007b370d17fe5e, processorArchitecture=MSIL">
-      <HintPath>..\packages\MFiles.VAF.2.2.0.10\lib\net45\MFiles.VAF.Configuration.dll</HintPath>
+    <Reference Include="MFiles.VAF.Configuration, Version=2.2.0.11, Culture=neutral, PublicKeyToken=fa007b370d17fe5e, processorArchitecture=MSIL">
+      <HintPath>..\packages\MFiles.VAF.2.2.0.11\lib\net45\MFiles.VAF.Configuration.dll</HintPath>
     </Reference>
     <Reference Include="MFiles.VAF.Configuration.Interfaces, Version=1.0.0.0, Culture=neutral, PublicKeyToken=fa007b370d17fe5e, processorArchitecture=MSIL">
-      <HintPath>..\packages\MFiles.VAF.2.2.0.10\lib\net45\MFiles.VAF.Configuration.Interfaces.dll</HintPath>
+      <HintPath>..\packages\MFiles.VAF.2.2.0.11\lib\net45\MFiles.VAF.Configuration.Interfaces.dll</HintPath>
     </Reference>
-    <Reference Include="MFiles.VAF.Extensions, Version=1.2.10.2, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\MFiles.VAF.Extensions.1.2.10.2\lib\net45\MFiles.VAF.Extensions.dll</HintPath>
+    <Reference Include="MFiles.VAF.Extensions, Version=1.2.11.4, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MFiles.VAF.Extensions.1.2.11.4\lib\net45\MFiles.VAF.Extensions.dll</HintPath>
     </Reference>
     <Reference Include="MFilesAPI.Extensions, Version=1.0.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\MFilesAPI.Extensions.1.0.2\lib\net45\MFilesAPI.Extensions.dll</HintPath>
@@ -68,7 +68,7 @@
       <HintPath>..\packages\MSTest.TestFramework.2.1.1\lib\net45\Microsoft.VisualStudio.TestPlatform.TestFramework.Extensions.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\MFiles.VAF.2.2.0.10\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\MFiles.VAF.2.2.0.11\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -116,6 +116,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
